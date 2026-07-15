@@ -15,6 +15,10 @@ fruit_scene = ExtResource("2")
 one_shot = true
 wait_time = 0.5
 
+[node name="Preview" type="Sprite2D" parent="."]
+z_index = 50
+centered = true
+
 [node name="RayCast2D" type="RayCast2D" parent="."]
 enabled = true
 target_position = Vector2(0, 1000)

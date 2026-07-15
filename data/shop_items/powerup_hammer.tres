@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="ShopItemData" load_steps=2 format=3 uid="uid://fshop00000000000000000004"]
+[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://ild8oj1o2qid"]
 
-[ext_resource type="Script" path="res://data/resources/shop_item_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://3ptbmu8qpv2h" path="res://data/resources/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dxp8v48shmhwe" path="res://Assets/Menu/Hammer.png" id="1_ceewp"]
 
 [resource]
 script = ExtResource("1")
 id = "powerup_hammer"
 display_name = "Hammer"
+icon = ExtResource("1_ceewp")
 cost = 50
 category = "powerup"
 description = "Destroy one fruit"

@@ -1,13 +1,16 @@
-[gd_resource type="Resource" script_class="FruitData" load_steps=2 format=3 uid="uid://f0a1b2c30000000000000003"]
+[gd_resource type="Resource" script_class="FruitData" load_steps=3 format=3 uid="uid://f0a1b2c30000000000000003"]
 
 [ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Fruits/Orange.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-tier = 2
+sprite = ExtResource("2")
+tier = 10
 display_name = "Orange"
-radius = 22.0
-score_value = 4
-next_tier = 3
-mass = 0.9
-color = Color(1, 0.6, 0.1, 1)
+sprite_scale = Vector2(0.07, 0.07)
+radius = 35.0
+score_value = 1024
+next_tier = 11
+mass = 1.6
+color = Color(1, 1, 1, 1)

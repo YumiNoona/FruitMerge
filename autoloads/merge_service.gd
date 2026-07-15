@@ -21,7 +21,7 @@ static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 	fruit_a.set_emotion(Enums.FruitEmotion.EXCITED)
 	fruit_b.set_emotion(Enums.FruitEmotion.EXCITED)
 
-	await fruit_a.get_tree().create_timer(0.1).timeout
+	await fruit_a.get_tree().create_timer(0.18).timeout
 
 	var midpoint: Vector2 = (fruit_a.global_position + fruit_b.global_position) / 2.0
 	var score_gained: int = fruit_a.data.score_value
@@ -29,10 +29,8 @@ static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 
 	EventBus.fruit_merged.emit(tier, midpoint, score_gained)
 
-	if is_instance_valid(fruit_a):
-		fruit_a.queue_free()
-	if is_instance_valid(fruit_b):
-		fruit_b.queue_free()
+	fruit_a.start_merge_exit()
+	fruit_b.start_merge_exit()
 
 	Spawner.spawn_at(next_data, midpoint)
 	return true

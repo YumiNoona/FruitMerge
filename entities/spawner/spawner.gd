@@ -3,10 +3,10 @@ extends Node2D
 
 const SPAWN_TIERS: Array[Enums.FruitTier] = [
 	Enums.FruitTier.CHERRY,
+	Enums.FruitTier.STRAWBERRY,
 	Enums.FruitTier.GRAPE,
-	Enums.FruitTier.ORANGE,
-	Enums.FruitTier.LEMON,
-	Enums.FruitTier.APPLE,
+	Enums.FruitTier.RADISH,
+	Enums.FruitTier.CAPSICUM,
 ]
 
 @export var drop_cooldown: float = 0.5
@@ -23,6 +23,7 @@ var _current_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var _next_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 
 @onready var _cooldown_timer: Timer = $CooldownTimer
+@onready var _preview: Sprite2D = $Preview
 
 
 func _ready() -> void:
@@ -30,16 +31,32 @@ func _ready() -> void:
 		_cooldown_timer.timeout.connect(_on_cooldown_ready)
 	_update_tiers()
 	EventBus.state_changed.connect(_on_state_changed)
+	_refresh_preview()
+
+func _process(_delta: float) -> void:
+	if not _can_drop or not _is_aiming:
+		return
+	var mx := _clamp_x(get_global_mouse_position().x)
+	_preview.position.x = mx - position.x
 
 
 func _on_state_changed(state: Enums.GameState) -> void:
 	_can_drop = (state == Enums.GameState.PLAYING)
+	_preview.visible = _can_drop
 
 
 func _update_tiers() -> void:
 	_current_tier = _next_tier
 	_next_tier = _get_random_spawn_tier()
 	GameManager.next_fruit_tier = _next_tier
+	_refresh_preview()
+
+
+func _refresh_preview() -> void:
+	var d := FruitDatabase.get_fruit(_current_tier)
+	if d:
+		_preview.texture = d.sprite
+	_preview.position = Vector2(0, -20)
 
 
 func _get_random_spawn_tier() -> Enums.FruitTier:
@@ -164,6 +181,7 @@ func _drop_at(x: float) -> void:
 		return
 
 	_can_drop = false
+	_preview.visible = false
 	if _cooldown_timer:
 		_cooldown_timer.start(drop_cooldown)
 
@@ -178,6 +196,7 @@ func _drop_at(x: float) -> void:
 	await get_tree().create_timer(0.02).timeout
 	if is_instance_valid(fruit):
 		fruit.freeze = false
+		fruit.sleeping = false
 
 	EventBus.fruit_dropped.emit(_current_tier)
 	_spawn_drop_line(x)
@@ -194,3 +213,4 @@ func _spawn_drop_line(target_x: float) -> void:
 
 func _on_cooldown_ready() -> void:
 	_can_drop = true
+	_preview.visible = true

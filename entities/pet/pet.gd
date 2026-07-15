@@ -57,7 +57,7 @@ func _process(delta: float) -> void:
 
 func _on_merge(tier: int, _pos: Vector2, _score: int) -> void:
 	_target_squash = 1.0 + squash_amount
-	if tier >= Enums.FruitTier.PEACH:
+	if tier >= Enums.FruitTier.CABBAGE:
 		current_mood = Mood.EXCITED
 		_excited_timer = 1.2
 

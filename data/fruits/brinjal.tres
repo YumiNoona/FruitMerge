@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FruitData" format=3 uid="uid://s31mutudiwqk"]
+
+[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Vegetables/Bringle.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+sprite = ExtResource("2")
+tier = 12
+display_name = "Brinjal"
+sprite_scale = Vector2(0.06, 0.06)
+radius = 42.0
+score_value = 4096
+next_tier = 13
+mass = 2.1
+color = Color(1, 1, 1, 1)

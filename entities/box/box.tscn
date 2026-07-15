@@ -12,7 +12,6 @@ size = Vector2(240, 20)
 script = ExtResource("1")
 danger_settle_time = 2.0
 danger_line_y = -380.0
-overflow_line_y = 40.0
 
 [node name="LeftWall" type="CollisionShape2D" parent="."]
 unique_name_in_owner = true

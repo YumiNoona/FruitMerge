@@ -3,7 +3,6 @@ extends StaticBody2D
 
 @export var danger_settle_time: float = 2.0
 @export var danger_line_y: float = -400.0
-@export var overflow_line_y: float = 40.0
 
 var _danger_area: Area2D
 var _danger_timer: float = 0.0
@@ -64,16 +63,6 @@ func _on_body_exited_danger(body: Node) -> void:
 			_danger_active = false
 			_danger_timer = 0.0
 			EventBus.danger_line_exited.emit()
-
-
-func _check_overflow() -> void:
-	for fruit in get_tree().get_nodes_in_group("fruits"):
-		if not is_instance_valid(fruit):
-			continue
-		if fruit.global_position.y <= overflow_line_y:
-			_game_over_triggered = true
-			GameManager.change_state(Enums.GameState.GAME_OVER)
-			return
 
 
 func get_danger_ratio() -> float:

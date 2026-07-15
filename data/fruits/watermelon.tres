@@ -1,13 +1,16 @@
-[gd_resource type="Resource" script_class="FruitData" load_steps=2 format=3 uid="uid://f0a1b2c30000000000000010"]
+[gd_resource type="Resource" script_class="FruitData" load_steps=3 format=3 uid="uid://f0a1b2c30000000000000010"]
 
 [ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Fruits/Watermelon.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-tier = 9
+sprite = ExtResource("2")
+tier = 16
 display_name = "Watermelon"
-radius = 64.0
-score_value = 512
+sprite_scale = Vector2(0.04, 0.04)
+radius = 70.0
+score_value = 65536
 next_tier = -1
-mass = 4.0
-color = Color(0.1, 0.7, 0.2, 1)
+mass = 4.5
+color = Color(1, 1, 1, 1)

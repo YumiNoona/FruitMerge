@@ -1,9 +1,9 @@
 extends Node2D
 
 const SHAKE_TIERS: Array[Enums.FruitTier] = [
-	Enums.FruitTier.PEACH,
-	Enums.FruitTier.PINEAPPLE,
+	Enums.FruitTier.CABBAGE,
 	Enums.FruitTier.MELON,
+	Enums.FruitTier.PUMPKIN,
 	Enums.FruitTier.WATERMELON,
 ]
 
@@ -106,7 +106,7 @@ func _on_fruit_merged(tier: int, world_pos: Vector2, _score: int) -> void:
 		burst.global_position = world_pos
 		add_child(burst)
 	_spawn_pooled_particles(world_pos)
-	if tier >= Enums.FruitTier.PEACH:
+	if tier >= Enums.FruitTier.CABBAGE:
 		_apply_screen_shake(tier)
 
 
@@ -123,7 +123,7 @@ func _apply_screen_shake(tier: int) -> void:
 	var cam := get_viewport().get_camera_2d()
 	if not cam:
 		return
-	var shake_strength: float = lerpf(2.0, 8.0, float(tier - Enums.FruitTier.PEACH) / 3.0)
+	var shake_strength: float = lerpf(2.0, 8.0, float(tier - Enums.FruitTier.CABBAGE) / 3.0)
 	var shakes := 8
 	var t := create_tween()
 	var orig := cam.position

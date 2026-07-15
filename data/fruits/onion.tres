@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FruitData" format=3 uid="uid://s31mutudiwqi"]
+
+[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Vegetables/Onion.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+sprite = ExtResource("2")
+tier = 8
+display_name = "Onion"
+sprite_scale = Vector2(0.07, 0.07)
+radius = 30.0
+score_value = 256
+next_tier = 9
+mass = 1.2
+color = Color(1, 1, 1, 1)

@@ -4,15 +4,22 @@ enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, SHOP }
 
 enum FruitTier {
 	CHERRY = 0,
-	GRAPE = 1,
-	ORANGE = 2,
-	LEMON = 3,
-	APPLE = 4,
-	PEAR = 5,
-	PEACH = 6,
-	PINEAPPLE = 7,
-	MELON = 8,
-	WATERMELON = 9,
+	STRAWBERRY = 1,
+	GRAPE = 2,
+	RADISH = 3,
+	CAPSICUM = 4,
+	CARROT = 5,
+	TOMATO = 6,
+	CORN = 7,
+	ONION = 8,
+	LEMON = 9,
+	ORANGE = 10,
+	CUCUMBER = 11,
+	BRINJAL = 12,
+	CABBAGE = 13,
+	MELON = 14,
+	PUMPKIN = 15,
+	WATERMELON = 16,
 }
 
 enum PowerUpType { HAMMER, BOMB, UNDO, SHUFFLE }

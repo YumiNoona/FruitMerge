@@ -49,6 +49,7 @@ func _apply_data() -> void:
 		_sprite.texture = data.sprite
 	if _sprite:
 		_sprite.self_modulate = data.color
+		_sprite.scale = data.sprite_scale
 	if _collision:
 		var shape: CircleShape2D = CircleShape2D.new()
 		shape.radius = data.radius
