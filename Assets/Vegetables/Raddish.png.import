@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwdo2ptow3kgh"
-path="res://.godot/imported/Capsicum.png-66440a434fa05e14d8902f6c22b2ed3c.ctex"
+uid="uid://bk61bty0r1mc"
+path="res://.godot/imported/Raddish.png-689ca71c4e3e5d3efc62793d46f02909.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Capsicum.png"
-dest_files=["res://.godot/imported/Capsicum.png-66440a434fa05e14d8902f6c22b2ed3c.ctex"]
+source_file="res://Assets/Vegetables/Raddish.png"
+dest_files=["res://.godot/imported/Raddish.png-689ca71c4e3e5d3efc62793d46f02909.ctex"]
 
 [params]
 

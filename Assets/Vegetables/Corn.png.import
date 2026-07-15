@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bhe0kvedtvgt"
-path="res://.godot/imported/Onion.png-8037c50eb2e6a8c4c9712df6f4e1272e.ctex"
+uid="uid://7d5hl3i76nx2"
+path="res://.godot/imported/Corn.png-f478223cd1915c31cc1b5af0c5d923b4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Onion.png"
-dest_files=["res://.godot/imported/Onion.png-8037c50eb2e6a8c4c9712df6f4e1272e.ctex"]
+source_file="res://Assets/Vegetables/Corn.png"
+dest_files=["res://.godot/imported/Corn.png-f478223cd1915c31cc1b5af0c5d923b4.ctex"]
 
 [params]
 
