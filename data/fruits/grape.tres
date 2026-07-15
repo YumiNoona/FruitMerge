@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="FruitData" load_steps=2 format=3 uid="uid://f0a1b2c30000000000000002"]
+
+[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tier = 1
+display_name = "Grape"
+radius = 20.0
+score_value = 2
+next_tier = 2
+mass = 0.7
+color = Color(0.5, 0.1, 0.7, 1)

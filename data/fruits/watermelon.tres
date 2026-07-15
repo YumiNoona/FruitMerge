@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="FruitData" load_steps=2 format=3 uid="uid://f0a1b2c30000000000000010"]
+
+[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tier = 9
+display_name = "Watermelon"
+radius = 64.0
+score_value = 512
+next_tier = -1
+mass = 4.0
+color = Color(0.1, 0.7, 0.2, 1)

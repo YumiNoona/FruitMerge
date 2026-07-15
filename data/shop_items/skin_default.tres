@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=2 format=3 uid="uid://fshop00000000000000000001"]
+
+[ext_resource type="Script" path="res://data/resources/shop_item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "skin_default"
+display_name = "Default Skin"
+cost = 0
+category = "skin"
+description = "The classic fruit look"

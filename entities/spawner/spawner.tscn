@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bspwn00000000000000000001"]
+
+[ext_resource type="Script" path="res://entities/spawner/spawner.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://fmrt00000000000000000001" path="res://entities/fruit/fruit.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://bdrop00000000000000000001" path="res://vfx/drop_line.tscn" id="3"]
+
+[node name="Spawner" type="Node2D"]
+script = ExtResource("1")
+drop_cooldown = 0.5
+max_x_spread = 80.0
+drop_line_scene = ExtResource("3")
+fruit_scene = ExtResource("2")
+
+[node name="CooldownTimer" type="Timer" parent="."]
+one_shot = true
+wait_time = 0.5
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true
+target_position = Vector2(0, 1000)
+collision_mask = 1

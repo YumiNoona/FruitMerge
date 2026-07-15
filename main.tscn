@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://cpwny7e8eargy"]
+
+[ext_resource type="Script" path="res://main.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bbox0000000000000000000001" path="res://entities/box/box.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://bspwn00000000000000000001" path="res://entities/spawner/spawner.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://bpet0000000000000000000001" path="res://entities/pet/pet.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://bmerg00000000000000000001" path="res://vfx/merge_burst.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://bhud0000000000000000001" path="res://ui/hud/hud.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://bgmov00000000000000000001" path="res://ui/game_over/game_over.tscn" id="7"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1")
+box_scene = ExtResource("2")
+spawner_scene = ExtResource("3")
+pet_scene = ExtResource("4")
+merge_burst_scene = ExtResource("5")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -250)
+current = true
+
+[node name="BoxContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -250)
+
+[node name="SpawnerContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -550)
+
+[node name="PetContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(200, -200)
+
+[node name="HUD" parent="." instance=ExtResource("6")]
+unique_name_in_owner = true
+
+[node name="GameOverPanel" parent="." instance=ExtResource("7")]
+unique_name_in_owner = true
+visible = false
