@@ -16,7 +16,6 @@ var _excited_timer: float = 0.0
 var _worried_timer: float = 0.0
 
 @onready var _sprite: Sprite2D = %Sprite2D
-@onready var _anim_player: AnimationPlayer = %AnimationPlayer
 
 
 func _ready() -> void:
@@ -32,7 +31,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_bob_time += delta * bob_speed
-	var offset := sin(_bob_time) * bob_amplitude
+	var offset: float = sin(_bob_time) * bob_amplitude
 
 	match current_mood:
 		Mood.EXCITED:

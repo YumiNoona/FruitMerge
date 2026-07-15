@@ -41,7 +41,7 @@ func _enter_state(state: Enums.GameState) -> void:
 		Enums.GameState.MENU:
 			get_tree().paused = false
 
-func _exit_state(state: Enums.GameState) -> void:
+func _exit_state(_state: Enums.GameState) -> void:
 	pass
 
 func start_new_run() -> void:

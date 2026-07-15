@@ -38,7 +38,7 @@ func _load_data(data: Dictionary) -> void:
 		EconomyManager.coins = data.get("coins", 0)
 		var owned: Array = str_to_var(data.get("owned_items", "[]"))
 		EconomyManager.owned_items.assign(owned if owned else [])
-		var pw := data.get("powerup_counts", {})
+		var pw = data.get("powerup_counts", {})
 		if pw is Dictionary:
 			EconomyManager.powerup_counts = pw
 	if is_instance_valid(GameManager):

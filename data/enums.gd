@@ -16,3 +16,5 @@ enum FruitTier {
 }
 
 enum PowerUpType { HAMMER, BOMB, UNDO, SHUFFLE }
+
+enum FruitEmotion { IDLE, HAPPY, EXCITED, DIZZY, WORRIED, SLEEPY }

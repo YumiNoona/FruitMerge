@@ -15,13 +15,12 @@ const SHAKE_TIERS: Array[Enums.FruitTier] = [
 @onready var _box_container: Node2D = %BoxContainer
 @onready var _spawner_container: Node2D = %SpawnerContainer
 @onready var _pet_container: Node2D = %PetContainer
-@onready var _hud: Control = %HUD
 @onready var _game_over_panel: Control = %GameOverPanel
 
 var _box: Box
 var _spawner: Spawner
 var _pet: Pet
-var _particle_pool: Array[GpuParticles2D] = []
+var _particle_pool: Array[GPUParticles2D] = []
 var _pool_index: int = 0
 const PARTICLE_POOL_SIZE := 6
 
@@ -60,7 +59,7 @@ func _setup_pet() -> void:
 
 func _setup_particle_pool() -> void:
 	for i in PARTICLE_POOL_SIZE:
-		var particles := GpuParticles2D.new()
+		var particles := GPUParticles2D.new()
 		particles.one_shot = true
 		particles.amount = 14
 		particles.lifetime = 0.5
@@ -74,10 +73,10 @@ func _setup_particle_pool() -> void:
 
 func _create_particle_material() -> ParticleProcessMaterial:
 	var mat := ParticleProcessMaterial.new()
-	mat.gravity = Vector2(0, 200)
+	mat.gravity = Vector3(0, 200, 0)
 	mat.initial_velocity_min = 80.0
 	mat.initial_velocity_max = 180.0
-	mat.direction = Vector2(0, -1)
+	mat.direction = Vector3(0, -1, 0)
 	mat.spread = 90.0
 	mat.scale_min = 2.0
 	mat.scale_max = 5.0
@@ -124,7 +123,7 @@ func _apply_screen_shake(tier: int) -> void:
 	var cam := get_viewport().get_camera_2d()
 	if not cam:
 		return
-	var shake_strength := lerpf(2.0, 8.0, float(tier - Enums.FruitTier.PEACH) / 3.0)
+	var shake_strength: float = lerpf(2.0, 8.0, float(tier - Enums.FruitTier.PEACH) / 3.0)
 	var shakes := 8
 	var t := create_tween()
 	var orig := cam.position

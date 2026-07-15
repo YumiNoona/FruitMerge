@@ -21,6 +21,12 @@ script = ExtResource("1")
 unique_name_in_owner = true
 centered = true
 
+[node name="Face" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+centered = true
+position = Vector2(0, -4)
+z_index = 1
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 unique_name_in_owner = true
 shape = SubResource("1")
@@ -32,3 +38,8 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 one_shot = true
 wait_time = 0.4
+
+[node name="IdleTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
+wait_time = 9.0

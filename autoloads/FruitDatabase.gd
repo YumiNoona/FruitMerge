@@ -1,4 +1,3 @@
-class_name FruitDatabase
 extends Node
 
 @export var fruits: Array[FruitData] = []
@@ -29,7 +28,7 @@ func _auto_load_fruits() -> void:
 	fruits.sort_custom(func(a: FruitData, b: FruitData): return a.tier < b.tier)
 
 
-func get_fruit(tier: Enums.FruitTier) -> FruitData:
+func get_fruit(tier: int) -> FruitData:
 	for f in fruits:
 		if f.tier == tier:
 			return f
@@ -37,7 +36,7 @@ func get_fruit(tier: Enums.FruitTier) -> FruitData:
 
 
 func get_next_fruit(current_tier: Enums.FruitTier) -> FruitData:
-	var fd := get_fruit(current_tier)
+	var fd: FruitData = get_fruit(current_tier)
 	if not fd or fd.next_tier < 0:
 		return null
 	return get_fruit(fd.next_tier)

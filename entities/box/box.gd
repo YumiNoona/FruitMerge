@@ -11,10 +11,6 @@ var _fruits_in_danger: int = 0
 var _danger_active: bool = false
 var _game_over_triggered: bool = false
 
-@onready var _left_wall: CollisionShape2D = %LeftWall
-@onready var _right_wall: CollisionShape2D = %RightWall
-@onready var _floor: CollisionShape2D = %Floor
-
 
 func _ready() -> void:
 	var wall_mat := load("res://data/resources/wall_physics.tres") as PhysicsMaterial
@@ -53,6 +49,7 @@ func _process(delta: float) -> void:
 func _on_body_entered_danger(body: Node) -> void:
 	if body is Fruit:
 		_fruits_in_danger += 1
+		body.set_emotion(Enums.FruitEmotion.WORRIED)
 		if _fruits_in_danger == 1 and not _danger_active:
 			_danger_active = true
 			EventBus.danger_line_entered.emit()
@@ -61,6 +58,8 @@ func _on_body_entered_danger(body: Node) -> void:
 func _on_body_exited_danger(body: Node) -> void:
 	if body is Fruit:
 		_fruits_in_danger = max(0, _fruits_in_danger - 1)
+		if is_instance_valid(body) and not body.is_merging:
+			body.set_emotion(Enums.FruitEmotion.IDLE)
 		if _fruits_in_danger == 0 and _danger_active:
 			_danger_active = false
 			_danger_timer = 0.0

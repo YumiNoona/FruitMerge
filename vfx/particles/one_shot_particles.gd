@@ -1,4 +1,4 @@
-extends GpuParticles2D
+extends GPUParticles2D
 
 @export var auto_free: bool = true
 

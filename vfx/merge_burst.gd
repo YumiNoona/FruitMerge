@@ -11,8 +11,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	var p := _t / duration
-	var s := 1.0 + sin(p * PI) * 0.5
+	var p: float = _t / duration
+	var s: float = 1.0 + sin(p * PI) * 0.5
 	scale = Vector2(s, s)
 	modulate.a = 1.0 - p
 

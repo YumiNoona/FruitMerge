@@ -22,11 +22,7 @@ var _aim_line: Line2D
 var _current_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var _next_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 
-var _box_bounds: Rect2
-var _box_node: Box
-
 @onready var _cooldown_timer: Timer = $CooldownTimer
-@onready var _ray_cast: RayCast2D = $RayCast2D
 
 
 func _ready() -> void:
@@ -34,17 +30,6 @@ func _ready() -> void:
 		_cooldown_timer.timeout.connect(_on_cooldown_ready)
 	_update_tiers()
 	EventBus.state_changed.connect(_on_state_changed)
-	_find_box()
-
-
-func _find_box() -> void:
-	var parent := get_parent()
-	if parent:
-		var box_container := parent.get_node_or_null("BoxContainer")
-		if box_container:
-			_box_node = box_container.get_child(0) as Box if box_container.get_child_count() > 0 else null
-		if not _box_node:
-			_box_node = get_tree().get_first_node_in_group("box") as Box
 
 
 func _on_state_changed(state: Enums.GameState) -> void:
@@ -106,7 +91,7 @@ func _begin_aim() -> void:
 func _end_aim(release_pos: Vector2) -> void:
 	_is_aiming = false
 	var drop_x := _clamp_x(release_pos.x)
-	var dist := abs(drop_x - _aim_start.x)
+	var dist: float = abs(drop_x - _aim_start.x)
 	if dist < 10.0:
 		drop_x = _aim_start.x
 	_drop_at(drop_x)
