@@ -3,6 +3,7 @@ extends Control
 const ITEM_PATHS: PackedStringArray = [
 	"res://data/shop_items/skin_default.tres",
 	"res://data/shop_items/skin_pastel.tres",
+	"res://data/shop_items/skin_pineapple.tres",
 	"res://data/shop_items/pet_cat.tres",
 	"res://data/shop_items/powerup_hammer.tres",
 	"res://data/shop_items/powerup_bomb.tres",
@@ -85,7 +86,7 @@ func _on_item_purchased(_item_id: StringName) -> void:
 
 func _on_back_pressed() -> void:
 	GameManager.change_state(Enums.GameState.MENU)
-	get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")
+	get_tree().change_scene_to_file("res://ui/home/home.tscn")
 
 
 func _on_play_pressed() -> void:

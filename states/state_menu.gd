@@ -7,4 +7,4 @@ func enter() -> void:
 
 func _on_state_changed(state: Enums.GameState) -> void:
 	if state != Enums.GameState.MENU:
-		get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")
+		get_tree().change_scene_to_file("res://ui/home/home.tscn")

@@ -2,11 +2,18 @@ extends Node
 
 const FRUIT_PATHS: PackedStringArray = [
 	"res://data/fruits/cherry.tres",
+	"res://data/fruits/berries.tres",
 	"res://data/fruits/strawberry.tres",
 	"res://data/fruits/grape.tres",
+	"res://data/fruits/kiwi.tres",
 	"res://data/fruits/lemon.tres",
 	"res://data/fruits/orange.tres",
-	"res://data/fruits/melon.tres",
+	"res://data/fruits/apple.tres",
+	"res://data/fruits/peach.tres",
+	"res://data/fruits/mango.tres",
+	"res://data/fruits/coconut.tres",
+	"res://data/fruits/pineapple.tres",
+	"res://data/fruits/dragonfruit.tres",
 	"res://data/fruits/watermelon.tres",
 ]
 

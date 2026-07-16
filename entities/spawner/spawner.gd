@@ -3,6 +3,7 @@ extends Node2D
 
 const SPAWN_TIERS: Array[Enums.FruitTier] = [
 	Enums.FruitTier.CHERRY,
+	Enums.FruitTier.BERRIES,
 	Enums.FruitTier.STRAWBERRY,
 	Enums.FruitTier.GRAPE,
 ]

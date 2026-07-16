@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://3lu8luql7ivj" path="res://ui/main_menu/main_menu.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/BackGround.png" id="2"]
-[ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="3"]
+[ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://ui/theme/cozy_theme.tres" id="3"]
 [ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/Mascot.png" id="4_3c04x"]
 [ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://ui/components/cozy_button.gd" id="5"]
+[ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="6"]
 
 [node name="MainMenu" type="Control" unique_id=1663695879]
 layout_mode = 3
@@ -39,6 +40,7 @@ mouse_filter = 2
 color = Color(1, 0.86, 0.64, 0.08)
 
 [node name="TopStats" type="HBoxContainer" parent="." unique_id=1881115122]
+visible = false
 layout_mode = 0
 anchor_right = 1.0
 offset_left = 24.0
@@ -89,14 +91,12 @@ layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="CoinGlyph" type="Label" parent="TopStats/CoinPanel/CoinRow" unique_id=715739314]
+[node name="CoinGlyph" type="TextureRect" parent="TopStats/CoinPanel/CoinRow" unique_id=715739314]
+custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.68, 0.14, 1)
-theme_override_colors/font_outline_color = Color(0.66, 0.35, 0.08, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 31
-text = "●"
-vertical_alignment = 1
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="CoinsCopy" type="VBoxContainer" parent="TopStats/CoinPanel/CoinRow" unique_id=1694042161]
 layout_mode = 2
@@ -122,7 +122,7 @@ theme_override_colors/font_color = Color(0.42, 0.56, 0.22, 1)
 theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 0.9)
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 20
-text = "A COZY KITCHEN PUZZLE"
+text = "OPENING YOUR COZY KITCHEN"
 horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="." unique_id=1184265477]
@@ -167,11 +167,12 @@ grow_horizontal = 2
 
 [node name="Tip" type="Label" parent="TipPanel" unique_id=1089297883]
 layout_mode = 2
-text = "Drop matching fruits, make bigger friends!"
+text = "Tip: matching fruits grow into bigger friends!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Actions" type="VBoxContainer" parent="." unique_id=108242970]
+visible = false
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
@@ -203,21 +204,29 @@ layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -260.0
-offset_top = 1065.0
+offset_top = 1018.0
 offset_right = 260.0
-offset_bottom = 1150.0
+offset_bottom = 1142.0
 grow_horizontal = 2
 theme_override_constants/separation = 4
+
+[node name="LoadingBar" type="ProgressBar" parent="Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+show_percentage = false
+value = 3.0
 
 [node name="Rule" type="Label" parent="Footer" unique_id=1123255085]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.46, 0.31, 0.2, 1)
 theme_override_font_sizes/font_size = 18
-text = "TAP  •  DROP  •  GROW"
+text = "GATHERING FRUIT  •  POLISHING BUTTONS"
 horizontal_alignment = 1
 
-[node name="Goal" type="Label" parent="Footer" unique_id=1056732298]
+[node name="LoadingLabel" type="Label" parent="Footer" unique_id=1056732298]
+unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
-text = "Can you make the watermelon?"
+text = "Loading..."
 horizontal_alignment = 1

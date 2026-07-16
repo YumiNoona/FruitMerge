@@ -1,19 +1,48 @@
 extends Control
 
-@onready var _play_button: Button = %PlayButton
-@onready var _shop_button: Button = %ShopButton
-@onready var _high_score_label: Label = %HighScoreLabel
-@onready var _coins_label: Label = %CoinsLabel
+const HOME_SCENE := "res://ui/home/home.tscn"
+const MINIMUM_DISPLAY_TIME := 1.35
+
+@onready var _loading_bar: ProgressBar = %LoadingBar
+@onready var _loading_label: Label = %LoadingLabel
 @onready var _mascot: TextureRect = %Mascot
 
+var _elapsed := 0.0
+var _load_started := false
+var _transitioning := false
 
 func _ready() -> void:
-	_play_button.pressed.connect(_on_play_pressed)
-	_shop_button.pressed.connect(_on_shop_pressed)
-	EventBus.coins_changed.connect(_on_coins_changed)
-	_update_high_score()
-	_update_coins(EconomyManager.coins)
 	_play_intro()
+	var error := ResourceLoader.load_threaded_request(HOME_SCENE)
+	_load_started = error == OK
+	if not _load_started:
+		_loading_label.text = "Opening your cozy kitchen..."
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	if _transitioning:
+		return
+	_elapsed += delta
+	if not _load_started:
+		_loading_bar.value = minf(92.0, _loading_bar.value + delta * 45.0)
+		if _elapsed >= MINIMUM_DISPLAY_TIME:
+			_finish_with_path()
+		return
+
+	var progress: Array = []
+	var status := ResourceLoader.load_threaded_get_status(HOME_SCENE, progress)
+	var actual := 0.0
+	if not progress.is_empty():
+		actual = float(progress[0]) * 100.0
+	var display_target := minf(actual, 92.0) if status != ResourceLoader.THREAD_LOAD_LOADED else 100.0
+	_loading_bar.value = move_toward(_loading_bar.value, display_target, delta * 85.0)
+
+	if status == ResourceLoader.THREAD_LOAD_FAILED or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+		_load_started = false
+		_loading_label.text = "Opening your cozy kitchen..."
+	elif status == ResourceLoader.THREAD_LOAD_LOADED and _elapsed >= MINIMUM_DISPLAY_TIME and _loading_bar.value >= 99.0:
+		_finish_with_resource()
 
 
 func _play_intro() -> void:
@@ -31,24 +60,26 @@ func _play_intro() -> void:
 	bob.tween_property(_mascot, "position:y", _mascot.position.y, 1.4)
 
 
-func _update_high_score() -> void:
-	_high_score_label.text = "%d" % GameManager.high_score
+func _finish_with_resource() -> void:
+	_transitioning = true
+	_loading_label.text = "Ready!"
+	var packed := ResourceLoader.load_threaded_get(HOME_SCENE) as PackedScene
+	await _fade_out()
+	if packed:
+		get_tree().change_scene_to_packed(packed)
+	else:
+		get_tree().change_scene_to_file(HOME_SCENE)
 
 
-func _update_coins(amount: int) -> void:
-	_coins_label.text = "%d" % amount
+func _finish_with_path() -> void:
+	_transitioning = true
+	_loading_bar.value = 100.0
+	_loading_label.text = "Ready!"
+	await _fade_out()
+	get_tree().change_scene_to_file(HOME_SCENE)
 
 
-func _on_coins_changed(amount: int) -> void:
-	_update_coins(amount)
-
-
-func _on_play_pressed() -> void:
-	_play_button.disabled = true
-	GameManager.start_new_run()
-
-
-func _on_shop_pressed() -> void:
-	_shop_button.disabled = true
-	GameManager.change_state(Enums.GameState.SHOP)
-	get_tree().change_scene_to_file("res://ui/shop/shop.tscn")
+func _fade_out() -> void:
+	var fade := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fade.tween_property(self, "modulate:a", 0.0, 0.25)
+	await fade.finished

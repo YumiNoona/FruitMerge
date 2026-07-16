@@ -47,4 +47,4 @@ func _on_restart() -> void:
 
 func _on_menu() -> void:
 	GameManager.change_state(Enums.GameState.MENU)
-	get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")
+	get_tree().change_scene_to_file("res://ui/home/home.tscn")

@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3 uid="uid://fshop00000000000000000002"]
 
 [ext_resource type="Script" path="res://data/resources/shop_item_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/Fruits/Strawberry.png" id="2"]
+[ext_resource type="Texture2D" path="res://Assets/Shop/Shoplemon.png" id="2"]
 
 [resource]
 script = ExtResource("1")
 id = "skin_pastel"
-display_name = "Pastel Skin"
+display_name = "Sunny Lemon"
 icon = ExtResource("2")
 cost = 100
 category = "skin"
-description = "Soft strawberry colors"
+description = "A bright citrus friend"

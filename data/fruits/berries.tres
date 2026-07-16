@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FruitData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Fruits/Berries.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+sprite = ExtResource("2")
+sprite_visual_width = 293.0
+tier = 1
+display_name = "Berries"
+radius = 29.0
+score_value = 3
+next_tier = 2
+mass = 0.52
+color = Color(1, 1, 1, 1)

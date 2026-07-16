@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dagjsv28kdu6c"]
+[gd_scene load_steps=5 format=3 uid="uid://dagjsv28kdu6c"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="2"]
 [ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="3"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="4"]
 
 [node name="HUD" type="Control"]
 process_mode = 3
@@ -104,13 +105,12 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 8
 
-[node name="CoinGlyph" type="Label" parent="TopPanel/TopRow/CoinBlock/CoinRow"]
+[node name="CoinGlyph" type="TextureRect" parent="TopPanel/TopRow/CoinBlock/CoinRow"]
+custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.71, 0.15, 1)
-theme_override_colors/font_outline_color = Color(0.46, 0.27, 0.08, 1)
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 26
-text = "●"
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="CoinsLabel" type="Label" parent="TopPanel/TopRow/CoinBlock/CoinRow"]
 unique_name_in_owner = true

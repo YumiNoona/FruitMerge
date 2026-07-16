@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://ui/game_over/game_over.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="2"]
-[ext_resource type="Texture2D" path="res://Assets/Fruits/Watermelon.png" id="3"]
+[ext_resource type="Texture2D" path="res://Assets/Fruits/Watermellon.png" id="3"]
 [ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="4"]
 
 [node name="GameOver" type="Control"]

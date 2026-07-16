@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://beuves6ksy8cq"
-path="res://.godot/imported/ButtonPressed.png-3d878394c438ee92908fec50996b5f4a.ctex"
+uid="uid://xyonurfkvoux"
+path="res://.godot/imported/FruitsDock.png-9a5a78b1b704a171dfcd04d777db6418.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/ButtonPressed.png"
-dest_files=["res://.godot/imported/ButtonPressed.png-3d878394c438ee92908fec50996b5f4a.ctex"]
+source_file="res://Assets/FruitsDock.png"
+dest_files=["res://.godot/imported/FruitsDock.png-9a5a78b1b704a171dfcd04d777db6418.ctex"]
 
 [params]
 

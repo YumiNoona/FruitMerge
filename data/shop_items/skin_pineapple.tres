@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/resources/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Shop/Shoppineapple.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "skin_pineapple"
+display_name = "Star Pineapple"
+icon = ExtResource("2")
+cost = 180
+category = "skin"
+description = "A sparkly tropical look"

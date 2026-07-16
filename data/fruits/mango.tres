@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FruitData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Fruits/Mango.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+sprite = ExtResource("2")
+sprite_visual_width = 292.0
+tier = 9
+display_name = "Mango"
+radius = 91.0
+score_value = 55
+next_tier = 10
+mass = 2.5
+color = Color(1, 1, 1, 1)

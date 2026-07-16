@@ -9,6 +9,7 @@ enum Mood { IDLE, EXCITED, WORRIED, SAD }
 
 var current_mood: Mood = Mood.IDLE
 var _base_y: float
+var _base_scale: Vector2 = Vector2.ONE
 var _bob_time: float = 0.0
 var _target_squash: float = 1.0
 var _current_squash: float = 1.0
@@ -21,6 +22,7 @@ var _worried_timer: float = 0.0
 func _ready() -> void:
 	if _sprite:
 		_base_y = _sprite.position.y
+		_base_scale = _sprite.scale
 
 	EventBus.fruit_merged.connect(_on_merge)
 	EventBus.game_over.connect(_on_game_over)
@@ -52,7 +54,7 @@ func _process(delta: float) -> void:
 
 	if _sprite:
 		_sprite.position.y = _base_y + offset
-		_sprite.scale = Vector2(1.0 + (_current_squash - 1.0), 1.0 - (_current_squash - 1.0) * 0.5)
+		_sprite.scale = _base_scale * Vector2(1.0 + (_current_squash - 1.0), 1.0 - (_current_squash - 1.0) * 0.5)
 
 
 func _on_merge(tier: int, _pos: Vector2, _score: int) -> void:

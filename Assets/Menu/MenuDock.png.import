@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xyonurfkvoux"
-path="res://.godot/imported/Dock.png-843e154802cbdf13832629dc94e3c1f4.ctex"
+uid="uid://de6o6oo53fjyc"
+path="res://.godot/imported/MenuDock.png-5565fae1db027acbbcebd64ab818bd85.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Dock.png"
-dest_files=["res://.godot/imported/Dock.png-843e154802cbdf13832629dc94e3c1f4.ctex"]
+source_file="res://Assets/Menu/MenuDock.png"
+dest_files=["res://.godot/imported/MenuDock.png-5565fae1db027acbbcebd64ab818bd85.ctex"]
 
 [params]
 

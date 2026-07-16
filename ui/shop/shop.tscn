@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bshop00000000000000000001"]
+[gd_scene load_steps=7 format=3 uid="uid://bshop00000000000000000001"]
 
 [ext_resource type="Script" path="res://ui/shop/shop.gd" id="1"]
 [ext_resource type="Texture2D" path="res://Assets/BackGround.png" id="2"]
 [ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/Generated/mascot_cutout.png" id="4"]
+[ext_resource type="Texture2D" path="res://Assets/Mascot.png" id="4"]
 [ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="5"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="6"]
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -73,13 +74,12 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 10
 
-[node name="CoinGlyph" type="Label" parent="TopBar/CoinPanel/CoinRow"]
+[node name="CoinGlyph" type="TextureRect" parent="TopBar/CoinPanel/CoinRow"]
+custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.7, 0.16, 1)
-theme_override_colors/font_outline_color = Color(0.61, 0.34, 0.08, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 28
-text = "●"
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="ShopCoinsLabel" type="Label" parent="TopBar/CoinPanel/CoinRow"]
 unique_name_in_owner = true
