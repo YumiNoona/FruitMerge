@@ -1,45 +1,43 @@
 extends Node
 
+const FRUIT_PATHS: PackedStringArray = [
+	"res://data/fruits/cherry.tres",
+	"res://data/fruits/strawberry.tres",
+	"res://data/fruits/grape.tres",
+	"res://data/fruits/lemon.tres",
+	"res://data/fruits/orange.tres",
+	"res://data/fruits/melon.tres",
+	"res://data/fruits/watermelon.tres",
+]
+
 @export var fruits: Array[FruitData] = []
 
 
 func _ready() -> void:
 	if fruits.is_empty():
-		_auto_load_fruits()
-	for f in fruits:
-		if f.merge_sfx == null:
-			continue
-		f.merge_sfx.resource_local_to_scene = true
-
-
-func _auto_load_fruits() -> void:
-	var dir := DirAccess.open("res://data/fruits/")
-	if not dir:
-		return
-	dir.list_dir_begin()
-	var file_name := dir.get_next()
-	while file_name != "":
-		if file_name.ends_with(".tres"):
-			var res := load("res://data/fruits/" + file_name) as FruitData
-			if res:
-				fruits.append(res)
-		file_name = dir.get_next()
-	dir.list_dir_end()
+		_load_fruit_chain()
 	fruits.sort_custom(func(a: FruitData, b: FruitData): return a.tier < b.tier)
 
 
+func _load_fruit_chain() -> void:
+	for path in FRUIT_PATHS:
+		var fruit := load(path) as FruitData
+		if fruit and fruit.sprite:
+			fruits.append(fruit)
+
+
 func get_fruit(tier: int) -> FruitData:
-	for f in fruits:
-		if f.tier == tier:
-			return f
+	for fruit in fruits:
+		if fruit.tier == tier:
+			return fruit
 	return null
 
 
 func get_next_fruit(current_tier: Enums.FruitTier) -> FruitData:
-	var fd: FruitData = get_fruit(current_tier)
-	if not fd or fd.next_tier < 0:
+	var fruit := get_fruit(current_tier)
+	if not fruit or fruit.next_tier < 0:
 		return null
-	return get_fruit(fd.next_tier)
+	return get_fruit(fruit.next_tier)
 
 
 func get_tier_count() -> int:

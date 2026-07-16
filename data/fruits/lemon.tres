@@ -6,11 +6,11 @@
 [resource]
 script = ExtResource("1")
 sprite = ExtResource("2")
-tier = 9
+sprite_visual_width = 731.0
+tier = 3
 display_name = "Lemon"
-sprite_scale = Vector2(0.07, 0.07)
-radius = 32.0
-score_value = 512
-next_tier = 10
-mass = 1.4
+radius = 50.0
+score_value = 18
+next_tier = 4
+mass = 1.35
 color = Color(1, 1, 1, 1)

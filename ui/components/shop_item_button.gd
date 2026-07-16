@@ -3,64 +3,79 @@ extends Button
 var shop_item: ShopItemData
 
 @onready var _name_label: Label = %NameLabel
+@onready var _description_label: Label = %DescriptionLabel
 @onready var _cost_label: Label = %CostLabel
 @onready var _icon_rect: TextureRect = %IconRect
-@onready var _owned_badge: Control = %OwnedBadge
+@onready var _owned_badge: PanelContainer = %OwnedBadge
+@onready var _status_label: Label = %StatusLabel
 @onready var _count_label: Label = %CountLabel
+
+
+func _ready() -> void:
+	pressed.connect(_on_pressed)
+	EventBus.coins_changed.connect(_on_coins_changed)
+	if shop_item:
+		_apply_item()
 
 
 func setup(item: ShopItemData) -> void:
 	shop_item = item
-	if _name_label:
-		_name_label.text = item.display_name
-	if _icon_rect and item.icon:
-		_icon_rect.texture = item.icon
+	if is_node_ready():
+		_apply_item()
+
+
+func _apply_item() -> void:
+	_name_label.text = shop_item.display_name
+	_description_label.text = shop_item.description
+	_icon_rect.texture = shop_item.icon
+	_icon_rect.visible = shop_item.icon != null
 	_update_button_state()
-	pressed.connect(_on_pressed)
 
 
 func _update_button_state() -> void:
+	if not shop_item:
+		return
 	var is_consumable := shop_item.category == &"powerup"
 	var owned := EconomyManager.owns_item(shop_item.id)
-	var pw_count := EconomyManager.get_powerup_count(shop_item.id)
+	var equipped := EconomyManager.is_item_equipped(shop_item.id, shop_item.category)
+	var powerup_count := EconomyManager.get_powerup_count(shop_item.id)
 
-	if _cost_label:
-		if is_consumable:
-			if pw_count > 0:
-				_cost_label.text = "x%d" % pw_count
-				_cost_label.self_modulate = Color.GREEN
-			else:
-				_cost_label.text = "%d" % shop_item.cost
-				_cost_label.self_modulate = Color.GOLD if EconomyManager.coins >= shop_item.cost else Color.RED
-		elif owned:
-			_cost_label.text = "OWNED"
-			_cost_label.self_modulate = Color.GREEN
-		else:
-			_cost_label.text = "%d" % shop_item.cost
-			_cost_label.self_modulate = Color.GOLD if EconomyManager.coins >= shop_item.cost else Color.RED
+	_owned_badge.visible = owned and not is_consumable
+	_status_label.text = "EQUIPPED" if equipped else "OWNED"
+	_count_label.visible = is_consumable and powerup_count > 0
+	_count_label.text = "x%d" % powerup_count
 
-	if _owned_badge:
-		_owned_badge.visible = owned and not is_consumable
+	if is_consumable:
+		_cost_label.text = "%d" % shop_item.cost
+	elif owned:
+		_cost_label.text = "SELECT" if not equipped else "ACTIVE"
+	else:
+		_cost_label.text = "FREE" if shop_item.cost == 0 else "%d" % shop_item.cost
 
-	if _count_label:
-		if is_consumable and pw_count > 0:
-			_count_label.visible = true
-			_count_label.text = "x%d" % pw_count
-		else:
-			_count_label.visible = false
+	if not owned and not is_consumable and EconomyManager.coins < shop_item.cost:
+		_cost_label.modulate = Color(1.0, 0.75, 0.7, 1.0)
+	else:
+		_cost_label.modulate = Color.WHITE
+
+
+func _on_coins_changed(_amount: int) -> void:
+	_update_button_state()
 
 
 func _on_pressed() -> void:
+	if not shop_item:
+		return
 	var is_consumable := shop_item.category == &"powerup"
 	if is_consumable:
-		if EconomyManager.coins >= shop_item.cost:
-			EconomyManager.try_purchase(shop_item)
+		if EconomyManager.try_purchase(shop_item):
 			_update_button_state()
 		return
 
 	if EconomyManager.owns_item(shop_item.id):
 		EconomyManager.equip_item(shop_item.id, shop_item.category)
+		_update_button_state()
 		return
 
 	if EconomyManager.try_purchase(shop_item):
+		EconomyManager.equip_item(shop_item.id, shop_item.category)
 		_update_button_state()

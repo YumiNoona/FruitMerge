@@ -36,6 +36,7 @@ func try_purchase_consumable(item: ShopItemData) -> bool:
 	powerup_counts[item.id] = current + 1
 	EventBus.coins_changed.emit(coins)
 	EventBus.shop_item_purchased.emit(item.id)
+	SaveManager.save_game()
 	return true
 
 func consume_powerup(item_id: StringName) -> bool:

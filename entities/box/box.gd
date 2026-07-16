@@ -16,6 +16,14 @@ func _ready() -> void:
 	if wall_mat:
 		physics_material_override = wall_mat
 	_setup_danger_area()
+	queue_redraw()
+
+
+func _draw() -> void:
+	var calm := Color(0.84, 0.42, 0.28, 0.58)
+	var alert := Color(1.0, 0.3, 0.22, 0.95)
+	var line_color := calm.lerp(alert, get_danger_ratio())
+	draw_dashed_line(Vector2(-242, danger_line_y), Vector2(242, danger_line_y), line_color, 4.0, 14.0, true)
 
 
 func _setup_danger_area() -> void:
@@ -24,7 +32,7 @@ func _setup_danger_area() -> void:
 	_danger_area.position = Vector2(0, danger_line_y)
 	var collision := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(500, 20)
+	rect.size = Vector2(500, 18)
 	collision.shape = rect
 	collision.position = Vector2(0, 0)
 	_danger_area.add_child(collision)
@@ -43,6 +51,7 @@ func _process(delta: float) -> void:
 			GameManager.change_state(Enums.GameState.GAME_OVER)
 	else:
 		_danger_timer = max(0.0, _danger_timer - delta * 0.5)
+	queue_redraw()
 
 
 func _on_body_entered_danger(body: Node) -> void:

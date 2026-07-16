@@ -6,11 +6,11 @@
 [resource]
 script = ExtResource("1")
 sprite = ExtResource("2")
+sprite_visual_width = 610.0
 tier = 1
 display_name = "Strawberry"
-sprite_scale = Vector2(0.08, 0.08)
-radius = 19.0
-score_value = 2
+radius = 32.0
+score_value = 5
 next_tier = 2
-mass = 0.55
+mass = 0.75
 color = Color(1, 1, 1, 1)

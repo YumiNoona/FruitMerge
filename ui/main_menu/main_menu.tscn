@@ -1,102 +1,223 @@
 [gd_scene format=3 uid="uid://dh58y2es6ugey"]
 
 [ext_resource type="Script" uid="uid://3lu8luql7ivj" path="res://ui/main_menu/main_menu.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/BackGround.png" id="2_mu8pm"]
+[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/BackGround.png" id="2"]
+[ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/Mascot.png" id="4_3c04x"]
+[ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://ui/components/cozy_button.gd" id="5"]
 
-[node name="MainMenu" type="Control" unique_id=1757383803]
+[node name="MainMenu" type="Control" unique_id=1663695879]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3")
 script = ExtResource("1")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=208209456]
+[node name="Background" type="TextureRect" parent="." unique_id=1641086036]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_mu8pm")
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="WarmWash" type="ColorRect" parent="." unique_id=273843776]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0.86, 0.64, 0.08)
+
+[node name="TopStats" type="HBoxContainer" parent="." unique_id=1881115122]
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 102.0
+theme_override_constants/separation = 18
+
+[node name="BestPanel" type="PanelContainer" parent="TopStats" unique_id=1529831502]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BestRow" type="HBoxContainer" parent="TopStats/BestPanel" unique_id=999795240]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Trophy" type="Label" parent="TopStats/BestPanel/BestRow" unique_id=563131065]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.58, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.43, 0.24, 0.1, 0.8)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 30
+text = "★"
+vertical_alignment = 1
+
+[node name="BestCopy" type="VBoxContainer" parent="TopStats/BestPanel/BestRow" unique_id=1597329179]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -5
+
+[node name="Caption" type="Label" parent="TopStats/BestPanel/BestRow/BestCopy" unique_id=1570465439]
+layout_mode = 2
+theme_type_variation = &"CaptionLabel"
+text = "BEST SCORE"
+
+[node name="HighScoreLabel" type="Label" parent="TopStats/BestPanel/BestRow/BestCopy" unique_id=694240631]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+text = "0"
+
+[node name="CoinPanel" type="PanelContainer" parent="TopStats" unique_id=545534556]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CoinRow" type="HBoxContainer" parent="TopStats/CoinPanel" unique_id=2109305188]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="CoinGlyph" type="Label" parent="TopStats/CoinPanel/CoinRow" unique_id=715739314]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.68, 0.14, 1)
+theme_override_colors/font_outline_color = Color(0.66, 0.35, 0.08, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 31
+text = "●"
+vertical_alignment = 1
+
+[node name="CoinsCopy" type="VBoxContainer" parent="TopStats/CoinPanel/CoinRow" unique_id=1694042161]
+layout_mode = 2
+theme_override_constants/separation = -5
+
+[node name="Caption" type="Label" parent="TopStats/CoinPanel/CoinRow/CoinsCopy" unique_id=21362794]
+layout_mode = 2
+theme_type_variation = &"CaptionLabel"
+text = "COINS"
+
+[node name="CoinsLabel" type="Label" parent="TopStats/CoinPanel/CoinRow/CoinsCopy" unique_id=542178357]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+text = "0"
+
+[node name="BrandKicker" type="Label" parent="." unique_id=1846362051]
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 122.0
+offset_bottom = 154.0
+theme_override_colors/font_color = Color(0.42, 0.56, 0.22, 1)
+theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 0.9)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "A COZY KITCHEN PUZZLE"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="." unique_id=1184265477]
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 40.0
+offset_top = 145.0
+offset_right = -40.0
+offset_bottom = 310.0
+theme_type_variation = &"TitleLabel"
+text = "FRUIT
+MERGE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Mascot" type="TextureRect" parent="." unique_id=1821806590]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 195.0
+offset_right = 358.0
+offset_bottom = 995.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("4_3c04x")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TitleLabel" type="Label" parent="." unique_id=806882470]
+[node name="TipPanel" type="PanelContainer" parent="." unique_id=1077597495]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -272.0
+offset_top = 1149.0
+offset_right = 272.0
+offset_bottom = 1229.0
+grow_horizontal = 2
+
+[node name="Tip" type="Label" parent="TipPanel" unique_id=1089297883]
+layout_mode = 2
+text = "Drop matching fruits, make bigger friends!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Actions" type="VBoxContainer" parent="." unique_id=108242970]
 layout_mode = 0
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -200.0
-offset_right = 120.0
-offset_bottom = -150.0
+offset_left = -270.0
+offset_top = 805.0
+offset_right = 270.0
+offset_bottom = 1012.0
 grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 42
-text = "Fruit Merge"
+theme_override_constants/separation = 20
+
+[node name="PlayButton" type="Button" parent="Actions" unique_id=622964365]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(540, 88)
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "PLAY"
+script = ExtResource("5")
+
+[node name="ShopButton" type="Button" parent="Actions" unique_id=30297242]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(540, 80)
+layout_mode = 2
+theme_type_variation = &"OrangeButton"
+text = "SHOP"
+script = ExtResource("5")
+
+[node name="Footer" type="VBoxContainer" parent="." unique_id=1987206581]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -260.0
+offset_top = 1065.0
+offset_right = 260.0
+offset_bottom = 1150.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+
+[node name="Rule" type="Label" parent="Footer" unique_id=1123255085]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.46, 0.31, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "TAP  •  DROP  •  GROW"
 horizontal_alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="." unique_id=1469093669]
-unique_name_in_owner = true
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -140.0
-offset_right = 120.0
-offset_bottom = -118.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "High Score: 0"
+[node name="Goal" type="Label" parent="Footer" unique_id=1056732298]
+layout_mode = 2
+theme_type_variation = &"CaptionLabel"
+text = "Can you make the watermelon?"
 horizontal_alignment = 1
-
-[node name="CoinsLabel" type="Label" parent="." unique_id=616988559]
-unique_name_in_owner = true
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -110.0
-offset_right = 80.0
-offset_bottom = -88.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "0"
-horizontal_alignment = 1
-
-[node name="PlayButton" type="Button" parent="." unique_id=524268173]
-unique_name_in_owner = true
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -20.0
-offset_right = 80.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Play"
-
-[node name="ShopButton" type="Button" parent="." unique_id=1543722508]
-unique_name_in_owner = true
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = 40.0
-offset_right = 80.0
-offset_bottom = 80.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Shop"

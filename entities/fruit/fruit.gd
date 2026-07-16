@@ -9,18 +9,20 @@ const SLEEPY_IDLE_MAX: float = 12.0
 @export var data: FruitData
 @export var merge_cooldown: float = 0.4
 @export var face_frames: SpriteFrames
+@export var use_procedural_face: bool = false
 
 var is_merging: bool = false
 var _just_spawned: bool = true
 var _contact_pairs: Array[Fruit] = []
 var _prev_velocity: Vector2
 var _last_activity_time: float = 0.0
+var _visual_base_scale: Vector2 = Vector2.ONE
+var _visual_tween: Tween
 
 @onready var _sprite: Sprite2D = %Sprite2D
 @onready var _collision: CollisionShape2D = %CollisionShape2D
 @onready var _wake_timer: Timer = %WakeTimer
 @onready var _idle_timer: Timer = %IdleTimer
-@onready var _anim_player: AnimationPlayer = %AnimationPlayer
 @onready var face: AnimatedSprite2D = %Face
 
 
@@ -47,28 +49,36 @@ func _apply_data() -> void:
 		return
 	if _sprite and data.sprite:
 		_sprite.texture = data.sprite
+		var tex_w: float = data.sprite_visual_width if data.sprite_visual_width > 0.0 else float(data.sprite.get_width())
+		if tex_w > 0.0:
+			var s: float = (data.radius * 2.0) / tex_w
+			_visual_base_scale = Vector2(s, s)
+			_sprite.scale = _visual_base_scale
+			if face:
+				face.scale = _visual_base_scale
 	if _sprite:
 		_sprite.self_modulate = data.color
-		_sprite.scale = data.sprite_scale
 	if _collision:
 		var shape: CircleShape2D = CircleShape2D.new()
 		shape.radius = data.radius
 		_collision.shape = shape
-	if freeze:
-		freeze = true
 	mass = data.mass
 	call_deferred("_clear_just_spawned")
 
 
 func _clear_just_spawned() -> void:
-	await get_tree().create_timer(0.1).timeout
+	await get_tree().create_timer(0.12).timeout
 	_just_spawned = false
+	_check_contacts_for_merge()
 
 
 # ── emotion system ──
 
 func _setup_face() -> void:
 	if not face:
+		return
+	face.visible = use_procedural_face
+	if not use_procedural_face:
 		return
 	if face_frames:
 		face.sprite_frames = face_frames
@@ -195,7 +205,7 @@ func _draw_rect(img: Image, x: int, y: int, w: int, h: int, col: Color) -> void:
 
 
 func set_emotion(emotion: Enums.FruitEmotion, hold_time: float = -1.0) -> void:
-	if not face or is_merging:
+	if not use_procedural_face or not face or is_merging:
 		return
 	var anim_name: String = Enums.FruitEmotion.keys()[emotion].to_lower()
 	if not face.sprite_frames or not face.sprite_frames.has_animation(anim_name):
@@ -242,13 +252,20 @@ func _on_hard_landing(impact: float) -> void:
 
 func _on_body_entered(body: Node) -> void:
 	_reset_idle_timer()
-	if _just_spawned:
-		return
 	if body is Fruit and body != self:
 		if not _contact_pairs.has(body):
 			_contact_pairs.append(body)
+		if _just_spawned:
+			return
 		if _should_initiate_merge(body):
 			MergeService.try_merge(self, body)
+
+
+func _check_contacts_for_merge() -> void:
+	for body in _contact_pairs:
+		if is_instance_valid(body) and _should_initiate_merge(body):
+			MergeService.try_merge(self, body)
+			return
 
 
 func _should_initiate_merge(body: Fruit) -> bool:
@@ -286,64 +303,37 @@ func _wake_up_check() -> void:
 # ── animations ──
 
 func _play_spawn_animation() -> void:
-	if not _anim_player:
+	if not _sprite:
 		return
-	if _anim_player.has_animation_library("fruit_lib"):
-		_anim_player.play("fruit_lib/spawn")
-		return
-	var lib: AnimationLibrary = AnimationLibrary.new()
-	var anim: Animation = Animation.new()
-	anim.length = 0.3
-	var track: int = anim.add_track(Animation.TYPE_VALUE)
-	anim.track_set_path(track, ".:scale")
-	anim.track_insert_key(track, 0.0, Vector2(0.7, 0.7))
-	anim.track_insert_key(track, 0.15, Vector2(1.15, 0.85))
-	anim.track_insert_key(track, 0.3, Vector2(1.0, 1.0))
-	lib.add_animation("spawn", anim)
-	_anim_player.add_animation_library("fruit_lib", lib)
-	_anim_player.play("fruit_lib/spawn")
+	if _visual_tween and _visual_tween.is_valid():
+		_visual_tween.kill()
+	_sprite.scale = _visual_base_scale * 0.72
+	_visual_tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_visual_tween.tween_property(_sprite, "scale", _visual_base_scale, 0.28)
 
 
 func play_land_squash() -> void:
-	if not _anim_player:
+	if not _sprite or is_merging:
 		return
-	var lib: AnimationLibrary = _anim_player.get_animation_library("fruit_lib")
-	if not lib:
-		return
-	if not lib.has_animation("land"):
-		var anim: Animation = Animation.new()
-		anim.length = 0.2
-		var track: int = anim.add_track(Animation.TYPE_VALUE)
-		anim.track_set_path(track, ".:scale")
-		anim.track_insert_key(track, 0.0, Vector2(1.0, 1.0))
-		anim.track_insert_key(track, 0.05, Vector2(1.2, 0.8))
-		anim.track_insert_key(track, 0.2, Vector2(1.0, 1.0))
-		lib.add_animation("land", anim)
-	_anim_player.play("fruit_lib/land")
+	if _visual_tween and _visual_tween.is_valid():
+		_visual_tween.kill()
+	_visual_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_visual_tween.tween_property(_sprite, "scale", _visual_base_scale * Vector2(1.12, 0.88), 0.06)
+	_visual_tween.tween_property(_sprite, "scale", _visual_base_scale, 0.14).set_trans(Tween.TRANS_BACK)
 
 
 func play_merge_exit_animation(on_complete: Callable) -> void:
-	if not _anim_player:
+	if not _sprite:
 		on_complete.call()
 		return
-	var lib: AnimationLibrary = _anim_player.get_animation_library("fruit_lib")
-	if not lib:
-		on_complete.call()
-		return
-	if not lib.has_animation("merge_exit"):
-		var anim: Animation = Animation.new()
-		anim.length = 0.2
-		var track_s: int = anim.add_track(Animation.TYPE_VALUE)
-		anim.track_set_path(track_s, ".:scale")
-		anim.track_insert_key(track_s, 0.0, Vector2(1.0, 1.0))
-		anim.track_insert_key(track_s, 0.2, Vector2(0.0, 0.0))
-		var track_m: int = anim.add_track(Animation.TYPE_VALUE)
-		anim.track_set_path(track_m, ".:modulate")
-		anim.track_insert_key(track_m, 0.0, Color.WHITE)
-		anim.track_insert_key(track_m, 0.2, Color(1, 1, 1, 0))
-		lib.add_animation("merge_exit", anim)
-	_anim_player.play("fruit_lib/merge_exit")
-	_anim_player.animation_finished.connect(on_complete.bind(), CONNECT_ONE_SHOT)
+	_collision.set_deferred("disabled", true)
+	if _visual_tween and _visual_tween.is_valid():
+		_visual_tween.kill()
+	_visual_tween = create_tween().set_parallel(true)
+	_visual_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	_visual_tween.tween_property(_sprite, "scale", Vector2.ZERO, 0.18)
+	_visual_tween.tween_property(_sprite, "modulate:a", 0.0, 0.16)
+	_visual_tween.chain().tween_callback(on_complete)
 
 
 func start_merge_exit() -> void:

@@ -1,15 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bpet0000000000000000000001"]
+[gd_scene load_steps=3 format=3 uid="uid://bpet0000000000000000000001"]
 
 [ext_resource type="Script" path="res://entities/pet/pet.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Generated/mascot_cutout.png" id="2"]
 
 [node name="Pet" type="Node2D"]
 script = ExtResource("1")
 bob_amplitude = 4.0
 bob_speed = 2.0
-squash_amount = 0.2
+squash_amount = 0.12
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 unique_name_in_owner = true
+scale = Vector2(0.105, 0.105)
+texture = ExtResource("2")
 centered = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

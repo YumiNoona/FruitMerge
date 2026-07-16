@@ -26,11 +26,15 @@ static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 	var midpoint: Vector2 = (fruit_a.global_position + fruit_b.global_position) / 2.0
 	var score_gained: int = fruit_a.data.score_value
 	var tier: int = fruit_a.data.tier as int
+	var merged_velocity := (fruit_a.linear_velocity + fruit_b.linear_velocity) * 0.22 + Vector2(0, -45)
 
+	GameManager.add_score(score_gained)
+	GameManager.highest_tier_reached = max(GameManager.highest_tier_reached, next_data.tier)
 	EventBus.fruit_merged.emit(tier, midpoint, score_gained)
 
 	fruit_a.start_merge_exit()
 	fruit_b.start_merge_exit()
 
-	Spawner.spawn_at(next_data, midpoint)
+	var merged_fruit := Spawner.spawn_at(next_data, midpoint)
+	merged_fruit.linear_velocity = merged_velocity
 	return true

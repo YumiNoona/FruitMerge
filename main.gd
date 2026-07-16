@@ -1,12 +1,5 @@
 extends Node2D
 
-const SHAKE_TIERS: Array[Enums.FruitTier] = [
-	Enums.FruitTier.CABBAGE,
-	Enums.FruitTier.MELON,
-	Enums.FruitTier.PUMPKIN,
-	Enums.FruitTier.WATERMELON,
-]
-
 @export var box_scene: PackedScene
 @export var spawner_scene: PackedScene
 @export var pet_scene: PackedScene
@@ -52,7 +45,7 @@ func _setup_spawner() -> void:
 
 
 func _setup_pet() -> void:
-	if pet_scene:
+	if pet_scene and EconomyManager.is_item_equipped(&"pet_cat", &"pet"):
 		_pet = pet_scene.instantiate()
 		_pet_container.add_child(_pet)
 
@@ -106,7 +99,7 @@ func _on_fruit_merged(tier: int, world_pos: Vector2, _score: int) -> void:
 		burst.global_position = world_pos
 		add_child(burst)
 	_spawn_pooled_particles(world_pos)
-	if tier >= Enums.FruitTier.CABBAGE:
+	if tier >= Enums.FruitTier.ORANGE:
 		_apply_screen_shake(tier)
 
 
@@ -123,7 +116,9 @@ func _apply_screen_shake(tier: int) -> void:
 	var cam := get_viewport().get_camera_2d()
 	if not cam:
 		return
-	var shake_strength: float = lerpf(2.0, 8.0, float(tier - Enums.FruitTier.CABBAGE) / 3.0)
+	var tier_span: int = maxi(1, Enums.FruitTier.WATERMELON - Enums.FruitTier.ORANGE)
+	var shake_ratio := clampf(float(tier - Enums.FruitTier.ORANGE) / float(tier_span), 0.0, 1.0)
+	var shake_strength: float = lerpf(2.0, 7.0, shake_ratio)
 	var shakes := 8
 	var t := create_tween()
 	var orig := cam.position

@@ -1,10 +1,13 @@
-[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://ild8oj1o2qia"]
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3 uid="uid://ild8oj1o2qia"]
 
 [ext_resource type="Script" uid="uid://3ptbmu8qpv2h" path="res://data/resources/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Fruits/Cherry.png" id="2"]
 
 [resource]
 script = ExtResource("1")
 id = "skin_default"
 display_name = "Default Skin"
+icon = ExtResource("2")
+cost = 0
 category = "skin"
 description = "The classic fruit look"

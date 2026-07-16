@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cpwny7e8eargy"]
+[gd_scene load_steps=10 format=3 uid="uid://cpwny7e8eargy"]
 
 [ext_resource type="Script" path="res://main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://entities/box/box.tscn" id="2"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://vfx/merge_burst.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://ui/game_over/game_over.tscn" id="7"]
+[ext_resource type="Texture2D" path="res://Assets/BackGround.png" id="8"]
+[ext_resource type="Texture2D" path="res://Assets/Container.png" id="9"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1")
@@ -15,25 +17,40 @@ spawner_scene = ExtResource("3")
 pet_scene = ExtResource("4")
 merge_burst_scene = ExtResource("5")
 
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -100
+position = Vector2(0, -640)
+scale = Vector2(0.766, 0.766)
+texture = ExtResource("8")
+
+[node name="ContainerArt" type="Sprite2D" parent="."]
+z_index = -10
+position = Vector2(0, -545)
+scale = Vector2(0.72, 0.72)
+texture = ExtResource("9")
+
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, -250)
+position = Vector2(0, -640)
 current = true
 
 [node name="BoxContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -250)
+position = Vector2(0, -80)
 
 [node name="SpawnerContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -550)
+position = Vector2(0, -1060)
 
 [node name="PetContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(200, -200)
+z_index = 30
+position = Vector2(282, -155)
 
-[node name="HUD" parent="." instance=ExtResource("6")]
+[node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="Interface" instance=ExtResource("6")]
 unique_name_in_owner = true
 
-[node name="GameOverPanel" parent="." instance=ExtResource("7")]
+[node name="GameOverPanel" parent="Interface" instance=ExtResource("7")]
 unique_name_in_owner = true
 visible = false

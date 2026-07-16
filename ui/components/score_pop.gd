@@ -1,7 +1,6 @@
 extends Control
 
 var text: String = ""
-var _t: float = 0.0
 var _duration: float = 1.2
 
 @onready var _label: Label = %Label

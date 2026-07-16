@@ -6,11 +6,11 @@
 [resource]
 script = ExtResource("1")
 sprite = ExtResource("2")
+sprite_visual_width = 610.0
 tier = 2
 display_name = "Grape"
-sprite_scale = Vector2(0.08, 0.08)
-radius = 20.0
-score_value = 4
+radius = 40.0
+score_value = 10
 next_tier = 3
-mass = 0.6
+mass = 1.0
 color = Color(1, 1, 1, 1)
