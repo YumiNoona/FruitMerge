@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b57tbmjunwyej"
-path="res://.godot/imported/Mascot.png-9fd5202339e72a51e5a58c60b0c1d289.ctex"
+uid="uid://cf2ma74f64wdy"
+path="res://.godot/imported/ShakeIT.png-e1e37c5853151670b87c19f6504b3d27.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Mascot.png"
-dest_files=["res://.godot/imported/Mascot.png-9fd5202339e72a51e5a58c60b0c1d289.ctex"]
+source_file="res://Assets/PowerUps/ShakeIT.png"
+dest_files=["res://.godot/imported/ShakeIT.png-e1e37c5853151670b87c19f6504b3d27.ctex"]
 
 [params]
 

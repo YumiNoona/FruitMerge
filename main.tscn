@@ -7,8 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://crtdg4cffh6sa" path="res://vfx/merge_burst.tscn" id="5"]
 [ext_resource type="PackedScene" uid="uid://dagjsv28kdu6c" path="res://ui/hud/hud.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://5lrjra080tca" path="res://ui/game_over/game_over.tscn" id="7"]
-[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/BackGround.png" id="8"]
-[ext_resource type="Texture2D" uid="uid://bf34mdo5qit6q" path="res://Assets/Container.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://bf34mdo5qit6q" path="res://Assets/UI/Container.png" id="9"]
 
 [node name="Main" type="Node2D" unique_id=1137529470]
 script = ExtResource("1")

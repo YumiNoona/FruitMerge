@@ -2,16 +2,30 @@ extends Control
 
 const HOME_SCENE := "res://ui/home/home.tscn"
 const MINIMUM_DISPLAY_TIME := 1.35
+const LOADING_TIPS := [
+	"Two matching fruits walk into a box. One bigger fruit walks out.",
+	"Gravity is free. Floor space is definitely not.",
+	"Cherries are tiny, but their ambitions are watermelon-sized.",
+	"If the pile starts wobbling, pretend it is dancing.",
+	"A sideways pineapple is just taking a very spiky nap.",
+	"Merge responsibly. Watermelons need personal space.",
+	"The danger line is not decorative. The fruit wish it were.",
+	"When in doubt, blame gravity. It cannot defend itself.",
+	"Combos are just fruit having dramatic family reunions.",
+	"No fruit were squished permanently during this loading screen.",
+]
 
 @onready var _loading_bar: ProgressBar = %LoadingBar
 @onready var _loading_label: Label = %LoadingLabel
 @onready var _mascot: TextureRect = %Mascot
+@onready var _tip_label: Label = %Tip
 
 var _elapsed := 0.0
 var _load_started := false
 var _transitioning := false
 
 func _ready() -> void:
+	_tip_label.text = "Tip: %s" % LOADING_TIPS.pick_random()
 	_play_intro()
 	var error := ResourceLoader.load_threaded_request(HOME_SCENE)
 	_load_started = error == OK

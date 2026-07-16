@@ -35,9 +35,14 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if GameManager.is_powerup_targeting:
+		_preview.visible = false
+		queue_redraw()
+		return
 	if not _can_drop or GameManager.current_state != Enums.GameState.PLAYING:
 		queue_redraw()
 		return
+	_preview.visible = true
 	var target_x := _clamp_x(get_global_mouse_position().x)
 	_preview.position.x = target_x - global_position.x
 	_guide_phase = fmod(_guide_phase + GUIDE_SPEED * delta, GUIDE_DASH_LENGTH + GUIDE_GAP_LENGTH)
@@ -45,10 +50,10 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	if not _can_drop or GameManager.current_state != Enums.GameState.PLAYING or not _preview.visible:
+	if GameManager.is_powerup_targeting or not _can_drop or GameManager.current_state != Enums.GameState.PLAYING or not _preview.visible:
 		return
-	var radius := FruitDatabase.get_collision_radius(_current_tier)
-	var start := Vector2(_preview.position.x, _preview.position.y + radius + 9.0)
+	var bottom_extent := FruitDatabase.get_collision_bottom_extent(_current_tier)
+	var start := Vector2(_preview.position.x, _preview.position.y + bottom_extent + 9.0)
 	var end := to_local(_raycast_to_floor(to_global(start)))
 	_draw_animated_guide(start, end)
 
@@ -86,13 +91,8 @@ func _update_tiers() -> void:
 
 
 func _refresh_preview() -> void:
-	var data := FruitDatabase.get_fruit(_current_tier)
-	if data and data.sprite:
-		_preview.texture = data.sprite
-		var texture_width := data.sprite_visual_width if data.sprite_visual_width > 0.0 else float(data.sprite.get_width())
-		if texture_width > 0.0:
-			var visual_scale := (data.radius * 2.0) / texture_width
-			_preview.scale = Vector2.ONE * visual_scale
+	_preview.texture = FruitDatabase.get_visual_texture(_current_tier)
+	_preview.scale = FruitDatabase.get_visual_scale(_current_tier)
 	_preview.position.y = -16.0
 
 
@@ -119,7 +119,7 @@ static func spawn_at(fruit_data: FruitData, world_pos: Vector2) -> Fruit:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not _can_drop or GameManager.current_state != Enums.GameState.PLAYING:
+	if GameManager.is_powerup_targeting or not _can_drop or GameManager.current_state != Enums.GameState.PLAYING:
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:

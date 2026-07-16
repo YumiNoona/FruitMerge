@@ -1,0 +1,14 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060 Ti
+
+LEVEL_GROUP Cherry tier=0 merging=false
+ERROR: Level Up did not spawn the next-tier fruit scene
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://tests/tmp_powerup_runtime.gd:34)
+REMOVE_INSTANCE valid=true queued=false
+ERROR: Remove Smallest did not remove the lowest-tier fruit
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://tests/tmp_powerup_runtime.gd:50)
+POWERUP_RUNTIME_OK

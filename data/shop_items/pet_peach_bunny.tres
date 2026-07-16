@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/resources/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Pets/Peach Bunny.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "pet_peach_bunny"
+display_name = "Peach Bunny"
+icon = ExtResource("2")
+cost = 1000
+category = "pet"
+description = "Soft ears and sunny hops"
+

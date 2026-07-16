@@ -8,6 +8,7 @@ var is_new_high_score: bool = false
 var next_fruit_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var active_combo: int = 0
 var combo_timer: float = 0.0
+var is_powerup_targeting: bool = false
 const COMBO_WINDOW: float = 0.85
 const COMBO_MULTIPLIER: float = 1.5
 
@@ -50,6 +51,7 @@ func start_new_run() -> void:
 	highest_tier_reached = 0
 	active_combo = 0
 	combo_timer = 0.0
+	is_powerup_targeting = false
 	next_fruit_tier = Enums.FruitTier.CHERRY
 	EventBus.score_changed.emit(score)
 	change_state(Enums.GameState.PLAYING)

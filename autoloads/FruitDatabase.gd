@@ -37,6 +37,9 @@ const FRUIT_SCENE_PATHS: PackedStringArray = [
 @export var fruits: Array[FruitData] = []
 var _fruit_scenes: Array[PackedScene] = []
 var _fruit_collision_radii: Array[float] = []
+var _fruit_collision_bottoms: Array[float] = []
+var _fruit_visual_textures: Array[Texture2D] = []
+var _fruit_visual_scales: Array[Vector2] = []
 
 
 func _ready() -> void:
@@ -49,26 +52,41 @@ func _ready() -> void:
 func _load_fruit_chain() -> void:
 	for path in FRUIT_PATHS:
 		var fruit := load(path) as FruitData
-		if fruit and fruit.sprite:
+		if fruit:
 			fruits.append(fruit)
 
 
 func _load_fruit_scenes() -> void:
 	_fruit_scenes.clear()
 	_fruit_collision_radii.clear()
+	_fruit_collision_bottoms.clear()
+	_fruit_visual_textures.clear()
+	_fruit_visual_scales.clear()
 	for tier in FRUIT_SCENE_PATHS.size():
 		var scene := load(FRUIT_SCENE_PATHS[tier]) as PackedScene
 		_fruit_scenes.append(scene)
 		var fruit_data := get_fruit(tier)
-		var collision_radius := fruit_data.radius if fruit_data else 28.0
+		var collision_half_width := fruit_data.radius if fruit_data else 28.0
+		var collision_bottom := collision_half_width
+		var visual_texture: Texture2D = fruit_data.sprite if fruit_data else null
+		var visual_scale := Vector2.ONE
 		if scene:
 			var fruit := scene.instantiate() as Fruit
 			if fruit:
 				var collision := fruit.get_node_or_null("CollisionShape2D") as CollisionShape2D
-				if collision and collision.shape is CircleShape2D:
-					collision_radius = (collision.shape as CircleShape2D).radius
+				if collision and collision.shape:
+					var half_size := _get_shape_half_size(collision.shape, collision_half_width)
+					collision_half_width = half_size.x + absf(collision.position.x)
+					collision_bottom = maxf(1.0, half_size.y + collision.position.y)
+				var sprite := fruit.get_node_or_null("Sprite2D") as Sprite2D
+				if sprite:
+					visual_texture = sprite.texture
+					visual_scale = sprite.scale
 				fruit.free()
-		_fruit_collision_radii.append(collision_radius)
+		_fruit_collision_radii.append(collision_half_width)
+		_fruit_collision_bottoms.append(collision_bottom)
+		_fruit_visual_textures.append(visual_texture)
+		_fruit_visual_scales.append(visual_scale)
 
 
 func get_fruit(tier: int) -> FruitData:
@@ -96,6 +114,37 @@ func get_collision_radius(tier: int) -> float:
 		var fruit := get_fruit(tier)
 		return fruit.radius if fruit else 28.0
 	return _fruit_collision_radii[tier]
+
+
+func get_collision_bottom_extent(tier: int) -> float:
+	if tier < 0 or tier >= _fruit_collision_bottoms.size():
+		var fruit := get_fruit(tier)
+		return fruit.radius if fruit else 28.0
+	return _fruit_collision_bottoms[tier]
+
+
+func _get_shape_half_size(shape: Shape2D, fallback_radius: float) -> Vector2:
+	if shape is CircleShape2D:
+		var radius := (shape as CircleShape2D).radius
+		return Vector2(radius, radius)
+	if shape is CapsuleShape2D:
+		var capsule := shape as CapsuleShape2D
+		return Vector2(capsule.radius, capsule.height * 0.5)
+	if shape is RectangleShape2D:
+		return (shape as RectangleShape2D).size * 0.5
+	return Vector2.ONE * fallback_radius
+
+
+func get_visual_texture(tier: int) -> Texture2D:
+	if tier < 0 or tier >= _fruit_visual_textures.size():
+		return null
+	return _fruit_visual_textures[tier]
+
+
+func get_visual_scale(tier: int) -> Vector2:
+	if tier < 0 or tier >= _fruit_visual_scales.size():
+		return Vector2.ONE
+	return _fruit_visual_scales[tier]
 
 
 func create_fruit(tier: int) -> Fruit:

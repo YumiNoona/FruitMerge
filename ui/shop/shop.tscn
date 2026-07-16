@@ -1,11 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://bshop00000000000000000001"]
+[gd_scene format=3 uid="uid://dj1vtouyi5sy7"]
 
 [ext_resource type="Script" path="res://ui/shop/shop.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/BackGround.png" id="2"]
+[ext_resource type="Texture2D" path="res://Assets/UI/BackGround.png" id="2"]
 [ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/Mascot.png" id="4"]
-[ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="5"]
+[ext_resource type="Texture2D" path="res://Assets/UI/ShopButton.png" id="4"]
+[ext_resource type="Texture2D" path="res://Assets/UI/Close.png" id="5"]
 [ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="6"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/MenuDock.png" id="7"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Home.png" id="8"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Achivements.png" id="9"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Play.png" id="10"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Shop.png" id="11"]
+[ext_resource type="Texture2D" path="res://Assets/Menu/Settings.png" id="12"]
+[ext_resource type="FontFile" path="res://Assets/Fonts/Cloudy.otf" id="13"]
+[ext_resource type="FontFile" path="res://Assets/Fonts/Atop.ttf" id="14"]
+[ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="15"]
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -37,197 +46,268 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(1, 0.96, 0.85, 0.5)
+color = Color(1, 0.95, 0.82, 0.72)
 
-[node name="TopBar" type="HBoxContainer" parent="."]
-layout_mode = 0
-anchor_right = 1.0
-offset_left = 24.0
-offset_top = 22.0
-offset_right = -24.0
-offset_bottom = 94.0
-theme_override_constants/separation = 14
-
-[node name="BackButton" type="Button" parent="TopBar"]
+[node name="CloseButton" type="TextureButton" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(76, 68)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_font_sizes/font_size = 36
-text = "‹"
-script = ExtResource("5")
+layout_mode = 0
+offset_left = 22.0
+offset_top = 20.0
+offset_right = 106.0
+offset_bottom = 104.0
+texture_normal = ExtResource("5")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="TitleLabel" type="Label" parent="TopBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"HeadingLabel"
-text = "SHOP"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="CoinPanel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 468.0
+offset_top = 24.0
+offset_right = 698.0
+offset_bottom = 102.0
 
-[node name="CoinPanel" type="PanelContainer" parent="TopBar"]
-custom_minimum_size = Vector2(176, 68)
-layout_mode = 2
-
-[node name="CoinRow" type="HBoxContainer" parent="TopBar/CoinPanel"]
+[node name="CoinRow" type="HBoxContainer" parent="CoinPanel"]
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 10
 
-[node name="CoinGlyph" type="TextureRect" parent="TopBar/CoinPanel/CoinRow"]
-custom_minimum_size = Vector2(34, 34)
+[node name="CoinGlyph" type="TextureRect" parent="CoinPanel/CoinRow"]
+custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ShopCoinsLabel" type="Label" parent="TopBar/CoinPanel/CoinRow"]
+[node name="ShopCoinsLabel" type="Label" parent="CoinPanel/CoinRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 25
+theme_override_fonts/font = ExtResource("14")
+theme_override_font_sizes/font_size = 28
 text = "0"
 
-[node name="HeaderPanel" type="PanelContainer" parent="."]
+[node name="ShopHeader" type="TextureRect" parent="."]
 layout_mode = 0
-anchor_right = 1.0
-offset_left = 28.0
-offset_top = 112.0
-offset_right = -28.0
-offset_bottom = 272.0
-theme_type_variation = &"PeachPanel"
-
-[node name="HeaderRow" type="HBoxContainer" parent="HeaderPanel"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="Mascot" type="TextureRect" parent="HeaderPanel/HeaderRow"]
-custom_minimum_size = Vector2(132, 132)
-layout_mode = 2
+offset_left = 120.0
+offset_top = 74.0
+offset_right = 600.0
+offset_bottom = 286.0
 mouse_filter = 2
 texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HeaderCopy" type="VBoxContainer" parent="HeaderPanel/HeaderRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-theme_override_constants/separation = 2
-
-[node name="Headline" type="Label" parent="HeaderPanel/HeaderRow/HeaderCopy"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 31
-text = "Sweet little upgrades"
+[node name="ShopTitle" type="Label" parent="."]
+layout_mode = 0
+offset_left = 164.0
+offset_top = 126.0
+offset_right = 556.0
+offset_bottom = 236.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.97, 0.84, 1)
+theme_override_colors/font_outline_color = Color(0.42, 0.2, 0.08, 0.9)
+theme_override_fonts/font = ExtResource("13")
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 72
+text = "SHOP"
 horizontal_alignment = 1
-
-[node name="Subhead" type="Label" parent="HeaderPanel/HeaderRow/HeaderCopy"]
-layout_mode = 2
-theme_type_variation = &"CaptionLabel"
-theme_override_font_sizes/font_size = 17
-text = "Collect skins, helpers and boosts\nfor your next cozy run."
-horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TabBar" type="HBoxContainer" parent="."]
 layout_mode = 0
-anchor_right = 1.0
 offset_left = 24.0
-offset_top = 292.0
-offset_right = -24.0
-offset_bottom = 354.0
+offset_top = 270.0
+offset_right = 696.0
+offset_bottom = 344.0
 alignment = 1
-theme_override_constants/separation = 8
-
-[node name="TabAll" type="Button" parent="TabBar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(94, 58)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-toggle_mode = true
-button_pressed = true
-text = "All"
-script = ExtResource("5")
+theme_override_constants/separation = 10
 
 [node name="TabSkins" type="Button" parent="TabBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 58)
+custom_minimum_size = Vector2(205, 70)
 layout_mode = 2
 theme_type_variation = &"CreamButton"
+theme_override_fonts/font = ExtResource("14")
+theme_override_font_sizes/font_size = 25
 toggle_mode = true
-text = "Skins"
-script = ExtResource("5")
+text = "SKINS"
+script = ExtResource("15")
 
 [node name="TabPets" type="Button" parent="TabBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(108, 58)
+custom_minimum_size = Vector2(205, 70)
 layout_mode = 2
-theme_type_variation = &"CreamButton"
+theme_override_fonts/font = ExtResource("14")
+theme_override_font_sizes/font_size = 25
 toggle_mode = true
-text = "Pets"
-script = ExtResource("5")
+button_pressed = true
+text = "PETS"
+script = ExtResource("15")
 
 [node name="TabPowerups" type="Button" parent="TabBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 58)
+custom_minimum_size = Vector2(242, 70)
 layout_mode = 2
 theme_type_variation = &"CreamButton"
+theme_override_fonts/font = ExtResource("14")
+theme_override_font_sizes/font_size = 23
 toggle_mode = true
-text = "Boosts"
-script = ExtResource("5")
+text = "POWER-UPS"
+script = ExtResource("15")
 
-[node name="TabBackgrounds" type="Button" parent="TabBar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(124, 58)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-toggle_mode = true
-text = "Garden"
-script = ExtResource("5")
-
-[node name="ShopScroll" type="ScrollContainer" parent="."]
+[node name="CatalogPanel" type="PanelContainer" parent="."]
 layout_mode = 0
-anchor_right = 1.0
-offset_left = 30.0
-offset_top = 378.0
-offset_right = -30.0
-offset_bottom = 1152.0
+offset_left = 18.0
+offset_top = 352.0
+offset_right = 702.0
+offset_bottom = 1120.0
+
+[node name="CatalogMargin" type="MarginContainer" parent="CatalogPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 12
+
+[node name="ShopScroll" type="ScrollContainer" parent="CatalogPanel/CatalogMargin"]
+layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="ShopList" type="GridContainer" parent="ShopScroll"]
+[node name="ShopList" type="GridContainer" parent="CatalogPanel/CatalogMargin/ShopScroll"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(646, 0)
+custom_minimum_size = Vector2(648, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 16
-theme_override_constants/v_separation = 18
-columns = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 14
+columns = 3
 
-[node name="BottomNav" type="PanelContainer" parent="."]
+[node name="EmptyLabel" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
 layout_mode = 0
-anchor_right = 1.0
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -102.0
-offset_right = -24.0
-offset_bottom = -18.0
+offset_left = 110.0
+offset_top = 620.0
+offset_right = 610.0
+offset_bottom = 700.0
+theme_override_fonts/font = ExtResource("14")
+theme_override_font_sizes/font_size = 25
+text = "More cozy goodies are growing!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="BottomRow" type="HBoxContainer" parent="BottomNav"]
-layout_mode = 2
-theme_override_constants/separation = 16
+[node name="Dock" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 1118.0
+offset_right = 704.0
+offset_bottom = 1272.0
+mouse_filter = 2
+texture = ExtResource("7")
+expand_mode = 1
+stretch_mode = 0
 
-[node name="HomeButton" type="Button" parent="BottomNav/BottomRow"]
-custom_minimum_size = Vector2(0, 64)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"CreamButton"
-text = "HOME"
-script = ExtResource("5")
-
-[node name="PlayButton" type="Button" parent="BottomNav/BottomRow"]
+[node name="HomeNavButton" type="TextureButton" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"OrangeButton"
+layout_mode = 0
+offset_left = 48.0
+offset_top = 1138.0
+offset_right = 138.0
+offset_bottom = 1228.0
+texture_normal = ExtResource("8")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HomeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 1216.0
+offset_right = 156.0
+offset_bottom = 1254.0
+theme_override_font_sizes/font_size = 15
+text = "HOME"
+horizontal_alignment = 1
+
+[node name="QuestsNavButton" type="TextureButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 181.0
+offset_top = 1142.0
+offset_right = 267.0
+offset_bottom = 1228.0
+texture_normal = ExtResource("9")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="QuestsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 161.0
+offset_top = 1216.0
+offset_right = 287.0
+offset_bottom = 1254.0
+theme_override_font_sizes/font_size = 15
+text = "QUESTS"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="TextureButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 300.0
+offset_top = 1085.0
+offset_right = 420.0
+offset_bottom = 1215.0
+texture_normal = ExtResource("10")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="PlayLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 297.0
+offset_top = 1214.0
+offset_right = 423.0
+offset_bottom = 1254.0
+theme_override_font_sizes/font_size = 17
 text = "PLAY"
-script = ExtResource("5")
+horizontal_alignment = 1
+
+[node name="ShopNavButton" type="TextureButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 447.0
+offset_top = 1126.0
+offset_right = 549.0
+offset_bottom = 1228.0
+texture_normal = ExtResource("11")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 435.0
+offset_top = 1216.0
+offset_right = 561.0
+offset_bottom = 1254.0
+theme_override_colors/font_color = Color(0.85, 0.36, 0.15, 1)
+theme_override_font_sizes/font_size = 16
+text = "SHOP"
+horizontal_alignment = 1
+
+[node name="SettingsNavButton" type="TextureButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 587.0
+offset_top = 1142.0
+offset_right = 673.0
+offset_bottom = 1228.0
+texture_normal = ExtResource("12")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SettingsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 561.0
+offset_top = 1216.0
+offset_right = 699.0
+offset_bottom = 1254.0
+theme_override_font_sizes/font_size = 14
+text = "SETTINGS"
+horizontal_alignment = 1

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mxy37l8rbxq4"
-path="res://.godot/imported/Bomb.png-20be2745e243681972a6fd9df3d2b011.ctex"
+uid="uid://cw61w4ht0b4ud"
+path="res://.godot/imported/Daily Reward.png-8ced4f85d60a6f30caaa0cf70a784593.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Menu/Bomb.png"
-dest_files=["res://.godot/imported/Bomb.png-20be2745e243681972a6fd9df3d2b011.ctex"]
+source_file="res://Assets/UI/Daily Reward.png"
+dest_files=["res://.godot/imported/Daily Reward.png-8ced4f85d60a6f30caaa0cf70a784593.ctex"]
 
 [params]
 

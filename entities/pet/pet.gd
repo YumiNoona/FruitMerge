@@ -3,6 +3,19 @@ extends Node2D
 
 enum Mood { IDLE, EXCITED, WORRIED, SAD }
 
+const PET_TEXTURES := {
+	&"pet_cat": preload("res://Assets/UI/Mascot.png"),
+	&"pet_strawberry_cat": preload("res://Assets/Pets/Strawberry Cat.png"),
+	&"pet_watermelon_pup": preload("res://Assets/Pets/Watermelon Pup.png"),
+	&"pet_peach_bunny": preload("res://Assets/Pets/Peach Bunny.png"),
+	&"pet_pineapple_meow": preload("res://Assets/Pets/Pineapple Meow.png"),
+	&"pet_melon_bear": preload("res://Assets/Pets/Melon Bear.png"),
+	&"pet_banana_fox": preload("res://Assets/Pets/Banana Fox.png"),
+	&"pet_berry_hamster": preload("res://Assets/Pets/Berry Hamster.png"),
+	&"pet_cherry_bird": preload("res://Assets/Pets/Cherry Bird.png"),
+	&"pet_lemon_frog": preload("res://Assets/Pets/Lemon Frog.png"),
+}
+
 @export var bob_amplitude: float = 4.0
 @export var bob_speed: float = 2.0
 @export var squash_amount: float = 0.2
@@ -20,6 +33,9 @@ var _worried_timer: float = 0.0
 
 
 func _ready() -> void:
+	var equipped_pet := EconomyManager.get_equipped_item(&"pet")
+	if _sprite and PET_TEXTURES.has(equipped_pet):
+		_sprite.texture = PET_TEXTURES[equipped_pet]
 	if _sprite:
 		_base_y = _sprite.position.y
 		_base_scale = _sprite.scale

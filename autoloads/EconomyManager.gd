@@ -36,6 +36,7 @@ func try_purchase_consumable(item: ShopItemData) -> bool:
 	powerup_counts[item.id] = current + 1
 	EventBus.coins_changed.emit(coins)
 	EventBus.shop_item_purchased.emit(item.id)
+	EventBus.powerup_count_changed.emit(item.id, current + 1)
 	SaveManager.save_game()
 	return true
 
@@ -44,6 +45,8 @@ func consume_powerup(item_id: StringName) -> bool:
 	if count <= 0:
 		return false
 	powerup_counts[item_id] = count - 1
+	EventBus.powerup_count_changed.emit(item_id, count - 1)
+	SaveManager.save_game()
 	return true
 
 func get_powerup_count(item_id: StringName) -> int:
@@ -58,6 +61,7 @@ func is_item_equipped(item_id: StringName, equip_slot: StringName) -> bool:
 
 func equip_item(item_id: StringName, equip_slot: StringName) -> void:
 	SaveManager.set_setting("equipped_" + equip_slot, item_id)
+	EventBus.item_equipped.emit(item_id)
 
 func get_equipped_item(equip_slot: StringName) -> StringName:
 	var key: String = "equipped_" + equip_slot

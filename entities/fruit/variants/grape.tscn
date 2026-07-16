@@ -1,18 +1,18 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://dxnr4ynqqf2xq"]
 
-[ext_resource type="Script" path="res://entities/fruit/fruit.gd" id="1"]
+[ext_resource type="Script" uid="uid://bkb1mxfyg0jrf" path="res://entities/fruit/fruit.gd" id="1"]
 [ext_resource type="PhysicsMaterial" path="res://data/resources/fruit_physics.tres" id="2"]
-[ext_resource type="Resource" path="res://data/fruits/grape.tres" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/Fruits/Grape.png" id="4"]
+[ext_resource type="Resource" uid="uid://s31mutudiwpd" path="res://data/fruits/grape.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://beqlhokruqge0" path="res://Assets/Fruits/Grape.png" id="4"]
 
-[sub_resource type="CircleShape2D" id="CollisionCircle"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6i0e0"]
 radius = 37.0
+height = 86.0
 
-[node name="Grape" type="RigidBody2D" groups=["fruits"]]
+[node name="Grape" type="RigidBody2D" unique_id=1702814697 groups=["fruits"]]
 z_index = 10
-physics_material_override = ExtResource("2")
 mass = 0.5
-gravity_scale = 1.0
+physics_material_override = ExtResource("2")
 sleeping = true
 continuous_cd = 1
 contact_monitor = true
@@ -24,29 +24,29 @@ data = ExtResource("3")
 use_scene_visuals = true
 use_scene_collision = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1633266103]
 unique_name_in_owner = true
 scale = Vector2(0.253165, 0.253165)
 texture = ExtResource("4")
 
-[node name="Face" type="AnimatedSprite2D" parent="."]
+[node name="Face" type="AnimatedSprite2D" parent="." unique_id=846931323]
 unique_name_in_owner = true
 visible = false
 z_index = 1
 position = Vector2(0, -4)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=469980689]
 unique_name_in_owner = true
-position = Vector2(0, 4.0)
-shape = SubResource("CollisionCircle")
+position = Vector2(0, 4)
+rotation = -0.2617994
+shape = SubResource("CapsuleShape2D_6i0e0")
 
-[node name="WakeTimer" type="Timer" parent="."]
+[node name="WakeTimer" type="Timer" parent="." unique_id=1818361960]
 unique_name_in_owner = true
 wait_time = 0.4
 one_shot = true
 
-[node name="IdleTimer" type="Timer" parent="."]
+[node name="IdleTimer" type="Timer" parent="." unique_id=444253219]
 unique_name_in_owner = true
 wait_time = 9.0
 one_shot = true
-

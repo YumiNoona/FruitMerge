@@ -1,11 +1,15 @@
 [gd_scene format=3 uid="uid://dh58y2es6ugey"]
 
 [ext_resource type="Script" uid="uid://3lu8luql7ivj" path="res://ui/main_menu/main_menu.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/BackGround.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="2"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://ui/theme/cozy_theme.tres" id="3"]
-[ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/Mascot.png" id="4_3c04x"]
-[ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://ui/components/cozy_button.gd" id="5"]
+[ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/UI/Mascot.png" id="4_3c04x"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://c672wgorvvbgn" path="res://Assets/UI/Logo.png" id="7"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ocdlv"]
+font_size = 35
+font_color = Color(1, 0.5372549, 1, 1)
 
 [node name="MainMenu" type="Control" unique_id=1663695879]
 layout_mode = 3
@@ -113,30 +117,20 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 27
 text = "0"
 
-[node name="BrandKicker" type="Label" parent="." unique_id=1846362051]
-layout_mode = 0
-anchor_right = 1.0
-offset_top = 122.0
-offset_bottom = 154.0
-theme_override_colors/font_color = Color(0.42, 0.56, 0.22, 1)
-theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 0.9)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 20
-text = "OPENING YOUR COZY KITCHEN"
-horizontal_alignment = 1
-
-[node name="TitleLabel" type="Label" parent="." unique_id=1184265477]
-layout_mode = 0
-anchor_right = 1.0
-offset_left = 40.0
-offset_top = 145.0
-offset_right = -40.0
-offset_bottom = 310.0
-theme_type_variation = &"TitleLabel"
-text = "FRUIT
-MERGE"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="Logo" type="TextureRect" parent="." unique_id=433335810]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = -8.0
+offset_right = 320.0
+offset_bottom = 372.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("7")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Mascot" type="TextureRect" parent="." unique_id=1821806590]
 unique_name_in_owner = true
@@ -144,10 +138,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -360.0
-offset_top = 195.0
-offset_right = 358.0
-offset_bottom = 995.0
+offset_left = -484.0
+offset_top = 296.0
+offset_right = 366.0
+offset_bottom = 968.0
 grow_horizontal = 2
 mouse_filter = 2
 texture = ExtResource("4_3c04x")
@@ -160,55 +154,29 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -272.0
-offset_top = 1149.0
+offset_top = 1174.0
 offset_right = 272.0
-offset_bottom = 1229.0
+offset_bottom = 1254.0
 grow_horizontal = 2
 
 [node name="Tip" type="Label" parent="TipPanel" unique_id=1089297883]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Tip: matching fruits grow into bigger friends!"
+text = "Tip: Gravity is free. Floor space is definitely not."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Actions" type="VBoxContainer" parent="." unique_id=108242970]
-visible = false
-layout_mode = 0
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -270.0
-offset_top = 805.0
-offset_right = 270.0
-offset_bottom = 1012.0
-grow_horizontal = 2
-theme_override_constants/separation = 20
-
-[node name="PlayButton" type="Button" parent="Actions" unique_id=622964365]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(540, 88)
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-text = "PLAY"
-script = ExtResource("5")
-
-[node name="ShopButton" type="Button" parent="Actions" unique_id=30297242]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(540, 80)
-layout_mode = 2
-theme_type_variation = &"OrangeButton"
-text = "SHOP"
-script = ExtResource("5")
-
 [node name="Footer" type="VBoxContainer" parent="." unique_id=1987206581]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -260.0
-offset_top = 1018.0
+offset_top = 950.0
 offset_right = 260.0
-offset_bottom = 1142.0
+offset_bottom = 1074.0
 grow_horizontal = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 20
 
 [node name="LoadingBar" type="ProgressBar" parent="Footer" unique_id=449570944]
 unique_name_in_owner = true
@@ -217,16 +185,17 @@ layout_mode = 2
 value = 3.0
 show_percentage = false
 
-[node name="Rule" type="Label" parent="Footer" unique_id=1123255085]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.46, 0.31, 0.2, 1)
-theme_override_font_sizes/font_size = 18
-text = "GATHERING FRUIT  •  POLISHING BUTTONS"
-horizontal_alignment = 1
-
 [node name="LoadingLabel" type="Label" parent="Footer" unique_id=1056732298]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
 text = "Loading..."
+label_settings = SubResource("LabelSettings_ocdlv")
+horizontal_alignment = 1
+
+[node name="Rule" type="Label" parent="Footer" unique_id=1123255085]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.46, 0.31, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "Made With 💙 By Veil"
 horizontal_alignment = 1

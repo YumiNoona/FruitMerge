@@ -28,6 +28,18 @@ signal danger_line_exited
 signal shop_item_purchased(item_id: StringName)
 
 @warning_ignore("unused_signal")
+signal item_equipped(item_id: StringName)
+
+@warning_ignore("unused_signal")
+signal powerup_count_changed(item_id: StringName, count: int)
+
+@warning_ignore("unused_signal")
+signal powerup_requested(item_id: StringName)
+
+@warning_ignore("unused_signal")
+signal powerup_targeting_changed(active: bool, message: String)
+
+@warning_ignore("unused_signal")
 signal state_changed(new_state: Enums.GameState)
 
 @warning_ignore("unused_signal")

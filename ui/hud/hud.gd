@@ -14,6 +14,13 @@ extends Control
 @onready var _pause_overlay: Control = %PauseOverlay
 @onready var _resume_button: Button = %ResumeButton
 @onready var _menu_button: Button = %MenuButton
+@onready var _level_up_button: TextureButton = %LevelUpButton
+@onready var _shake_button: TextureButton = %ShakeButton
+@onready var _remove_button: TextureButton = %RemoveButton
+@onready var _level_up_count: Label = %LevelUpCount
+@onready var _shake_count: Label = %ShakeCount
+@onready var _remove_count: Label = %RemoveCount
+@onready var _powerup_hint: Label = %PowerupHint
 
 var _danger_tween: Tween
 var _combo_tween: Tween
@@ -31,12 +38,18 @@ func _ready() -> void:
 	_pause_button.pressed.connect(_on_pause_pressed)
 	_resume_button.pressed.connect(_on_resume_pressed)
 	_menu_button.pressed.connect(_on_menu_pressed)
+	_level_up_button.pressed.connect(func(): _request_powerup(&"powerup_level_up"))
+	_shake_button.pressed.connect(func(): _request_powerup(&"powerup_shake_box"))
+	_remove_button.pressed.connect(func(): _request_powerup(&"powerup_remove_smallest"))
+	EventBus.powerup_count_changed.connect(_on_powerup_count_changed)
+	EventBus.powerup_targeting_changed.connect(_on_powerup_targeting_changed)
 	_danger_overlay.modulate.a = 0.0
 	_combo_base_position = _combo_banner.position
 	_update_score(GameManager.score)
 	_update_high_score(GameManager.high_score)
 	_update_coins(EconomyManager.coins)
 	_update_next_fruit()
+	_update_powerup_buttons()
 
 
 func _on_score_changed(new_score: int) -> void:
@@ -128,6 +141,35 @@ func _on_menu_pressed() -> void:
 	get_tree().change_scene_to_file("res://ui/home/home.tscn")
 
 
+func _request_powerup(item_id: StringName) -> void:
+	if EconomyManager.get_powerup_count(item_id) <= 0:
+		return
+	EventBus.powerup_requested.emit(item_id)
+
+
+func _on_powerup_count_changed(_item_id: StringName, _count: int) -> void:
+	_update_powerup_buttons()
+
+
+func _update_powerup_buttons() -> void:
+	_update_powerup_button(_level_up_button, _level_up_count, &"powerup_level_up")
+	_update_powerup_button(_shake_button, _shake_count, &"powerup_shake_box")
+	_update_powerup_button(_remove_button, _remove_count, &"powerup_remove_smallest")
+
+
+func _update_powerup_button(button: TextureButton, count_label: Label, item_id: StringName) -> void:
+	var count := EconomyManager.get_powerup_count(item_id)
+	count_label.text = "x%d" % count
+	button.disabled = count <= 0
+	button.modulate = Color.WHITE if count > 0 else Color(0.62, 0.62, 0.62, 0.52)
+
+
+func _on_powerup_targeting_changed(active: bool, message: String) -> void:
+	_powerup_hint.visible = active
+	_powerup_hint.text = message
+	_level_up_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_level_up") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+
+
 func _update_score(value: int) -> void:
 	_score_label.text = "%d" % value
 	_score_label.self_modulate = Color(1.0, 0.65, 0.18) if GameManager.is_new_high_score else Color.WHITE
@@ -142,9 +184,9 @@ func _update_coins(value: int) -> void:
 
 
 func _update_next_fruit() -> void:
-	var data := FruitDatabase.get_fruit(GameManager.next_fruit_tier)
-	if data and data.sprite:
-		_next_fruit_icon.texture = data.sprite
+	var texture := FruitDatabase.get_visual_texture(GameManager.next_fruit_tier)
+	if texture:
+		_next_fruit_icon.texture = texture
 
 
 func _spawn_score_pop(world_pos: Vector2, score: int) -> void:

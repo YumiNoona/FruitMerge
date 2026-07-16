@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/resources/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Pets/Cherry Bird.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "pet_cherry_bird"
+display_name = "Cherry Bird"
+icon = ExtResource("2")
+cost = 800
+category = "pet"
+description = "Chirps whenever fruit combine"
+

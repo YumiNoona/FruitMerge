@@ -1,17 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://dagjsv28kdu6c"]
+[gd_scene load_steps=10 format=3 uid="uid://dagjsv28kdu6c"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="2"]
 [ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="3"]
 [ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="4"]
-
-[sub_resource type="SystemFont" id="SystemFont_combo"]
-font_names = PackedStringArray("Cooper Black", "Arial Black", "Trebuchet MS")
-font_weight = 900
-
-[sub_resource type="SystemFont" id="SystemFont_callout"]
-font_names = PackedStringArray("Segoe Print", "Comic Sans MS", "Trebuchet MS")
-font_weight = 800
+[ext_resource type="FontFile" path="res://Assets/Fonts/Cloudy.otf" id="5"]
+[ext_resource type="FontFile" path="res://Assets/Fonts/Atop.ttf" id="6"]
+[ext_resource type="Texture2D" path="res://Assets/PowerUps/LevelUP.png" id="7"]
+[ext_resource type="Texture2D" path="res://Assets/PowerUps/ShakeIT.png" id="8"]
+[ext_resource type="Texture2D" path="res://Assets/PowerUps/SuckUP.png" id="9"]
 
 [node name="HUD" type="Control"]
 process_mode = 3
@@ -187,6 +184,129 @@ theme_override_font_sizes/font_size = 24
 text = "TOO HIGH — MERGE FAST!"
 horizontal_alignment = 1
 
+[node name="PowerupHint" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 130.0
+offset_top = 270.0
+offset_right = 590.0
+offset_bottom = 328.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.97, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.48, 0.22, 0.08, 0.96)
+theme_override_fonts/font = ExtResource("6")
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 24
+text = "Tap a fruit to level it up!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PowerupTray" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 315.0
+offset_right = 116.0
+offset_bottom = 620.0
+mouse_filter = 1
+
+[node name="PowerupColumn" type="VBoxContainer" parent="PowerupTray"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LevelUpSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+
+[node name="LevelUpButton" type="TextureButton" parent="PowerupTray/PowerupColumn/LevelUpSlot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LevelUpCount" type="Label" parent="PowerupTray/PowerupColumn/LevelUpSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 51.0
+offset_top = 54.0
+offset_right = 86.0
+offset_bottom = 84.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 17
+text = "x0"
+horizontal_alignment = 1
+
+[node name="ShakeSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+
+[node name="ShakeButton" type="TextureButton" parent="PowerupTray/PowerupColumn/ShakeSlot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("8")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShakeCount" type="Label" parent="PowerupTray/PowerupColumn/ShakeSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 51.0
+offset_top = 54.0
+offset_right = 86.0
+offset_bottom = 84.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 17
+text = "x0"
+horizontal_alignment = 1
+
+[node name="RemoveSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+
+[node name="RemoveButton" type="TextureButton" parent="PowerupTray/PowerupColumn/RemoveSlot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("9")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RemoveCount" type="Label" parent="PowerupTray/PowerupColumn/RemoveSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 51.0
+offset_top = 54.0
+offset_right = 86.0
+offset_bottom = 84.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 17
+text = "x0"
+horizontal_alignment = 1
+
 [node name="ComboBanner" type="Control" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -213,7 +333,7 @@ grow_horizontal = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.65, 0.18, 1)
 theme_override_colors/font_outline_color = Color(0.38, 0.16, 0.05, 0.96)
-theme_override_fonts/font = SubResource("SystemFont_combo")
+theme_override_fonts/font = ExtResource("5")
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 78
 text = "x2"
@@ -231,7 +351,7 @@ grow_horizontal = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.98, 0.76, 1)
 theme_override_colors/font_outline_color = Color(0.81, 0.27, 0.09, 1)
-theme_override_fonts/font = SubResource("SystemFont_callout")
+theme_override_fonts/font = ExtResource("6")
 theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 34
 text = "JUICY COMBO!"
