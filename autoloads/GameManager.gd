@@ -8,7 +8,7 @@ var is_new_high_score: bool = false
 var next_fruit_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var active_combo: int = 0
 var combo_timer: float = 0.0
-const COMBO_WINDOW: float = 0.4
+const COMBO_WINDOW: float = 0.85
 const COMBO_MULTIPLIER: float = 1.5
 
 func _ready() -> void:
@@ -55,19 +55,23 @@ func start_new_run() -> void:
 	change_state(Enums.GameState.PLAYING)
 	get_tree().change_scene_to_file("res://main.tscn")
 
-func add_score(points: int) -> void:
+func add_score(points: int) -> int:
 	var mult := 1.0
 	if combo_timer > 0.0:
 		active_combo += 1
-		if active_combo > 1:
-			mult = pow(COMBO_MULTIPLIER, active_combo - 1)
+	else:
+		active_combo = 1
+	if active_combo > 1:
+		mult = pow(COMBO_MULTIPLIER, active_combo - 1)
 	combo_timer = COMBO_WINDOW
-	score += int(points * mult)
+	var awarded_points := int(points * mult)
+	score += awarded_points
 	if score > high_score:
 		high_score = score
 		is_new_high_score = true
 		EventBus.high_score_changed.emit(high_score)
 	EventBus.score_changed.emit(score)
+	return awarded_points
 
 func get_fruit_data_for_tier(tier: Enums.FruitTier) -> FruitData:
 	var db := FruitDatabase

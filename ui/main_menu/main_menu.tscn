@@ -210,12 +210,12 @@ offset_bottom = 1142.0
 grow_horizontal = 2
 theme_override_constants/separation = 4
 
-[node name="LoadingBar" type="ProgressBar" parent="Footer"]
+[node name="LoadingBar" type="ProgressBar" parent="Footer" unique_id=449570944]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
-show_percentage = false
 value = 3.0
+show_percentage = false
 
 [node name="Rule" type="Label" parent="Footer" unique_id=1123255085]
 layout_mode = 2

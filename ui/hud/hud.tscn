@@ -1,9 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://dagjsv28kdu6c"]
+[gd_scene load_steps=7 format=3 uid="uid://dagjsv28kdu6c"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/cozy_theme.tres" id="2"]
 [ext_resource type="Script" path="res://ui/components/cozy_button.gd" id="3"]
 [ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="4"]
+
+[sub_resource type="SystemFont" id="SystemFont_combo"]
+font_names = PackedStringArray("Cooper Black", "Arial Black", "Trebuchet MS")
+font_weight = 900
+
+[sub_resource type="SystemFont" id="SystemFont_callout"]
+font_names = PackedStringArray("Segoe Print", "Comic Sans MS", "Trebuchet MS")
+font_weight = 800
 
 [node name="HUD" type="Control"]
 process_mode = 3
@@ -179,7 +187,7 @@ theme_override_font_sizes/font_size = 24
 text = "TOO HIGH — MERGE FAST!"
 horizontal_alignment = 1
 
-[node name="ComboLabel" type="Label" parent="."]
+[node name="ComboBanner" type="Control" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
@@ -187,17 +195,48 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -110.0
-offset_right = 160.0
-offset_bottom = -50.0
+offset_left = -270.0
+offset_top = -210.0
+offset_right = 270.0
+offset_bottom = -30.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+
+[node name="ComboMultiplier" type="Label" parent="ComboBanner"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 102.0
+grow_horizontal = 2
+mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.65, 0.18, 1)
-theme_override_colors/font_outline_color = Color(0.45, 0.24, 0.08, 0.9)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_outline_color = Color(0.38, 0.16, 0.05, 0.96)
+theme_override_fonts/font = SubResource("SystemFont_combo")
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 78
+text = "x2"
 horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ComboCallout" type="Label" parent="ComboBanner"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 94.0
+offset_bottom = 164.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.98, 0.76, 1)
+theme_override_colors/font_outline_color = Color(0.81, 0.27, 0.09, 1)
+theme_override_fonts/font = SubResource("SystemFont_callout")
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 34
+text = "JUICY COMBO!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ScorePopContainer" type="Control" parent="."]
 unique_name_in_owner = true

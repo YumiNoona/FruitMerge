@@ -15,10 +15,12 @@ func _ready() -> void:
 		_label.text = text
 	pivot_offset = size * 0.5
 	modulate.a = 1.0
-	var t := create_tween()
-	t.set_parallel(true)
-	t.tween_property(self, "position:y", position.y - 60.0, _duration).set_ease(Tween.EASE_OUT)
-	t.tween_property(self, "scale", Vector2(1.3, 1.3), 0.15).set_ease(Tween.EASE_OUT)
-	t.tween_property(self, "scale", Vector2(1.0, 1.0), 0.3).set_delay(0.15).set_ease(Tween.EASE_IN)
-	t.tween_property(self, "modulate:a", 0.0, 0.4).set_delay(_duration - 0.4)
-	t.finished.connect(queue_free)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "position:y", position.y - 86.0, _duration)
+	tween.tween_property(self, "scale", Vector2(1.5, 1.5), 0.16)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.28).set_delay(0.16)
+	tween.tween_property(self, "rotation", deg_to_rad(randf_range(-4.0, 4.0)), 0.22)
+	tween.tween_property(self, "modulate:a", 0.0, 0.4).set_delay(_duration - 0.4)
+	tween.finished.connect(queue_free)

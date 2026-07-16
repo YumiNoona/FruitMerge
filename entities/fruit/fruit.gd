@@ -10,6 +10,9 @@ const SLEEPY_IDLE_MAX: float = 12.0
 @export var merge_cooldown: float = 0.4
 @export var face_frames: SpriteFrames
 @export var use_procedural_face: bool = false
+@export_category("Scene-owned setup")
+@export var use_scene_visuals: bool = false
+@export var use_scene_collision: bool = false
 
 var is_merging: bool = false
 var _just_spawned: bool = true
@@ -47,18 +50,23 @@ func _ready() -> void:
 func _apply_data() -> void:
 	if not data:
 		return
-	if _sprite and data.sprite:
-		_sprite.texture = data.sprite
-		var tex_w: float = data.sprite_visual_width if data.sprite_visual_width > 0.0 else float(data.sprite.get_width())
-		if tex_w > 0.0:
-			var s: float = (data.radius * 2.0) / tex_w
-			_visual_base_scale = Vector2(s, s)
-			_sprite.scale = _visual_base_scale
-			if face:
-				face.scale = _visual_base_scale
+	if _sprite:
+		if use_scene_visuals:
+			if not _sprite.texture and data.sprite:
+				_sprite.texture = data.sprite
+			_visual_base_scale = _sprite.scale
+		elif data.sprite:
+			_sprite.texture = data.sprite
+			var tex_w: float = data.sprite_visual_width if data.sprite_visual_width > 0.0 else float(data.sprite.get_width())
+			if tex_w > 0.0:
+				var s: float = (data.radius * 2.0) / tex_w
+				_visual_base_scale = Vector2(s, s)
+				_sprite.scale = _visual_base_scale
+				if face:
+					face.scale = _visual_base_scale
 	if _sprite:
 		_sprite.self_modulate = data.color
-	if _collision:
+	if _collision and not use_scene_collision:
 		var shape: CircleShape2D = CircleShape2D.new()
 		shape.radius = data.radius
 		_collision.shape = shape

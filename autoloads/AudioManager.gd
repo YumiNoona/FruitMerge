@@ -16,7 +16,9 @@ var sfx_vol: float = 0.8:
 var _music_player: AudioStreamPlayer
 var _sfx_pool: Array[AudioStreamPlayer] = []
 var _pool_index: int = 0
+var _merge_sfx_cache: Dictionary = {}
 const SFX_POOL_SIZE := 8
+const PROCEDURAL_SFX_RATE := 44100
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -73,10 +75,45 @@ func play_sfx(stream: AudioStream) -> void:
 	p.play()
 
 func play_sfx_at(stream: AudioStream, position: Vector2) -> void:
+	if not stream:
+		return
 	var p := AudioStreamPlayer2D.new()
 	p.bus = sfx_bus
 	p.stream = stream
 	p.global_position = position
 	p.finished.connect(p.queue_free)
-	get_tree().root.add_child(p)
-	p.play()
+	p.ready.connect(p.play, CONNECT_ONE_SHOT)
+	get_tree().root.add_child.call_deferred(p)
+
+
+func play_merge_sfx(tier: int, custom_stream: AudioStream, position: Vector2) -> void:
+	var stream := custom_stream
+	if not stream:
+		if not _merge_sfx_cache.has(tier):
+			_merge_sfx_cache[tier] = _build_merge_pop(tier)
+		stream = _merge_sfx_cache[tier] as AudioStream
+	play_sfx_at(stream, position)
+
+
+func _build_merge_pop(tier: int) -> AudioStreamWAV:
+	var duration := 0.18 + minf(float(tier), 8.0) * 0.006
+	var sample_count := int(PROCEDURAL_SFX_RATE * duration)
+	var pcm := PackedByteArray()
+	pcm.resize(sample_count * 2)
+	var base_frequency := 360.0 + minf(float(tier), 12.0) * 28.0
+	for sample_index in sample_count:
+		var time := float(sample_index) / float(PROCEDURAL_SFX_RATE)
+		var progress := time / duration
+		var envelope := pow(1.0 - progress, 2.2)
+		var pitch_sweep := base_frequency * (1.0 + 0.32 * progress)
+		var pop := sin(TAU * pitch_sweep * time)
+		var sparkle := sin(TAU * pitch_sweep * 2.01 * time) * 0.32
+		var transient := sin(TAU * 95.0 * time) * exp(-time * 35.0) * 0.45
+		var value := clampf((pop + sparkle) * envelope * 0.5 + transient, -1.0, 1.0)
+		pcm.encode_s16(sample_index * 2, int(value * 32767.0))
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = PROCEDURAL_SFX_RATE
+	wav.stereo = false
+	wav.data = pcm
+	return wav

@@ -15,7 +15,6 @@ const GUIDE_SHADOW := Color(0.55, 0.29, 0.09, 0.22)
 
 @export var drop_cooldown: float = 0.55
 @export var max_x_spread: float = 238.0
-@export var fruit_scene: PackedScene
 
 var _can_drop: bool = true
 var _is_aiming: bool = false
@@ -48,8 +47,7 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if not _can_drop or GameManager.current_state != Enums.GameState.PLAYING or not _preview.visible:
 		return
-	var data := FruitDatabase.get_fruit(_current_tier)
-	var radius := data.radius if data else 28.0
+	var radius := FruitDatabase.get_collision_radius(_current_tier)
 	var start := Vector2(_preview.position.x, _preview.position.y + radius + 9.0)
 	var end := to_local(_raycast_to_floor(to_global(start)))
 	_draw_animated_guide(start, end)
@@ -103,8 +101,11 @@ func _get_random_spawn_tier() -> Enums.FruitTier:
 
 
 static func spawn_at(fruit_data: FruitData, world_pos: Vector2) -> Fruit:
-	var scene := load("res://entities/fruit/fruit.tscn") as PackedScene
-	var fruit: Fruit = scene.instantiate()
+	if not fruit_data:
+		return null
+	var fruit: Fruit = FruitDatabase.create_fruit(fruit_data.tier)
+	if not fruit:
+		return null
 	fruit.data = fruit_data
 	fruit.global_position = world_pos
 	fruit.sleeping = false
@@ -159,8 +160,7 @@ func _update_aim(mouse_pos: Vector2) -> void:
 
 
 func _clamp_x(value: float) -> float:
-	var data := FruitDatabase.get_fruit(_current_tier)
-	var radius := data.radius if data else 28.0
+	var radius := FruitDatabase.get_collision_radius(_current_tier)
 	var left_limit := global_position.x - max_x_spread + radius
 	var right_limit := global_position.x + max_x_spread - radius
 	return clampf(value, left_limit, right_limit)
@@ -188,7 +188,11 @@ func _drop_at(x: float) -> void:
 	_cooldown_timer.start(drop_cooldown)
 
 	var spawn_position := Vector2(x, global_position.y - 20.0)
-	var fruit: Fruit = fruit_scene.instantiate()
+	var fruit: Fruit = FruitDatabase.create_fruit(fruit_data.tier)
+	if not fruit:
+		_can_drop = true
+		_preview.visible = true
+		return
 	fruit.data = fruit_data
 	fruit.freeze = true
 	fruit.linear_velocity = Vector2(0, 35)

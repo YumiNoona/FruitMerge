@@ -6,7 +6,9 @@ extends Control
 @onready var _next_fruit_icon: TextureRect = %NextFruitIcon
 @onready var _danger_overlay: ColorRect = %DangerOverlay
 @onready var _danger_warning: Label = %DangerWarning
-@onready var _combo_label: Label = %ComboLabel
+@onready var _combo_banner: Control = %ComboBanner
+@onready var _combo_multiplier: Label = %ComboMultiplier
+@onready var _combo_callout: Label = %ComboCallout
 @onready var _score_pop_container: Control = %ScorePopContainer
 @onready var _pause_button: Button = %PauseButton
 @onready var _pause_overlay: Control = %PauseOverlay
@@ -14,6 +16,8 @@ extends Control
 @onready var _menu_button: Button = %MenuButton
 
 var _danger_tween: Tween
+var _combo_tween: Tween
+var _combo_base_position: Vector2
 
 
 func _ready() -> void:
@@ -28,6 +32,7 @@ func _ready() -> void:
 	_resume_button.pressed.connect(_on_resume_pressed)
 	_menu_button.pressed.connect(_on_menu_pressed)
 	_danger_overlay.modulate.a = 0.0
+	_combo_base_position = _combo_banner.position
 	_update_score(GameManager.score)
 	_update_high_score(GameManager.high_score)
 	_update_coins(EconomyManager.coins)
@@ -52,16 +57,38 @@ func _on_fruit_dropped(_tier: int) -> void:
 
 func _on_fruit_merged(_tier: int, pos: Vector2, score_gained: int) -> void:
 	if GameManager.active_combo > 1:
-		_combo_label.text = "x%d  COMBO!" % GameManager.active_combo
-		_combo_label.visible = true
-		_combo_label.scale = Vector2(0.7, 0.7)
-		_combo_label.modulate.a = 1.0
-		var combo_tween := create_tween().set_parallel(true)
-		combo_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		combo_tween.tween_property(_combo_label, "scale", Vector2.ONE, 0.2)
-		combo_tween.tween_property(_combo_label, "modulate:a", 0.0, 1.2).set_delay(0.45)
-		combo_tween.chain().tween_callback(func(): _combo_label.visible = false)
+		_show_combo(GameManager.active_combo)
 	_spawn_score_pop(pos, score_gained)
+
+
+func _show_combo(combo: int) -> void:
+	if _combo_tween and _combo_tween.is_valid():
+		_combo_tween.kill()
+	_combo_multiplier.text = "x%d" % combo
+	_combo_callout.text = _get_combo_callout(combo)
+	_combo_banner.visible = true
+	_combo_banner.pivot_offset = _combo_banner.size * 0.5
+	_combo_banner.position = _combo_base_position
+	_combo_banner.scale = Vector2(0.52, 0.52)
+	_combo_banner.rotation = deg_to_rad(randf_range(-6.0, 6.0))
+	_combo_banner.modulate.a = 1.0
+	_combo_tween = create_tween().set_parallel(true)
+	_combo_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_combo_tween.tween_property(_combo_banner, "scale", Vector2.ONE, 0.24)
+	_combo_tween.tween_property(_combo_banner, "rotation", 0.0, 0.22)
+	_combo_tween.tween_property(_combo_banner, "position:y", _combo_base_position.y - 26.0, 0.9).set_delay(0.18)
+	_combo_tween.tween_property(_combo_banner, "modulate:a", 0.0, 0.38).set_delay(0.78)
+	_combo_tween.chain().tween_callback(func(): _combo_banner.visible = false)
+
+
+func _get_combo_callout(combo: int) -> String:
+	if combo >= 5:
+		return "MEGA MERGE!"
+	if combo == 4:
+		return "FRUIT FRENZY!"
+	if combo == 3:
+		return "SWEET STREAK!"
+	return "JUICY COMBO!"
 
 
 func _on_danger_entered() -> void:

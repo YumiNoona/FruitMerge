@@ -97,6 +97,8 @@ func _on_fruit_merged(tier: int, world_pos: Vector2, _score: int) -> void:
 	if merge_burst_scene:
 		var burst: Node2D = merge_burst_scene.instantiate()
 		burst.global_position = world_pos
+		if burst.has_method("configure"):
+			burst.call("configure", tier)
 		add_child(burst)
 	_spawn_pooled_particles(world_pos)
 	if tier >= Enums.FruitTier.ORANGE:
