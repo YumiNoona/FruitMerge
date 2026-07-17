@@ -8,3 +8,18 @@ extends Resource
 @export var currency: StringName = &"coins"
 @export var category: StringName
 @export var description: String
+
+@export_category("Power-up Juice")
+@export_range(0.05, 3.0, 0.01, "suffix:s") var effect_duration := 0.3
+@export_range(0.0, 2.0, 0.01) var camera_shake_strength := 0.35
+@export_range(0.1, 3.0, 0.01, "suffix:x") var camera_shake_duration := 0.7
+@export_range(0.0, 40.0, 0.1, "suffix:px") var container_motion_strength := 12.0
+@export_range(0.1, 3.0, 0.01, "suffix:s") var container_motion_duration := 0.8
+@export_range(0.0, 500.0, 1.0) var fruit_impulse_strength := 180.0
+@export_range(0.0, 16.0, 0.1) var fruit_spin_strength := 4.5
+@export_range(0.5, 4.0, 0.01, "suffix:x") var target_marker_scale := 2.55
+@export_range(0.05, 2.0, 0.01, "suffix:s") var target_marker_hold_time := 0.52
+@export_range(0.05, 1.0, 0.01, "suffix:s") var target_lock_time := 0.17
+@export_range(1.0, 1.5, 0.01, "suffix:x") var grab_held_scale := 1.13
+@export_range(20.0, 500.0, 1.0) var grab_release_speed := 180.0
+@export_range(1.0, 16.0, 0.1) var grab_ring_speed := 5.5

@@ -18,6 +18,7 @@ const ITEM_PATHS: PackedStringArray = [
 	"res://Data/ShopItems/powerup_level_up.tres",
 	"res://Data/ShopItems/powerup_shake_box.tres",
 	"res://Data/ShopItems/powerup_remove_smallest.tres",
+	"res://Data/ShopItems/powerup_grab_em.tres",
 ]
 
 var _current_category: StringName = &"pet"

@@ -26,8 +26,8 @@ texture = ExtResource("8")
 
 [node name="ContainerArt" type="Sprite2D" parent="." unique_id=1674211724]
 z_index = -10
-position = Vector2(0, -545)
-scale = Vector2(0.72, 0.72)
+position = Vector2(0, -640)
+scale = Vector2(0.603, 0.603)
 texture = ExtResource("9")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=29525824]
@@ -35,16 +35,16 @@ position = Vector2(0, -640)
 
 [node name="BoxContainer" type="Node2D" parent="." unique_id=687075484]
 unique_name_in_owner = true
-position = Vector2(0, -80)
+position = Vector2(0, -230)
 
 [node name="SpawnerContainer" type="Node2D" parent="." unique_id=1110466877]
 unique_name_in_owner = true
-position = Vector2(0, -1060)
+position = Vector2(0, -990)
 
 [node name="PetContainer" type="Node2D" parent="." unique_id=1142105273]
 unique_name_in_owner = true
 z_index = 30
-position = Vector2(282, -155)
+position = Vector2(282, -340)
 
 [node name="Interface" type="CanvasLayer" parent="." unique_id=1980987107]
 

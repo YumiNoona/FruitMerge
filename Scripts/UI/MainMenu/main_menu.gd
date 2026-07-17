@@ -80,7 +80,7 @@ func _finish_with_resource() -> void:
 	_loading_label.text = "Ready!"
 	ResourceLoader.load_threaded_get(HOME_SCENE)
 	await _fade_out()
-	get_tree().change_scene_to_file(DAILY_REWARD_SCENE)
+	get_tree().change_scene_to_file(_get_start_scene())
 
 
 func _finish_with_path() -> void:
@@ -88,7 +88,15 @@ func _finish_with_path() -> void:
 	_loading_bar.value = 100.0
 	_loading_label.text = "Ready!"
 	await _fade_out()
-	get_tree().change_scene_to_file(DAILY_REWARD_SCENE)
+	get_tree().change_scene_to_file(_get_start_scene())
+
+
+func _get_start_scene() -> String:
+	# The reward stays pending until it is claimed. Closing the reward panel leaves
+	# it pending, so it will gently return on the next app launch.
+	var last_claim := str(SaveManager.get_setting("daily_reward_last_claim", ""))
+	var today := Time.get_date_string_from_system()
+	return HOME_SCENE if last_claim == today else DAILY_REWARD_SCENE
 
 
 func _fade_out() -> void:

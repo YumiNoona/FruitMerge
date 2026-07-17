@@ -16,14 +16,26 @@ extends Control
 @onready var _level_up_button: TextureButton = %LevelUpButton
 @onready var _shake_button: TextureButton = %ShakeButton
 @onready var _remove_button: TextureButton = %RemoveButton
+@onready var _grab_button: TextureButton = %GrabButton
 @onready var _level_up_count: Label = %LevelUpCount
 @onready var _shake_count: Label = %ShakeCount
 @onready var _remove_count: Label = %RemoveCount
+@onready var _grab_count: Label = %GrabCount
 @onready var _powerup_hint: Label = %PowerupHint
+@onready var _tier_reward_banner: Control = %TierRewardBanner
+@onready var _tier_reward_label: Label = %TierRewardLabel
 
 var _danger_tween: Tween
 var _combo_tween: Tween
 var _combo_base_position: Vector2
+var _tier_reward_tween: Tween
+var _requested_targeting_powerup: StringName = &""
+
+const TICKET_REWARD_TIERS: PackedInt32Array = [
+	Enums.FruitTier.PINEAPPLE,
+	Enums.FruitTier.DRAGONFRUIT,
+	Enums.FruitTier.WATERMELON,
+]
 
 
 func _ready() -> void:
@@ -39,6 +51,7 @@ func _ready() -> void:
 	_level_up_button.pressed.connect(func(): _request_powerup(&"powerup_level_up"))
 	_shake_button.pressed.connect(func(): _request_powerup(&"powerup_shake_box"))
 	_remove_button.pressed.connect(func(): _request_powerup(&"powerup_remove_smallest"))
+	_grab_button.pressed.connect(func(): _request_powerup(&"powerup_grab_em"))
 	EventBus.powerup_count_changed.connect(_on_powerup_count_changed)
 	EventBus.powerup_targeting_changed.connect(_on_powerup_targeting_changed)
 	_danger_overlay.modulate.a = 0.0
@@ -74,7 +87,7 @@ func _on_fruit_dropped(_tier: int) -> void:
 func _on_fruit_merged(_tier: int, pos: Vector2, score_gained: int) -> void:
 	if GameManager.active_combo > 1:
 		_show_combo(GameManager.active_combo)
-	_spawn_score_pop(pos, score_gained)
+		_spawn_score_pop(pos, score_gained)
 
 
 func _show_combo(combo: int) -> void:
@@ -136,6 +149,7 @@ func _on_pause_pressed() -> void:
 func _request_powerup(item_id: StringName) -> void:
 	if EconomyManager.get_powerup_count(item_id) <= 0:
 		return
+	_requested_targeting_powerup = item_id
 	EventBus.powerup_requested.emit(item_id)
 
 
@@ -147,6 +161,7 @@ func _update_powerup_buttons() -> void:
 	_update_powerup_button(_level_up_button, _level_up_count, &"powerup_level_up")
 	_update_powerup_button(_shake_button, _shake_count, &"powerup_shake_box")
 	_update_powerup_button(_remove_button, _remove_count, &"powerup_remove_smallest")
+	_update_powerup_button(_grab_button, _grab_count, &"powerup_grab_em")
 
 
 func _update_powerup_button(button: TextureButton, count_label: Label, item_id: StringName) -> void:
@@ -157,9 +172,13 @@ func _update_powerup_button(button: TextureButton, count_label: Label, item_id: 
 
 
 func _on_powerup_targeting_changed(active: bool, message: String) -> void:
+	if not active:
+		_requested_targeting_powerup = &""
 	_powerup_hint.visible = active
 	_powerup_hint.text = message
-	_level_up_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_level_up") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+	_level_up_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_level_up" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_level_up") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+	if _grab_button:
+		_grab_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_grab_em" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_grab_em") > 0 else Color(0.62, 0.62, 0.62, 0.52))
 
 
 func _update_score(value: int) -> void:
@@ -183,6 +202,27 @@ func _update_next_fruit() -> void:
 	var texture := FruitDatabase.get_visual_texture(GameManager.next_fruit_tier)
 	if texture:
 		_next_fruit_icon.texture = texture
+
+
+func show_tier_ticket_reward(created_tier: int, ticket_amount: int) -> void:
+	if created_tier not in TICKET_REWARD_TIERS:
+		return
+	_tier_reward_label.text = "+%d TICKET%s!" % [ticket_amount, "" if ticket_amount == 1 else "S"]
+	_tier_reward_banner.visible = true
+	_tier_reward_banner.pivot_offset = _tier_reward_banner.size * 0.5
+	_tier_reward_banner.scale = Vector2(0.55, 0.55)
+	_tier_reward_banner.modulate.a = 0.0
+	if _tier_reward_tween and _tier_reward_tween.is_valid():
+		_tier_reward_tween.kill()
+	_tier_reward_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_tier_reward_tween.tween_property(_tier_reward_banner, "scale", Vector2.ONE, 0.22)
+	_tier_reward_tween.tween_property(_tier_reward_banner, "modulate:a", 1.0, 0.14)
+	_tier_reward_tween.tween_property(_tier_reward_banner, "position:y", 920.0, 0.85).set_delay(0.16)
+	_tier_reward_tween.tween_property(_tier_reward_banner, "modulate:a", 0.0, 0.28).set_delay(0.72)
+	_tier_reward_tween.chain().tween_callback(func():
+		_tier_reward_banner.visible = false
+		_tier_reward_banner.position.y = 948.0
+	)
 
 
 func _spawn_score_pop(world_pos: Vector2, score: int) -> void:

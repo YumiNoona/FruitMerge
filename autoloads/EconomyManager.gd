@@ -5,6 +5,18 @@ var tickets: int = 0
 var owned_items: Array[StringName] = []
 var powerup_counts: Dictionary = {}
 
+
+func set_debug_powerups(amount: int) -> void:
+	# Kept out of the save file: every debug launch gets a clean test set.
+	for item_id: StringName in [
+		&"powerup_level_up",
+		&"powerup_shake_box",
+		&"powerup_remove_smallest",
+		&"powerup_grab_em",
+	]:
+		powerup_counts[item_id] = amount
+		EventBus.powerup_count_changed.emit(item_id, amount)
+
 func add_coins(amount: int) -> void:
 	coins += amount
 	EventBus.coins_changed.emit(coins)
