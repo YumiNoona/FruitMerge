@@ -15,16 +15,20 @@ run/main_scene="res://Scenes/UI/MainMenu/main_menu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="res://MusicBus.tres"
+
 [autoload]
 
 EventBus="*res://Autoloads/EventBus.gd"
 SaveManager="*res://Autoloads/SaveManager.gd"
 EconomyManager="*res://Autoloads/EconomyManager.gd"
-AdManager="*res://Autoloads/AdManager.gd"
 GameManager="*res://Autoloads/GameManager.gd"
 AudioManager="*res://Autoloads/AudioManager.gd"
 FruitDatabase="*res://Autoloads/FruitDatabase.gd"
 Bootstrap="*res://Autoloads/Bootstrap.gd"
+AdManager="*res://Autoloads/AdManager.gd"
 
 [display]
 

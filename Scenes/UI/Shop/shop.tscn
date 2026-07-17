@@ -1,24 +1,23 @@
 [gd_scene format=3 uid="uid://dj1vtouyi5sy7"]
 
-[ext_resource type="Script" path="res://Scripts/UI/Shop/shop.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/UI/BackGround.png" id="2"]
-[ext_resource type="Theme" path="res://Data/Themes/cozy_theme.tres" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/UI/ShopButton.png" id="4"]
-[ext_resource type="Texture2D" path="res://Assets/UI/Close.png" id="5"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="6"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/MenuDock.png" id="7"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Home.png" id="8"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Achivements.png" id="9"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Play.png" id="10"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Shop.png" id="11"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Settings.png" id="12"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Cloudy.otf" id="13"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Atop.ttf" id="14"]
-[ext_resource type="Script" path="res://Scripts/UI/Components/cozy_button.gd" id="15"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/Settings/settings_menu.tscn" id="16"]
-[ext_resource type="Texture2D" path="res://Assets/UI/Ticket.png" id="17"]
+[ext_resource type="Script" uid="uid://box274uu1k7rn" path="res://Scripts/UI/Shop/shop.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="2"]
+[ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://bi5ayibkyki5k" path="res://Assets/UI/ShopButton.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://de6o6oo53fjyc" path="res://Assets/Menu/MenuDock.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://bmsolomqsvxdn" path="res://Assets/Menu/Home.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://b0fxh5pishhre" path="res://Assets/Menu/Achivements.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://ynpc7wv52gl0" path="res://Assets/Menu/Play.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://bebnxvysq4bx" path="res://Assets/Menu/Shop.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://gv41dgmcnp4w" path="res://Assets/Menu/Settings.png" id="12"]
+[ext_resource type="FontFile" uid="uid://b7jjn4abg7gyt" path="res://Assets/Fonts/Cloudy.otf" id="13"]
+[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="14"]
+[ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="15"]
+[ext_resource type="PackedScene" uid="uid://curl0kqpuh6dx" path="res://Scenes/UI/Settings/settings_menu.tscn" id="16"]
+[ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/UI/Ticket.png" id="17"]
 
-[node name="Shop" type="Control"]
+[node name="Shop" type="Control" unique_id=812633842]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,7 +27,7 @@ grow_vertical = 2
 theme = ExtResource("3")
 script = ExtResource("1")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1292964946]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,7 +39,7 @@ texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CreamWash" type="ColorRect" parent="."]
+[node name="CreamWash" type="ColorRect" parent="." unique_id=163200334]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,118 +49,106 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.95, 0.82, 0.72)
 
-[node name="CloseButton" type="TextureButton" parent="."]
-unique_name_in_owner = true
+[node name="CoinPanel" type="PanelContainer" parent="." unique_id=930402671]
 layout_mode = 0
-offset_left = 22.0
-offset_top = 20.0
-offset_right = 106.0
-offset_bottom = 104.0
-texture_normal = ExtResource("5")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="CoinPanel" type="PanelContainer" parent="."]
-layout_mode = 0
-offset_left = 468.0
+offset_left = 20.0
 offset_top = 24.0
-offset_right = 578.0
+offset_right = 129.99979
 offset_bottom = 102.0
 
-[node name="CoinRow" type="HBoxContainer" parent="CoinPanel"]
+[node name="CoinRow" type="HBoxContainer" parent="CoinPanel" unique_id=164176402]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 10
+alignment = 1
 
-[node name="CoinGlyph" type="TextureRect" parent="CoinPanel/CoinRow"]
-custom_minimum_size = Vector2(30, 30)
+[node name="CoinGlyph" type="TextureRect" parent="CoinPanel/CoinRow" unique_id=491369368]
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 texture = ExtResource("6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ShopCoinsLabel" type="Label" parent="CoinPanel/CoinRow"]
+[node name="ShopCoinsLabel" type="Label" parent="CoinPanel/CoinRow" unique_id=2131521105]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("14")
 theme_override_font_sizes/font_size = 28
 text = "0"
 
-[node name="TicketPanel" type="PanelContainer" parent="."]
+[node name="TicketPanel" type="PanelContainer" parent="." unique_id=1323067986]
 layout_mode = 0
-offset_left = 584.0
+offset_left = 180.0
 offset_top = 24.0
-offset_right = 698.0
-offset_bottom = 102.0
+offset_right = 301.0
+offset_bottom = 116.0
 
-[node name="TicketRow" type="HBoxContainer" parent="TicketPanel"]
+[node name="TicketRow" type="HBoxContainer" parent="TicketPanel" unique_id=364563564]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 5
+alignment = 1
 
-[node name="TicketGlyph" type="TextureRect" parent="TicketPanel/TicketRow"]
-custom_minimum_size = Vector2(34, 34)
+[node name="TicketGlyph" type="TextureRect" parent="TicketPanel/TicketRow" unique_id=73417585]
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 texture = ExtResource("17")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ShopTicketsLabel" type="Label" parent="TicketPanel/TicketRow"]
+[node name="ShopTicketsLabel" type="Label" parent="TicketPanel/TicketRow" unique_id=1963500190]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("14")
 theme_override_font_sizes/font_size = 25
 text = "0"
 
-[node name="RewardedAdButton" type="Button" parent="."]
+[node name="RewardedAdButton" type="Button" parent="." unique_id=1126102909]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 22.0
-offset_top = 112.0
-offset_right = 206.0
-offset_bottom = 166.0
+offset_left = 540.0
+offset_top = 24.0
+offset_right = 712.0
+offset_bottom = 109.0
 theme_type_variation = &"OrangeButton"
-theme_override_font_sizes/font_size = 15
-text = "WATCH AD  +1 🎟"
+theme_override_font_sizes/font_size = 25
+text = "WATCH AD"
 script = ExtResource("15")
 
-[node name="ShopHeader" type="TextureRect" parent="."]
+[node name="ShopHeader" type="TextureRect" parent="." unique_id=180183263]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 74.0
-offset_right = 600.0
-offset_bottom = 286.0
+offset_left = 166.0
+offset_top = 117.0
+offset_right = 503.3585
+offset_bottom = 266.0
 mouse_filter = 2
 texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ShopTitle" type="Label" parent="."]
+[node name="ShopTitle" type="Label" parent="." unique_id=876346518]
 layout_mode = 0
-offset_left = 164.0
-offset_top = 126.0
-offset_right = 556.0
-offset_bottom = 236.0
-mouse_filter = 2
+offset_left = 245.35849
+offset_top = 145.0
+offset_right = 462.3585
+offset_bottom = 245.0
 theme_override_colors/font_color = Color(1, 0.97, 0.84, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.2, 0.08, 0.9)
-theme_override_fonts/font = ExtResource("13")
 theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("13")
 theme_override_font_sizes/font_size = 72
 text = "SHOP"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TabBar" type="HBoxContainer" parent="."]
+[node name="TabBar" type="HBoxContainer" parent="." unique_id=1768444516]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 270.0
 offset_right = 696.0
 offset_bottom = 344.0
-alignment = 1
 theme_override_constants/separation = 10
+alignment = 1
 
-[node name="TabSkins" type="Button" parent="TabBar"]
+[node name="TabSkins" type="Button" parent="TabBar" unique_id=1840600637]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(205, 70)
 layout_mode = 2
@@ -172,7 +159,7 @@ toggle_mode = true
 text = "SKINS"
 script = ExtResource("15")
 
-[node name="TabPets" type="Button" parent="TabBar"]
+[node name="TabPets" type="Button" parent="TabBar" unique_id=1477082889]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(205, 70)
 layout_mode = 2
@@ -183,7 +170,7 @@ button_pressed = true
 text = "PETS"
 script = ExtResource("15")
 
-[node name="TabPowerups" type="Button" parent="TabBar"]
+[node name="TabPowerups" type="Button" parent="TabBar" unique_id=40130374]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 70)
 layout_mode = 2
@@ -194,25 +181,25 @@ toggle_mode = true
 text = "POWER-UPS"
 script = ExtResource("15")
 
-[node name="CatalogPanel" type="PanelContainer" parent="."]
+[node name="CatalogPanel" type="PanelContainer" parent="." unique_id=1845654484]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 352.0
-offset_right = 702.0
-offset_bottom = 1120.0
+offset_left = 8.0
+offset_top = 360.0
+offset_right = 712.0
+offset_bottom = 1125.9297
 
-[node name="CatalogMargin" type="MarginContainer" parent="CatalogPanel"]
+[node name="CatalogMargin" type="MarginContainer" parent="CatalogPanel" unique_id=1163881241]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 12
 
-[node name="ShopScroll" type="ScrollContainer" parent="CatalogPanel/CatalogMargin"]
+[node name="ShopScroll" type="ScrollContainer" parent="CatalogPanel/CatalogMargin" unique_id=1294102764]
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="ShopList" type="GridContainer" parent="CatalogPanel/CatalogMargin/ShopScroll"]
+[node name="ShopList" type="GridContainer" parent="CatalogPanel/CatalogMargin/ShopScroll" unique_id=842318434]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(648, 0)
 layout_mode = 2
@@ -221,7 +208,7 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 14
 columns = 3
 
-[node name="EmptyLabel" type="Label" parent="."]
+[node name="EmptyLabel" type="Label" parent="." unique_id=926243641]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
@@ -235,7 +222,7 @@ text = "More cozy goodies are growing!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Dock" type="TextureRect" parent="."]
+[node name="Dock" type="TextureRect" parent="." unique_id=1608225391]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 1118.0
@@ -244,9 +231,8 @@ offset_bottom = 1272.0
 mouse_filter = 2
 texture = ExtResource("7")
 expand_mode = 1
-stretch_mode = 0
 
-[node name="HomeNavButton" type="TextureButton" parent="."]
+[node name="HomeNavButton" type="TextureButton" parent="." unique_id=1629651493]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 48.0
@@ -257,7 +243,7 @@ texture_normal = ExtResource("8")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="HomeLabel" type="Label" parent="."]
+[node name="HomeLabel" type="Label" parent="." unique_id=850137549]
 layout_mode = 0
 offset_left = 30.0
 offset_top = 1216.0
@@ -267,7 +253,7 @@ theme_override_font_sizes/font_size = 15
 text = "HOME"
 horizontal_alignment = 1
 
-[node name="QuestsNavButton" type="TextureButton" parent="."]
+[node name="QuestsNavButton" type="TextureButton" parent="." unique_id=1893816566]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 181.0
@@ -278,7 +264,7 @@ texture_normal = ExtResource("9")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="QuestsLabel" type="Label" parent="."]
+[node name="QuestsLabel" type="Label" parent="." unique_id=1712175170]
 layout_mode = 0
 offset_left = 161.0
 offset_top = 1216.0
@@ -288,7 +274,7 @@ theme_override_font_sizes/font_size = 15
 text = "QUESTS"
 horizontal_alignment = 1
 
-[node name="PlayButton" type="TextureButton" parent="."]
+[node name="PlayButton" type="TextureButton" parent="." unique_id=1721527645]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 300.0
@@ -299,7 +285,7 @@ texture_normal = ExtResource("10")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="PlayLabel" type="Label" parent="."]
+[node name="PlayLabel" type="Label" parent="." unique_id=403367912]
 layout_mode = 0
 offset_left = 297.0
 offset_top = 1214.0
@@ -309,7 +295,7 @@ theme_override_font_sizes/font_size = 17
 text = "PLAY"
 horizontal_alignment = 1
 
-[node name="ShopNavButton" type="TextureButton" parent="."]
+[node name="ShopNavButton" type="TextureButton" parent="." unique_id=645055910]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 447.0
@@ -320,7 +306,7 @@ texture_normal = ExtResource("11")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ShopLabel" type="Label" parent="."]
+[node name="ShopLabel" type="Label" parent="." unique_id=1122448062]
 layout_mode = 0
 offset_left = 435.0
 offset_top = 1216.0
@@ -331,7 +317,7 @@ theme_override_font_sizes/font_size = 16
 text = "SHOP"
 horizontal_alignment = 1
 
-[node name="SettingsNavButton" type="TextureButton" parent="."]
+[node name="SettingsNavButton" type="TextureButton" parent="." unique_id=678240055]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 587.0
@@ -342,7 +328,7 @@ texture_normal = ExtResource("12")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SettingsLabel" type="Label" parent="."]
+[node name="SettingsLabel" type="Label" parent="." unique_id=1688120062]
 layout_mode = 0
 offset_left = 561.0
 offset_top = 1216.0
@@ -352,4 +338,5 @@ theme_override_font_sizes/font_size = 14
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="SettingsMenu" parent="." instance=ExtResource("16")]
+[node name="SettingsMenu" parent="." unique_id=1771943392 instance=ExtResource("16")]
+layout_mode = 1

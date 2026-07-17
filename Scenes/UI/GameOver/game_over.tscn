@@ -1,11 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bgmov00000000000000000001"]
+[gd_scene format=3 uid="uid://5lrjra080tca"]
 
-[ext_resource type="Script" path="res://Scripts/UI/GameOver/game_over.gd" id="1"]
-[ext_resource type="Theme" path="res://Data/Themes/cozy_theme.tres" id="2"]
-[ext_resource type="Texture2D" path="res://Assets/Fruits/Watermellon.png" id="3"]
-[ext_resource type="Script" path="res://Scripts/UI/Components/cozy_button.gd" id="4"]
+[ext_resource type="Script" uid="uid://dwit82np30oi3" path="res://Scripts/UI/GameOver/game_over.gd" id="1"]
+[ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://ovlvr6ymt41h" path="res://Assets/Fruits/Watermellon.png" id="3"]
+[ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="4"]
 
-[node name="GameOver" type="Control"]
+[node name="GameOver" type="Control" unique_id=79099277]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -16,7 +16,7 @@ grow_vertical = 2
 theme = ExtResource("2")
 script = ExtResource("1")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="ColorRect" parent="." unique_id=480137520]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,7 +25,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.28, 0.14, 0.06, 0.58)
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="." unique_id=2060268255]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,18 +33,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ResultCard" type="PanelContainer" parent="Center"]
+[node name="ResultCard" type="PanelContainer" parent="Center" unique_id=1699551389]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(540, 650)
 layout_mode = 2
 theme_type_variation = &"PeachPanel"
 
-[node name="Content" type="VBoxContainer" parent="Center/ResultCard"]
+[node name="Content" type="VBoxContainer" parent="Center/ResultCard" unique_id=1848023079]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="FruitIcon" type="TextureRect" parent="Center/ResultCard/Content"]
+[node name="FruitIcon" type="TextureRect" parent="Center/ResultCard/Content" unique_id=14189788]
 custom_minimum_size = Vector2(0, 145)
 layout_mode = 2
 mouse_filter = 2
@@ -52,13 +52,13 @@ texture = ExtResource("3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="Center/ResultCard/Content"]
+[node name="Title" type="Label" parent="Center/ResultCard/Content" unique_id=1697401222]
 layout_mode = 2
 theme_type_variation = &"HeadingLabel"
 text = "FRUIT BASKET FULL!"
 horizontal_alignment = 1
 
-[node name="NewHighLabel" type="Label" parent="Center/ResultCard/Content"]
+[node name="NewHighLabel" type="Label" parent="Center/ResultCard/Content" unique_id=45744338]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -69,13 +69,13 @@ theme_override_font_sizes/font_size = 22
 text = "NEW BEST SCORE!"
 horizontal_alignment = 1
 
-[node name="ScoreCaption" type="Label" parent="Center/ResultCard/Content"]
+[node name="ScoreCaption" type="Label" parent="Center/ResultCard/Content" unique_id=1834759168]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
 text = "YOUR SCORE"
 horizontal_alignment = 1
 
-[node name="FinalScoreLabel" type="Label" parent="Center/ResultCard/Content"]
+[node name="FinalScoreLabel" type="Label" parent="Center/ResultCard/Content" unique_id=1305634699]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.47, 0.22, 1)
@@ -85,37 +85,37 @@ theme_override_font_sizes/font_size = 56
 text = "0"
 horizontal_alignment = 1
 
-[node name="RewardRow" type="HBoxContainer" parent="Center/ResultCard/Content"]
+[node name="RewardRow" type="HBoxContainer" parent="Center/ResultCard/Content" unique_id=484271174]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 28
+alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="Center/ResultCard/Content/RewardRow"]
+[node name="HighScoreLabel" type="Label" parent="Center/ResultCard/Content/RewardRow" unique_id=2082222930]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Best  0"
 
-[node name="CoinsEarnedLabel" type="Label" parent="Center/ResultCard/Content/RewardRow"]
+[node name="CoinsEarnedLabel" type="Label" parent="Center/ResultCard/Content/RewardRow" unique_id=2110257755]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.66, 0.22, 1)
 text = "+0 coins"
 
-[node name="Encouragement" type="Label" parent="Center/ResultCard/Content"]
+[node name="Encouragement" type="Label" parent="Center/ResultCard/Content" unique_id=1418125610]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
 theme_override_font_sizes/font_size = 18
 text = "Every drop grows your garden."
 horizontal_alignment = 1
 
-[node name="RestartButton" type="Button" parent="Center/ResultCard/Content"]
+[node name="RestartButton" type="Button" parent="Center/ResultCard/Content" unique_id=1317943307]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
 text = "PLAY AGAIN"
 script = ExtResource("4")
 
-[node name="MenuButton" type="Button" parent="Center/ResultCard/Content"]
+[node name="MenuButton" type="Button" parent="Center/ResultCard/Content" unique_id=1712340312]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
