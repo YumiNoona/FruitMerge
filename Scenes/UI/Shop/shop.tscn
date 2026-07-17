@@ -16,6 +16,7 @@
 [ext_resource type="FontFile" path="res://Assets/Fonts/Atop.ttf" id="14"]
 [ext_resource type="Script" path="res://Scripts/UI/Components/cozy_button.gd" id="15"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Settings/settings_menu.tscn" id="16"]
+[ext_resource type="Texture2D" path="res://Assets/UI/Ticket.png" id="17"]
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -64,7 +65,7 @@ stretch_mode = 5
 layout_mode = 0
 offset_left = 468.0
 offset_top = 24.0
-offset_right = 698.0
+offset_right = 578.0
 offset_bottom = 102.0
 
 [node name="CoinRow" type="HBoxContainer" parent="CoinPanel"]
@@ -73,7 +74,7 @@ alignment = 1
 theme_override_constants/separation = 10
 
 [node name="CoinGlyph" type="TextureRect" parent="CoinPanel/CoinRow"]
-custom_minimum_size = Vector2(42, 42)
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 texture = ExtResource("6")
 expand_mode = 1
@@ -85,6 +86,44 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("14")
 theme_override_font_sizes/font_size = 28
 text = "0"
+
+[node name="TicketPanel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 584.0
+offset_top = 24.0
+offset_right = 698.0
+offset_bottom = 102.0
+
+[node name="TicketRow" type="HBoxContainer" parent="TicketPanel"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="TicketGlyph" type="TextureRect" parent="TicketPanel/TicketRow"]
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 2
+texture = ExtResource("17")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShopTicketsLabel" type="Label" parent="TicketPanel/TicketRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("14")
+theme_override_font_sizes/font_size = 25
+text = "0"
+
+[node name="RewardedAdButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 112.0
+offset_right = 206.0
+offset_bottom = 166.0
+theme_type_variation = &"OrangeButton"
+theme_override_font_sizes/font_size = 15
+text = "WATCH AD  +1 🎟"
+script = ExtResource("15")
 
 [node name="ShopHeader" type="TextureRect" parent="."]
 layout_mode = 0

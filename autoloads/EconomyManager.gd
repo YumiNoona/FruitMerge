@@ -1,6 +1,7 @@
 extends Node
 
 var coins: int = 0
+var tickets: int = 0
 var owned_items: Array[StringName] = []
 var powerup_counts: Dictionary = {}
 
@@ -15,26 +16,54 @@ func spend_coins(amount: int) -> bool:
 	EventBus.coins_changed.emit(coins)
 	return true
 
+
+func add_tickets(amount: int) -> void:
+	if amount <= 0:
+		return
+	tickets += amount
+	EventBus.tickets_changed.emit(tickets)
+
+
+func spend_tickets(amount: int) -> bool:
+	if amount < 0 or tickets < amount:
+		return false
+	tickets -= amount
+	EventBus.tickets_changed.emit(tickets)
+	return true
+
+
+func get_currency_balance(currency: StringName) -> int:
+	return tickets if currency == &"tickets" else coins
+
+
+func can_afford(currency: StringName, amount: int) -> bool:
+	return get_currency_balance(currency) >= amount
+
+
+func spend_currency(currency: StringName, amount: int) -> bool:
+	return spend_tickets(amount) if currency == &"tickets" else spend_coins(amount)
+
 func try_purchase(item: ShopItemData) -> bool:
 	if item.category == &"powerup":
 		return try_purchase_consumable(item)
 	if item.id in owned_items:
 		return false
-	if coins < item.cost:
+	if not can_afford(item.currency, item.cost):
 		return false
-	coins -= item.cost
+	if not spend_currency(item.currency, item.cost):
+		return false
 	owned_items.append(item.id)
-	EventBus.coins_changed.emit(coins)
 	EventBus.shop_item_purchased.emit(item.id)
+	SaveManager.save_game()
 	return true
 
 func try_purchase_consumable(item: ShopItemData) -> bool:
-	if coins < item.cost:
+	if not can_afford(item.currency, item.cost):
 		return false
-	coins -= item.cost
+	if not spend_currency(item.currency, item.cost):
+		return false
 	var current: int = powerup_counts.get(item.id, 0)
 	powerup_counts[item.id] = current + 1
-	EventBus.coins_changed.emit(coins)
 	EventBus.shop_item_purchased.emit(item.id)
 	EventBus.powerup_count_changed.emit(item.id, current + 1)
 	SaveManager.save_game()

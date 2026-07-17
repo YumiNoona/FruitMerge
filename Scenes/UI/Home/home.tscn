@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://duhssdh6bvku3" path="res://Assets/UI/NoAds.png" id="5_s3cbl"]
 [ext_resource type="Texture2D" uid="uid://de6o6oo53fjyc" path="res://Assets/Menu/MenuDock.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/UI/Ticket.png" id="6_173y0"]
 [ext_resource type="Texture2D" uid="uid://dok2upe21xu8j" path="res://Assets/Mascots/Cuby.png" id="6_s3cbl"]
 [ext_resource type="Texture2D" uid="uid://bmsolomqsvxdn" path="res://Assets/Menu/Home.png" id="7"]
 [ext_resource type="Texture2D" uid="uid://b0fxh5pishhre" path="res://Assets/Menu/Achivements.png" id="8"]
@@ -15,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://ynpc7wv52gl0" path="res://Assets/Menu/Play.png" id="11"]
 [ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="12"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Settings/settings_menu.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/NoAds/no_ads_purchase.tscn" id="14"]
 
 [node name="Home" type="Control" unique_id=1077973259]
 layout_mode = 3
@@ -66,22 +68,23 @@ texture = ExtResource("4_loy6l")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Copy" type="VBoxContainer" parent="BestPanel/BestRow" unique_id=1089209279]
+[node name="Score" type="VBoxContainer" parent="BestPanel/BestRow" unique_id=1089209279]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="Caption" type="Label" parent="BestPanel/BestRow/Copy" unique_id=1039141340]
+[node name="Caption" type="Label" parent="BestPanel/BestRow/Score" unique_id=1039141340]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
 text = "BEST SCORE"
 
-[node name="BestScoreLabel" type="Label" parent="BestPanel/BestRow/Copy" unique_id=70521302]
+[node name="BestScoreLabel" type="Label" parent="BestPanel/BestRow/Score" unique_id=70521302]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 27
 text = "0"
+horizontal_alignment = 1
 
 [node name="CoinPanel" type="PanelContainer" parent="." unique_id=928885741]
 layout_mode = 0
@@ -96,7 +99,7 @@ theme_override_constants/separation = 12
 alignment = 1
 
 [node name="CoinIcon" type="TextureRect" parent="CoinPanel/CoinRow" unique_id=1003842360]
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 texture = ExtResource("5")
 expand_mode = 1
@@ -107,6 +110,32 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 27
 text = "0"
+horizontal_alignment = 1
+
+[node name="TicketPanel" type="PanelContainer" parent="." unique_id=1505216483]
+layout_mode = 0
+offset_left = 363.0
+offset_top = 22.0
+offset_right = 529.0
+offset_bottom = 104.0
+
+[node name="TicketRow" type="HBoxContainer" parent="TicketPanel" unique_id=1751810089]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="TicketIcon" type="TextureRect" parent="TicketPanel/TicketRow" unique_id=1166969211]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture = ExtResource("6_173y0")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TicketLabel" type="Label" parent="TicketPanel/TicketRow" unique_id=1042006569]
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+text = "0"
+horizontal_alignment = 1
 
 [node name="Mascot" type="TextureRect" parent="." unique_id=1764906066]
 unique_name_in_owner = true
@@ -289,4 +318,7 @@ text = "CLOSE"
 script = ExtResource("12")
 
 [node name="SettingsMenu" parent="." unique_id=1908337641 instance=ExtResource("13")]
+layout_mode = 1
+
+[node name="NoAdsPurchase" parent="." instance=ExtResource("14")]
 layout_mode = 1

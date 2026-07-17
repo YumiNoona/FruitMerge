@@ -1,0 +1,112 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/NoAds/no_ads_purchase.gd" id="1"]
+[ext_resource type="Theme" path="res://Data/Themes/cozy_theme.tres" id="2"]
+[ext_resource type="Texture2D" path="res://Assets/UI/NoAds.png" id="3"]
+[ext_resource type="Texture2D" path="res://Assets/UI/Close.png" id="4"]
+[ext_resource type="Script" path="res://Scripts/UI/Components/cozy_button.gd" id="5"]
+
+[node name="NoAdsPurchase" type="Control"]
+visible = false
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme = ExtResource("2")
+script = ExtResource("1")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.19, 0.1, 0.05, 0.68)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelRoot" type="PanelContainer" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(560, 690)
+layout_mode = 2
+theme_type_variation = &"PeachPanel"
+
+[node name="ContentMargin" type="MarginContainer" parent="Center/PanelRoot"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 34
+
+[node name="Content" type="VBoxContainer" parent="Center/PanelRoot/ContentMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/PanelRoot/ContentMargin/Content"]
+layout_mode = 2
+theme_type_variation = &"HeadingLabel"
+text = "NO ADS"
+horizontal_alignment = 1
+
+[node name="NoAdsArt" type="TextureRect" parent="Center/PanelRoot/ContentMargin/Content"]
+custom_minimum_size = Vector2(0, 248)
+layout_mode = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Description" type="Label" parent="Center/PanelRoot/ContentMargin/Content"]
+custom_minimum_size = Vector2(0, 94)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Keep the cozy vibes flowing.\nRemove forced ads forever."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="PurchaseButton" type="Button" parent="Center/PanelRoot/ContentMargin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_type_variation = &"OrangeButton"
+theme_override_font_sizes/font_size = 22
+text = "CONTINUE WITH GOOGLE PLAY"
+script = ExtResource("5")
+
+[node name="StatusLabel" type="Label" parent="Center/PanelRoot/ContentMargin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 68)
+layout_mode = 2
+theme_type_variation = &"CaptionLabel"
+theme_override_font_sizes/font_size = 16
+text = "One payment removes forced ads forever. Price is shown by Google Play."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="TextureButton" parent="Center/PanelRoot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -72.0
+offset_top = -31.0
+offset_right = 28.0
+offset_bottom = 69.0
+grow_horizontal = 0
+texture_normal = ExtResource("4")
+ignore_texture_size = true
+stretch_mode = 5

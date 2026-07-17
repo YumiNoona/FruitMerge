@@ -8,7 +8,7 @@ script = ExtResource("1")
 id = "powerup_remove_smallest"
 display_name = "Remove Smallest"
 icon = ExtResource("2")
-cost = 250
+cost = 1
+currency = &"tickets"
 category = "powerup"
 description = "Remove the lowest-tier fruit"
-

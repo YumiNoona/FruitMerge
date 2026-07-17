@@ -3,6 +3,7 @@ extends Control
 @onready var _score_label: Label = %ScoreLabel
 @onready var _high_score_label: Label = %HighScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
+@onready var _tickets_label: Label = %TicketsLabel
 @onready var _next_fruit_icon: TextureRect = %NextFruitIcon
 @onready var _danger_overlay: ColorRect = %DangerOverlay
 @onready var _danger_warning: Label = %DangerWarning
@@ -10,7 +11,7 @@ extends Control
 @onready var _combo_multiplier: Label = %ComboMultiplier
 @onready var _combo_callout: Label = %ComboCallout
 @onready var _score_pop_container: Control = %ScorePopContainer
-@onready var _pause_button: Button = %PauseButton
+@onready var _pause_button: TextureButton = %PauseButton
 @onready var _pause_menu = $PauseMenu
 @onready var _level_up_button: TextureButton = %LevelUpButton
 @onready var _shake_button: TextureButton = %ShakeButton
@@ -29,6 +30,7 @@ func _ready() -> void:
 	EventBus.score_changed.connect(_on_score_changed)
 	EventBus.high_score_changed.connect(_on_high_score_changed)
 	EventBus.coins_changed.connect(_on_coins_changed)
+	EventBus.tickets_changed.connect(_on_tickets_changed)
 	EventBus.fruit_dropped.connect(_on_fruit_dropped)
 	EventBus.fruit_merged.connect(_on_fruit_merged)
 	EventBus.danger_line_entered.connect(_on_danger_entered)
@@ -44,6 +46,7 @@ func _ready() -> void:
 	_update_score(GameManager.score)
 	_update_high_score(GameManager.high_score)
 	_update_coins(EconomyManager.coins)
+	_update_tickets(EconomyManager.tickets)
 	_update_next_fruit()
 	_update_powerup_buttons()
 
@@ -58,6 +61,10 @@ func _on_high_score_changed(new_high: int) -> void:
 
 func _on_coins_changed(new_amount: int) -> void:
 	_update_coins(new_amount)
+
+
+func _on_tickets_changed(new_amount: int) -> void:
+	_update_tickets(new_amount)
 
 
 func _on_fruit_dropped(_tier: int) -> void:
@@ -166,6 +173,10 @@ func _update_high_score(value: int) -> void:
 
 func _update_coins(value: int) -> void:
 	_coins_label.text = "%d" % value
+
+
+func _update_tickets(value: int) -> void:
+	_tickets_label.text = "%d" % value
 
 
 func _update_next_fruit() -> void:

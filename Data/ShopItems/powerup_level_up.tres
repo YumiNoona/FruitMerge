@@ -8,7 +8,7 @@ script = ExtResource("1")
 id = "powerup_level_up"
 display_name = "Level Up"
 icon = ExtResource("2")
-cost = 350
+cost = 2
+currency = &"tickets"
 category = "powerup"
 description = "Promote one selected fruit"
-

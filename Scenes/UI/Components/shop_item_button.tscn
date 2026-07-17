@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://c0vforfkqalk1" path="res://Scripts/UI/Components/shop_item_button.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="2"]
 [ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="3"]
+[ext_resource type="Texture2D" path="res://Assets/UI/Ticket.png" id="4"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l3tvs"]
 font_size = 30
@@ -71,7 +72,8 @@ mouse_filter = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="CoinGlyph" type="TextureRect" parent="ContentMargin/Content/PricePanel/PriceRow" unique_id=1362080417]
+[node name="CurrencyGlyph" type="TextureRect" parent="ContentMargin/Content/PricePanel/PriceRow" unique_id=1362080417]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture = ExtResource("2")

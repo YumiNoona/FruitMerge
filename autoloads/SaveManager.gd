@@ -1,7 +1,7 @@
 extends Node
 
 const SAVE_PATH := "user://savegame.json"
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 
 var _settings: Dictionary = {}
 var _loaded: bool = false
@@ -13,6 +13,7 @@ func save_game() -> void:
 	var data := {
 		"version": SAVE_VERSION,
 		"coins": EconomyManager.coins if is_instance_valid(EconomyManager) else 0,
+		"tickets": EconomyManager.tickets if is_instance_valid(EconomyManager) else 0,
 		"owned_items": _serialize_owned(),
 		"powerup_counts": _serialize_powerups(),
 		"high_score": GameManager.high_score if is_instance_valid(GameManager) else 0,
@@ -36,6 +37,7 @@ func load_game() -> void:
 func _load_data(data: Dictionary) -> void:
 	if is_instance_valid(EconomyManager):
 		EconomyManager.coins = data.get("coins", 0)
+		EconomyManager.tickets = data.get("tickets", 0)
 		var owned: Array = str_to_var(data.get("owned_items", "[]"))
 		EconomyManager.owned_items.assign(owned if owned else [])
 		var pw = data.get("powerup_counts", {})

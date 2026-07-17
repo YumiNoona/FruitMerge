@@ -8,7 +8,7 @@ script = ExtResource("1")
 id = "powerup_shake_box"
 display_name = "Shake Box"
 icon = ExtResource("2")
-cost = 300
+cost = 2
+currency = &"tickets"
 category = "powerup"
 description = "Shake and mix the whole pile"
-

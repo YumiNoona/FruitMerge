@@ -5,18 +5,21 @@ const ACHIEVEMENTS_MUSIC: AudioStream = preload("res://Audio/Music/Achievements.
 
 @onready var _best_score_label: Label = %BestScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
+@onready var _tickets_label: Label = $TicketPanel/TicketRow/TicketLabel
 @onready var _mascot: TextureRect = %Mascot
 @onready var _play_button: TextureButton = %PlayButton
 @onready var _home_button: TextureButton = %HomeButton
 @onready var _achievements_button: TextureButton = %AchievementsButton
 @onready var _shop_button: TextureButton = %ShopButton
 @onready var _settings_button: TextureButton = %SettingsButton
+@onready var _no_ads_button: TextureButton = %NoAdsButton
 @onready var _info_overlay: Control = %InfoOverlay
 @onready var _info_title: Label = %InfoTitle
 @onready var _info_body: Label = %InfoBody
 @onready var _settings_controls: VBoxContainer = %SettingsControls
 @onready var _close_info_button: Button = %CloseInfoButton
 @onready var _settings_menu = $SettingsMenu
+@onready var _no_ads_purchase: NoAdsPurchase = $NoAdsPurchase
 
 
 func _ready() -> void:
@@ -24,13 +27,18 @@ func _ready() -> void:
 	AudioManager.play_music(MAIN_MENU_MUSIC)
 	_best_score_label.text = "%d" % GameManager.high_score
 	_update_coins(EconomyManager.coins)
+	_update_tickets(EconomyManager.tickets)
 	EventBus.coins_changed.connect(_update_coins)
+	EventBus.tickets_changed.connect(_update_tickets)
+	AdManager.no_ads_changed.connect(_on_no_ads_changed)
+	_no_ads_button.visible = not AdManager.has_no_ads()
 
 	_play_button.pressed.connect(_start_game)
 	_home_button.pressed.connect(_on_home_pressed)
 	_achievements_button.pressed.connect(_show_achievements)
 	_shop_button.pressed.connect(_open_shop)
 	_settings_button.pressed.connect(_show_settings)
+	_no_ads_button.pressed.connect(_show_no_ads_purchase)
 	_close_info_button.pressed.connect(_hide_info)
 
 	_play_intro.call_deferred()
@@ -38,6 +46,10 @@ func _ready() -> void:
 
 func _update_coins(amount: int) -> void:
 	_coins_label.text = "%d" % amount
+
+
+func _update_tickets(amount: int) -> void:
+	_tickets_label.text = "%d" % amount
 
 
 func _start_game() -> void:
@@ -73,6 +85,14 @@ func _show_achievements() -> void:
 func _show_settings() -> void:
 	_hide_info()
 	_settings_menu.open()
+
+
+func _show_no_ads_purchase() -> void:
+	_no_ads_purchase.open()
+
+
+func _on_no_ads_changed(owned: bool) -> void:
+	_no_ads_button.visible = not owned
 
 
 func _show_info() -> void:

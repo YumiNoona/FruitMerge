@@ -4,7 +4,19 @@ extends Control
 const HOME_SCENE := "res://Scenes/UI/Home/home.tscn"
 const MAIN_MENU_MUSIC: AudioStream = preload("res://Audio/Music/Main Menu.wav")
 const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
-const DAILY_COIN_REWARDS: PackedInt32Array = [25, 35, 45, 60, 75, 100, 250]
+const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
+
+# Coins buy collectible friends; tickets are the special currency for power-ups.
+# Keeping the rewards small and predictable makes the seven-day loop easy to read.
+const DAILY_REWARDS := [
+	{"currency": &"coins", "amount": 25},
+	{"currency": &"coins", "amount": 35},
+	{"currency": &"tickets", "amount": 1},
+	{"currency": &"coins", "amount": 60},
+	{"currency": &"tickets", "amount": 2},
+	{"currency": &"coins", "amount": 100},
+	{"currency": &"tickets", "amount": 3},
+]
 
 @onready var _grid: GridContainer = %RewardsGrid
 @onready var _day_seven_slot: Control = %DaySevenSlot
@@ -22,6 +34,10 @@ func _ready() -> void:
 	_claimed_today = str(SaveManager.get_setting("daily_reward_last_claim", "")) == _today_string()
 	_claim_button.pressed.connect(_on_claim_pressed)
 	%CloseButton.pressed.connect(_go_home)
+	# GridContainer receives its final size on the first layout pass. Populate after
+	# that pass so generated cards can never be wider or taller than the area set
+	# in the scene.
+	await get_tree().process_frame
 	_populate_rewards()
 	_update_claim_button()
 	_play_intro.call_deferred()
@@ -37,7 +53,7 @@ func _get_current_day_index() -> int:
 	var stored_day := int(SaveManager.get_setting("daily_reward_day_index", 0))
 	var last_claim := str(SaveManager.get_setting("daily_reward_last_claim", ""))
 	if not last_claim.is_empty() and last_claim != _today_string():
-		stored_day = posmod(stored_day + 1, DAILY_COIN_REWARDS.size())
+		stored_day = posmod(stored_day + 1, DAILY_REWARDS.size())
 	return stored_day
 
 
@@ -47,11 +63,18 @@ func _today_string() -> String:
 
 func _populate_rewards() -> void:
 	for child in _grid.get_children():
-		child.queue_free()
+		child.free()
+
+	var columns := maxi(_grid.columns, 1)
+	var horizontal_gap := float(_grid.get_theme_constant("h_separation"))
+	var vertical_gap := float(_grid.get_theme_constant("v_separation"))
+	var card_width := maxf(1.0, (_grid.size.x - horizontal_gap * float(columns - 1)) / float(columns))
+	var card_height := maxf(1.0, (_grid.size.y - vertical_gap) / 2.0)
+	var card_size := Vector2(floorf(card_width), floorf(card_height))
 	for index in 6:
-		_grid.add_child(_create_day_card(index))
+		_grid.add_child(_create_day_card(index, card_size))
 	for child in _day_seven_slot.get_children():
-		child.queue_free()
+		child.free()
 	var day_seven_card := _create_day_seven_card()
 	_day_seven_slot.add_child(day_seven_card)
 	# The slot is intentionally laid out in the scene. Make the generated card
@@ -59,9 +82,13 @@ func _populate_rewards() -> void:
 	day_seven_card.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
-func _create_day_card(index: int) -> PanelContainer:
+func _create_day_card(index: int, card_size: Vector2) -> PanelContainer:
 	var card := PanelContainer.new()
-	card.custom_minimum_size = Vector2(174, 106)
+	card.custom_minimum_size = card_size
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	card.clip_contents = true
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_theme_stylebox_override("panel", _card_style(_get_card_color(index), _get_card_border(index)))
 
 	var content := VBoxContainer.new()
@@ -89,15 +116,15 @@ func _create_day_card(index: int) -> PanelContainer:
 		reward_row.add_theme_constant_override("separation", 4)
 		content.add_child(reward_row)
 
-		var coin := TextureRect.new()
-		coin.custom_minimum_size = Vector2(35, 35)
-		coin.texture = COIN_ICON
-		coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		reward_row.add_child(coin)
+		var reward_icon := TextureRect.new()
+		reward_icon.custom_minimum_size = Vector2(35, 35)
+		reward_icon.texture = _reward_icon(index)
+		reward_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		reward_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		reward_row.add_child(reward_icon)
 
 		var amount := Label.new()
-		amount.text = "%d" % DAILY_COIN_REWARDS[index]
+		amount.text = "x%d" % _reward_amount(index) if _reward_currency(index) == &"tickets" else "%d" % _reward_amount(index)
 		amount.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		amount.add_theme_font_size_override("font_size", 23)
 		amount.add_theme_color_override("font_color", Color(1, 0.96, 0.78, 1) if _is_current_day(index) else Color(0.48, 0.27, 0.13, 1))
@@ -108,6 +135,7 @@ func _create_day_card(index: int) -> PanelContainer:
 func _create_day_seven_card() -> PanelContainer:
 	var card := PanelContainer.new()
 	card.clip_contents = true
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_theme_stylebox_override("panel", _card_style(Color(1.0, 0.77, 0.16, 1), Color(1, 0.96, 0.66, 1), 22))
 
 	var content := VBoxContainer.new()
@@ -135,15 +163,15 @@ func _create_day_seven_card() -> PanelContainer:
 		reward_row.add_theme_constant_override("separation", 7)
 		content.add_child(reward_row)
 
-		var coin := TextureRect.new()
-		coin.custom_minimum_size = Vector2(42, 42)
-		coin.texture = COIN_ICON
-		coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		reward_row.add_child(coin)
+		var reward_icon := TextureRect.new()
+		reward_icon.custom_minimum_size = Vector2(42, 42)
+		reward_icon.texture = _reward_icon(6)
+		reward_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		reward_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		reward_row.add_child(reward_icon)
 
 		var amount := Label.new()
-		amount.text = "%d coins" % DAILY_COIN_REWARDS[6]
+		amount.text = "x%d TICKETS" % _reward_amount(6)
 		amount.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		amount.add_theme_font_size_override("font_size", 26)
 		amount.add_theme_color_override("font_color", Color(0.45, 0.23, 0.08, 1))
@@ -195,12 +223,35 @@ func _is_completed(index: int) -> bool:
 	return index < _day_index
 
 
+func _reward_currency(index: int) -> StringName:
+	return StringName(DAILY_REWARDS[index].get("currency", &"coins"))
+
+
+func _reward_amount(index: int) -> int:
+	return int(DAILY_REWARDS[index].get("amount", 0))
+
+
+func _reward_icon(index: int) -> Texture2D:
+	return TICKET_ICON if _reward_currency(index) == &"tickets" else COIN_ICON
+
+
+func _reward_name(index: int) -> String:
+	return "TICKETS" if _reward_currency(index) == &"tickets" else "COINS"
+
+
+func _grant_reward(index: int) -> void:
+	if _reward_currency(index) == &"tickets":
+		EconomyManager.add_tickets(_reward_amount(index))
+	else:
+		EconomyManager.add_coins(_reward_amount(index))
+
+
 func _update_claim_button() -> void:
 	if _claimed_today:
 		_claim_button.text = "CONTINUE"
 		_status_label.text = "Today’s fruit treat is safely in your basket!"
 	else:
-		_claim_button.text = "CLAIM %d COINS" % DAILY_COIN_REWARDS[_day_index]
+		_claim_button.text = "CLAIM %d %s" % [_reward_amount(_day_index), _reward_name(_day_index)]
 		_status_label.text = "Come back tomorrow for the next sweet surprise."
 
 
@@ -208,7 +259,7 @@ func _on_claim_pressed() -> void:
 	if _claimed_today:
 		_go_home()
 		return
-	EconomyManager.add_coins(DAILY_COIN_REWARDS[_day_index])
+	_grant_reward(_day_index)
 	SaveManager.set_setting("daily_reward_day_index", _day_index)
 	SaveManager.set_setting("daily_reward_last_claim", _today_string())
 	_claimed_today = true

@@ -16,6 +16,9 @@ signal high_score_changed(new_high_score: int)
 signal coins_changed(new_amount: int)
 
 @warning_ignore("unused_signal")
+signal tickets_changed(new_amount: int)
+
+@warning_ignore("unused_signal")
 signal game_over(final_score: int)
 
 @warning_ignore("unused_signal")
