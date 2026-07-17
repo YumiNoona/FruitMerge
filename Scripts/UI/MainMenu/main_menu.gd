@@ -1,6 +1,7 @@
 extends Control
 
 const HOME_SCENE := "res://Scenes/UI/Home/home.tscn"
+const DAILY_REWARD_SCENE := "res://Scenes/UI/DailyReward/daily_reward.tscn"
 const MINIMUM_DISPLAY_TIME := 1.35
 const LOADING_TIPS := [
 	"Two matching fruits walk into a box. One bigger fruit walks out.",
@@ -77,12 +78,9 @@ func _play_intro() -> void:
 func _finish_with_resource() -> void:
 	_transitioning = true
 	_loading_label.text = "Ready!"
-	var packed := ResourceLoader.load_threaded_get(HOME_SCENE) as PackedScene
+	ResourceLoader.load_threaded_get(HOME_SCENE)
 	await _fade_out()
-	if packed:
-		get_tree().change_scene_to_packed(packed)
-	else:
-		get_tree().change_scene_to_file(HOME_SCENE)
+	get_tree().change_scene_to_file(DAILY_REWARD_SCENE)
 
 
 func _finish_with_path() -> void:
@@ -90,7 +88,7 @@ func _finish_with_path() -> void:
 	_loading_bar.value = 100.0
 	_loading_label.text = "Ready!"
 	await _fade_out()
-	get_tree().change_scene_to_file(HOME_SCENE)
+	get_tree().change_scene_to_file(DAILY_REWARD_SCENE)
 
 
 func _fade_out() -> void:
