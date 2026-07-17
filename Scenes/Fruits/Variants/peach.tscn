@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://dxv4malw6csfm"]
+
+[ext_resource type="Script" uid="uid://bkb1mxfyg0jrf" path="res://Scripts/Entities/Fruit/fruit.gd" id="1"]
+[ext_resource type="PhysicsMaterial" path="res://Data/Resources/fruit_physics.tres" id="2"]
+[ext_resource type="Resource" path="res://Data/Fruits/peach.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://bjvad3tgg5gjo" path="res://Assets/Fruits/Peach.png" id="4"]
+
+[sub_resource type="CircleShape2D" id="CollisionCircle"]
+radius = 75.00667
+
+[node name="Peach" type="RigidBody2D" unique_id=1448468078 groups=["fruits"]]
+z_index = 10
+mass = 0.5
+physics_material_override = ExtResource("2")
+sleeping = true
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 12
+linear_damp = 0.12
+angular_damp = 0.45
+script = ExtResource("1")
+data = ExtResource("3")
+use_scene_visuals = true
+use_scene_collision = true
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1136392603]
+unique_name_in_owner = true
+scale = Vector2(0.490798, 0.490798)
+texture = ExtResource("4")
+
+[node name="Face" type="AnimatedSprite2D" parent="." unique_id=2139802691]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+position = Vector2(0, -4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924602716]
+unique_name_in_owner = true
+position = Vector2(0, 4)
+shape = SubResource("CollisionCircle")
+
+[node name="WakeTimer" type="Timer" parent="." unique_id=1212367865]
+unique_name_in_owner = true
+wait_time = 0.4
+one_shot = true
+
+[node name="IdleTimer" type="Timer" parent="." unique_id=1136441765]
+unique_name_in_owner = true
+wait_time = 9.0
+one_shot = true

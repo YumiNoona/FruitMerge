@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://m6vpswd6mcrw"]
+
+[ext_resource type="Script" uid="uid://bkb1mxfyg0jrf" path="res://Scripts/Entities/Fruit/fruit.gd" id="1"]
+[ext_resource type="PhysicsMaterial" path="res://Data/Resources/fruit_physics.tres" id="2"]
+[ext_resource type="Resource" uid="uid://s31mutudiwqb" path="res://Data/Fruits/watermelon.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://ovlvr6ymt41h" path="res://Assets/Fruits/Watermellon.png" id="4"]
+
+[sub_resource type="CircleShape2D" id="CollisionCircle"]
+radius = 123.00407
+
+[node name="Watermelon" type="RigidBody2D" unique_id=1632356725 groups=["fruits"]]
+z_index = 10
+mass = 0.5
+physics_material_override = ExtResource("2")
+sleeping = true
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 12
+linear_damp = 0.12
+angular_damp = 0.45
+script = ExtResource("1")
+data = ExtResource("3")
+use_scene_visuals = true
+use_scene_collision = true
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=374676103]
+unique_name_in_owner = true
+scale = Vector2(0.733333, 0.733333)
+texture = ExtResource("4")
+
+[node name="Face" type="AnimatedSprite2D" parent="." unique_id=1462029999]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+position = Vector2(0, -4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=689209913]
+unique_name_in_owner = true
+position = Vector2(0, 17)
+shape = SubResource("CollisionCircle")
+
+[node name="WakeTimer" type="Timer" parent="." unique_id=2083396314]
+unique_name_in_owner = true
+wait_time = 0.4
+one_shot = true
+
+[node name="IdleTimer" type="Timer" parent="." unique_id=860925351]
+unique_name_in_owner = true
+wait_time = 9.0
+one_shot = true

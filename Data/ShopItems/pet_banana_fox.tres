@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Pets/Banana Fox.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "pet_banana_fox"
+display_name = "Banana Fox"
+icon = ExtResource("2")
+cost = 1400
+category = "pet"
+description = "Fast, clever and potassium-rich"
+

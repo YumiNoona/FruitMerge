@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Pets/Melon Bear.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "pet_melon_bear"
+display_name = "Melon Bear"
+icon = ExtResource("2")
+cost = 1300
+category = "pet"
+description = "The coziest bear in the box"
+

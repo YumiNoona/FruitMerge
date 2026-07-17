@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="FruitData" load_steps=3 format=3 uid="uid://f0a1b2c30000000000000011"]
 
-[ext_resource type="Script" path="res://data/resources/fruit_data.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/Data/fruit_data.gd" id="1"]
 [ext_resource type="Texture2D" path="res://Assets/Fruits/Strawberry.png" id="2"]
 
 [resource]

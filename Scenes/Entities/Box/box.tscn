@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbox0000000000000000000001"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/Box/box.gd" id="1"]
+
+[sub_resource type="RectangleShape2D" id="WallShape"]
+size = Vector2(22, 920)
+
+[sub_resource type="RectangleShape2D" id="FloorShape"]
+size = Vector2(542, 22)
+
+[node name="Box" type="StaticBody2D" groups=["box"]]
+script = ExtResource("1")
+danger_settle_time = 2.4
+danger_line_y = -820.0
+
+[node name="LeftWall" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-260, -460)
+shape = SubResource("WallShape")
+
+[node name="RightWall" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(260, -460)
+shape = SubResource("WallShape")
+
+[node name="Floor" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, 0)
+shape = SubResource("FloorShape")

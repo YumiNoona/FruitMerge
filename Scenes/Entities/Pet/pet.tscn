@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://d2oytgx1ahhm3"]
+
+[ext_resource type="Script" uid="uid://6f6n0cq1h6a5" path="res://Scripts/Entities/Pet/pet.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/UI/Mascot.png" id="2"]
+
+[node name="Pet" type="Node2D"]
+script = ExtResource("1")
+bob_amplitude = 4.0
+bob_speed = 2.0
+squash_amount = 0.12
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+scale = Vector2(0.13, 0.13)
+texture = ExtResource("2")
+centered = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true

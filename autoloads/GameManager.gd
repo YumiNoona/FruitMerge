@@ -55,7 +55,7 @@ func start_new_run() -> void:
 	next_fruit_tier = Enums.FruitTier.CHERRY
 	EventBus.score_changed.emit(score)
 	change_state(Enums.GameState.PLAYING)
-	get_tree().change_scene_to_file("res://main.tscn")
+	get_tree().change_scene_to_file("res://Scenes/Core/main.tscn")
 
 func add_score(points: int) -> int:
 	var mult := 1.0

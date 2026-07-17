@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://cpwny7e8eargy"]
+
+[ext_resource type="Script" uid="uid://dwrjckrtjas6y" path="res://Scripts/Core/main.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://byiarmv5l5oi7" path="res://Scenes/Entities/Box/box.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://cuomd8d71krie" path="res://Scenes/Entities/Spawner/spawner.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://d2oytgx1ahhm3" path="res://Scenes/Entities/Pet/pet.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://crtdg4cffh6sa" path="res://Scenes/VFX/merge_burst.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://dagjsv28kdu6c" path="res://Scenes/UI/HUD/hud.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://5lrjra080tca" path="res://Scenes/UI/GameOver/game_over.tscn" id="7"]
+[ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://bf34mdo5qit6q" path="res://Assets/UI/Container.png" id="9"]
+
+[node name="Main" type="Node2D" unique_id=1137529470]
+script = ExtResource("1")
+box_scene = ExtResource("2")
+spawner_scene = ExtResource("3")
+pet_scene = ExtResource("4")
+merge_burst_scene = ExtResource("5")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=902294362]
+visible = false
+z_index = -100
+position = Vector2(0, -640)
+scale = Vector2(0.766, 0.766)
+texture = ExtResource("8")
+
+[node name="ContainerArt" type="Sprite2D" parent="." unique_id=1674211724]
+z_index = -10
+position = Vector2(0, -545)
+scale = Vector2(0.72, 0.72)
+texture = ExtResource("9")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=29525824]
+position = Vector2(0, -640)
+
+[node name="BoxContainer" type="Node2D" parent="." unique_id=687075484]
+unique_name_in_owner = true
+position = Vector2(0, -80)
+
+[node name="SpawnerContainer" type="Node2D" parent="." unique_id=1110466877]
+unique_name_in_owner = true
+position = Vector2(0, -1060)
+
+[node name="PetContainer" type="Node2D" parent="." unique_id=1142105273]
+unique_name_in_owner = true
+z_index = 30
+position = Vector2(282, -155)
+
+[node name="Interface" type="CanvasLayer" parent="." unique_id=1980987107]
+
+[node name="HUD" parent="Interface" unique_id=508397783 instance=ExtResource("6")]
+unique_name_in_owner = true
+
+[node name="GameOverPanel" parent="Interface" unique_id=1459464301 instance=ExtResource("7")]
+unique_name_in_owner = true
+visible = false
