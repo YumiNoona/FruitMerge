@@ -1,5 +1,7 @@
 extends Control
 
+const SHOP_MUSIC: AudioStream = preload("res://Audio/Music/Shop.wav")
+
 const ITEM_PATHS: PackedStringArray = [
 	"res://Data/ShopItems/pet_strawberry_cat.tres",
 	"res://Data/ShopItems/pet_watermelon_pup.tres",
@@ -36,6 +38,7 @@ var _shop_items: Array[ShopItemData] = []
 
 func _ready() -> void:
 	GameManager.change_state(Enums.GameState.SHOP)
+	AudioManager.play_music(SHOP_MUSIC)
 	_load_items()
 	EventBus.coins_changed.connect(_on_coins_changed)
 	EventBus.shop_item_purchased.connect(_on_catalog_changed)

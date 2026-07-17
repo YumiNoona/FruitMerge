@@ -1,17 +1,17 @@
-[gd_scene load_steps=11 format=3 uid="uid://dagjsv28kdu6c"]
+[gd_scene format=3 uid="uid://dagjsv28kdu6c"]
 
-[ext_resource type="Script" path="res://Scripts/UI/HUD/hud.gd" id="1"]
-[ext_resource type="Theme" path="res://Data/Themes/cozy_theme.tres" id="2"]
-[ext_resource type="Script" path="res://Scripts/UI/Components/cozy_button.gd" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="4"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Cloudy.otf" id="5"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Atop.ttf" id="6"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/LevelUP.png" id="7"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/ShakeIT.png" id="8"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/SuckUP.png" id="9"]
+[ext_resource type="Script" uid="uid://d0jgs76v321fr" path="res://Scripts/UI/HUD/hud.gd" id="1"]
+[ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
+[ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="4"]
+[ext_resource type="FontFile" uid="uid://b7jjn4abg7gyt" path="res://Assets/Fonts/Cloudy.otf" id="5"]
+[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="6"]
+[ext_resource type="Texture2D" uid="uid://nopddh48kk0t" path="res://Assets/PowerUps/LevelUP.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cf2ma74f64wdy" path="res://Assets/PowerUps/ShakeIT.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://v65d1o5qctqf" path="res://Assets/PowerUps/SuckUP.png" id="9"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Pause/pause_menu.tscn" id="10"]
 
-[node name="HUD" type="Control"]
+[node name="HUD" type="Control" unique_id=761868550]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -23,7 +23,7 @@ mouse_filter = 2
 theme = ExtResource("2")
 script = ExtResource("1")
 
-[node name="DangerOverlay" type="ColorRect" parent="."]
+[node name="DangerOverlay" type="ColorRect" parent="." unique_id=1516065254]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -34,7 +34,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.24, 0.2, 0.22)
 
-[node name="TopPanel" type="Panel" parent="."]
+[node name="TopPanel" type="Panel" parent="." unique_id=1282061740]
 layout_mode = 0
 anchor_right = 1.0
 offset_left = 18.0
@@ -43,7 +43,7 @@ offset_right = -18.0
 offset_bottom = 150.0
 mouse_filter = 1
 
-[node name="TopRow" type="Control" parent="TopPanel"]
+[node name="TopRow" type="Control" parent="TopPanel" unique_id=1909119419]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,7 +51,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PauseButton" type="Button" parent="TopPanel/TopRow"]
+[node name="PauseButton" type="Button" parent="TopPanel/TopRow" unique_id=2097920535]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 14.0
@@ -63,7 +63,7 @@ theme_override_font_sizes/font_size = 24
 text = "II"
 script = ExtResource("3")
 
-[node name="ScoreBlock" type="VBoxContainer" parent="TopPanel/TopRow"]
+[node name="ScoreBlock" type="VBoxContainer" parent="TopPanel/TopRow" unique_id=1927060834]
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
@@ -72,30 +72,30 @@ offset_top = 12.0
 offset_right = 150.0
 offset_bottom = 118.0
 grow_horizontal = 2
-alignment = 1
 theme_override_constants/separation = -5
+alignment = 1
 
-[node name="ScoreCaption" type="Label" parent="TopPanel/TopRow/ScoreBlock"]
+[node name="ScoreCaption" type="Label" parent="TopPanel/TopRow/ScoreBlock" unique_id=1351932339]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
 text = "SCORE"
 horizontal_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="TopPanel/TopRow/ScoreBlock"]
+[node name="ScoreLabel" type="Label" parent="TopPanel/TopRow/ScoreBlock" unique_id=52368361]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ScoreLabel"
 text = "0"
 horizontal_alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="TopPanel/TopRow/ScoreBlock"]
+[node name="HighScoreLabel" type="Label" parent="TopPanel/TopRow/ScoreBlock" unique_id=722846137]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
 text = "Best  0"
 horizontal_alignment = 1
 
-[node name="CoinBlock" type="PanelContainer" parent="TopPanel/TopRow"]
+[node name="CoinBlock" type="PanelContainer" parent="TopPanel/TopRow" unique_id=792183887]
 layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
@@ -106,60 +106,59 @@ offset_bottom = 100.0
 grow_horizontal = 0
 theme_type_variation = &"GreenPanel"
 
-[node name="CoinRow" type="HBoxContainer" parent="TopPanel/TopRow/CoinBlock"]
+[node name="CoinRow" type="HBoxContainer" parent="TopPanel/TopRow/CoinBlock" unique_id=1279906710]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 8
+alignment = 1
 
-[node name="CoinGlyph" type="TextureRect" parent="TopPanel/TopRow/CoinBlock/CoinRow"]
+[node name="CoinGlyph" type="TextureRect" parent="TopPanel/TopRow/CoinBlock/CoinRow" unique_id=1684234722]
 custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
 texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CoinsLabel" type="Label" parent="TopPanel/TopRow/CoinBlock/CoinRow"]
+[node name="CoinsLabel" type="Label" parent="TopPanel/TopRow/CoinBlock/CoinRow" unique_id=1028157389]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"WhiteLabel"
 theme_override_font_sizes/font_size = 23
 text = "0"
 
-[node name="NextPanel" type="PanelContainer" parent="."]
-layout_mode = 0
+[node name="NextPanel" type="PanelContainer" parent="." unique_id=354472279]
+layout_mode = 1
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -218.0
-offset_top = 164.0
-offset_right = -18.0
-offset_bottom = 250.0
+offset_left = -173.0
+offset_top = 159.545
+offset_right = -23.0
+offset_bottom = 249.545
 grow_horizontal = 0
 mouse_filter = 2
 
-[node name="NextRow" type="HBoxContainer" parent="NextPanel"]
+[node name="NextRow" type="HBoxContainer" parent="NextPanel" unique_id=772076108]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="NextCopy" type="VBoxContainer" parent="NextPanel/NextRow"]
+[node name="NextCopy" type="VBoxContainer" parent="NextPanel/NextRow" unique_id=802069788]
 layout_mode = 2
 mouse_filter = 2
-alignment = 1
 theme_override_constants/separation = -4
+alignment = 1
 
-[node name="Caption" type="Label" parent="NextPanel/NextRow/NextCopy"]
+[node name="Caption" type="Label" parent="NextPanel/NextRow/NextCopy" unique_id=835688897]
 layout_mode = 2
-mouse_filter = 2
 theme_type_variation = &"CaptionLabel"
 text = "NEXT"
 
-[node name="Ready" type="Label" parent="NextPanel/NextRow/NextCopy"]
+[node name="Ready" type="Label" parent="NextPanel/NextRow/NextCopy" unique_id=537734219]
 layout_mode = 2
-mouse_filter = 2
 theme_override_font_sizes/font_size = 17
 text = "fruit"
 
-[node name="NextFruitIcon" type="TextureRect" parent="NextPanel/NextRow"]
+[node name="NextFruitIcon" type="TextureRect" parent="NextPanel/NextRow" unique_id=557336160]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(58, 58)
 layout_mode = 2
@@ -167,7 +166,7 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="DangerWarning" type="Label" parent="."]
+[node name="DangerWarning" type="Label" parent="." unique_id=1049890252]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
@@ -185,7 +184,7 @@ theme_override_font_sizes/font_size = 24
 text = "TOO HIGH — MERGE FAST!"
 horizontal_alignment = 1
 
-[node name="PowerupHint" type="Label" parent="."]
+[node name="PowerupHint" type="Label" parent="." unique_id=802749085]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
@@ -193,33 +192,32 @@ offset_left = 130.0
 offset_top = 270.0
 offset_right = 590.0
 offset_bottom = 328.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.97, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0.48, 0.22, 0.08, 0.96)
-theme_override_fonts/font = ExtResource("6")
 theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("6")
 theme_override_font_sizes/font_size = 24
 text = "Tap a fruit to level it up!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PowerupTray" type="PanelContainer" parent="."]
+[node name="PowerupTray" type="PanelContainer" parent="." unique_id=1193002709]
 layout_mode = 0
 offset_left = 12.0
-offset_top = 315.0
-offset_right = 116.0
-offset_bottom = 620.0
+offset_top = 174.0
+offset_right = 136.0
+offset_bottom = 479.0
 mouse_filter = 1
 
-[node name="PowerupColumn" type="VBoxContainer" parent="PowerupTray"]
+[node name="PowerupColumn" type="VBoxContainer" parent="PowerupTray" unique_id=223288358]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="LevelUpSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+[node name="LevelUpSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=2023733540]
 custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
 
-[node name="LevelUpButton" type="TextureButton" parent="PowerupTray/PowerupColumn/LevelUpSlot"]
+[node name="LevelUpButton" type="TextureButton" parent="PowerupTray/PowerupColumn/LevelUpSlot" unique_id=880568202]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -231,14 +229,13 @@ texture_normal = ExtResource("7")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="LevelUpCount" type="Label" parent="PowerupTray/PowerupColumn/LevelUpSlot"]
+[node name="LevelUpCount" type="Label" parent="PowerupTray/PowerupColumn/LevelUpSlot" unique_id=1224270999]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 51.0
 offset_top = 54.0
 offset_right = 86.0
 offset_bottom = 84.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -246,11 +243,11 @@ theme_override_font_sizes/font_size = 17
 text = "x0"
 horizontal_alignment = 1
 
-[node name="ShakeSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+[node name="ShakeSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=696279286]
 custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
 
-[node name="ShakeButton" type="TextureButton" parent="PowerupTray/PowerupColumn/ShakeSlot"]
+[node name="ShakeButton" type="TextureButton" parent="PowerupTray/PowerupColumn/ShakeSlot" unique_id=1881890609]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -262,14 +259,13 @@ texture_normal = ExtResource("8")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ShakeCount" type="Label" parent="PowerupTray/PowerupColumn/ShakeSlot"]
+[node name="ShakeCount" type="Label" parent="PowerupTray/PowerupColumn/ShakeSlot" unique_id=1821510251]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 51.0
 offset_top = 54.0
 offset_right = 86.0
 offset_bottom = 84.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -277,11 +273,11 @@ theme_override_font_sizes/font_size = 17
 text = "x0"
 horizontal_alignment = 1
 
-[node name="RemoveSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+[node name="RemoveSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=1146480691]
 custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
 
-[node name="RemoveButton" type="TextureButton" parent="PowerupTray/PowerupColumn/RemoveSlot"]
+[node name="RemoveButton" type="TextureButton" parent="PowerupTray/PowerupColumn/RemoveSlot" unique_id=1402959976]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -293,14 +289,13 @@ texture_normal = ExtResource("9")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="RemoveCount" type="Label" parent="PowerupTray/PowerupColumn/RemoveSlot"]
+[node name="RemoveCount" type="Label" parent="PowerupTray/PowerupColumn/RemoveSlot" unique_id=1273027438]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 51.0
 offset_top = 54.0
 offset_right = 86.0
 offset_bottom = 84.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -308,10 +303,10 @@ theme_override_font_sizes/font_size = 17
 text = "x0"
 horizontal_alignment = 1
 
-[node name="ComboBanner" type="Control" parent="."]
+[node name="ComboBanner" type="Control" parent="." unique_id=1911956985]
 unique_name_in_owner = true
 visible = false
-layout_mode = 0
+anchors_preset = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -324,24 +319,23 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="ComboMultiplier" type="Label" parent="ComboBanner"]
+[node name="ComboMultiplier" type="Label" parent="ComboBanner" unique_id=894161821]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 102.0
 grow_horizontal = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.65, 0.18, 1)
 theme_override_colors/font_outline_color = Color(0.38, 0.16, 0.05, 0.96)
-theme_override_fonts/font = ExtResource("5")
 theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 78
 text = "x2"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ComboCallout" type="Label" parent="ComboBanner"]
+[node name="ComboCallout" type="Label" parent="ComboBanner" unique_id=890441300]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
@@ -349,17 +343,16 @@ anchor_right = 1.0
 offset_top = 94.0
 offset_bottom = 164.0
 grow_horizontal = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.98, 0.76, 1)
 theme_override_colors/font_outline_color = Color(0.81, 0.27, 0.09, 1)
-theme_override_fonts/font = ExtResource("6")
 theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("6")
 theme_override_font_sizes/font_size = 34
 text = "JUICY COMBO!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScorePopContainer" type="Control" parent="."]
+[node name="ScorePopContainer" type="Control" parent="." unique_id=2109409295]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -369,4 +362,5 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="PauseMenu" parent="." instance=ExtResource("10")]
+[node name="PauseMenu" parent="." unique_id=636403790 instance=ExtResource("10")]
+layout_mode = 1

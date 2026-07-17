@@ -1,8 +1,11 @@
 [gd_scene format=3 uid="uid://b1l5aedv3kisu"]
 
 [ext_resource type="Script" uid="uid://c0vforfkqalk1" path="res://Scripts/UI/Components/shop_item_button.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/Menu/Coin.png" id="2"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Atop.ttf" id="3"]
+[ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="2"]
+[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_l3tvs"]
+font_size = 30
 
 [node name="ShopItemButton" type="Button" unique_id=1280928594]
 custom_minimum_size = Vector2(209, 282)
@@ -69,7 +72,7 @@ theme_override_constants/separation = 8
 alignment = 1
 
 [node name="CoinGlyph" type="TextureRect" parent="ContentMargin/Content/PricePanel/PriceRow" unique_id=1362080417]
-custom_minimum_size = Vector2(25, 25)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture = ExtResource("2")
 expand_mode = 1
@@ -80,6 +83,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"WhiteLabel"
 text = "100"
+label_settings = SubResource("LabelSettings_l3tvs")
 
 [node name="OwnedBadge" type="PanelContainer" parent="." unique_id=258772887]
 unique_name_in_owner = true

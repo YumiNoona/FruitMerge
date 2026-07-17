@@ -1,5 +1,6 @@
 extends Node2D
 
+const GAMEPLAY_MUSIC: AudioStream = preload("res://Audio/Music/Gameplay.wav")
 const POWERUP_LEVEL_UP: StringName = &"powerup_level_up"
 const POWERUP_SHAKE_BOX: StringName = &"powerup_shake_box"
 const POWERUP_REMOVE_SMALLEST: StringName = &"powerup_remove_smallest"
@@ -25,6 +26,7 @@ const PARTICLE_POOL_SIZE := 6
 
 
 func _ready() -> void:
+	AudioManager.play_music(GAMEPLAY_MUSIC)
 	EventBus.state_changed.connect(_on_state_changed)
 	EventBus.fruit_merged.connect(_on_fruit_merged)
 	EventBus.game_over.connect(_on_game_over)

@@ -1,5 +1,8 @@
 extends Control
 
+const MAIN_MENU_MUSIC: AudioStream = preload("res://Audio/Music/Main Menu.wav")
+const ACHIEVEMENTS_MUSIC: AudioStream = preload("res://Audio/Music/Achievements.wav")
+
 @onready var _best_score_label: Label = %BestScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
 @onready var _mascot: TextureRect = %Mascot
@@ -18,6 +21,7 @@ extends Control
 
 func _ready() -> void:
 	GameManager.change_state(Enums.GameState.MENU)
+	AudioManager.play_music(MAIN_MENU_MUSIC)
 	_best_score_label.text = "%d" % GameManager.high_score
 	_update_coins(EconomyManager.coins)
 	EventBus.coins_changed.connect(_update_coins)
@@ -55,6 +59,7 @@ func _on_home_pressed() -> void:
 
 
 func _show_achievements() -> void:
+	AudioManager.play_music(ACHIEVEMENTS_MUSIC)
 	_info_title.text = "ACHIEVEMENTS"
 	_info_body.text = "Best score: %d\n\nFruit discovered: %d / %d\n\nReach the watermelon to complete your first cozy collection!" % [
 		GameManager.high_score,
@@ -82,6 +87,8 @@ func _show_info() -> void:
 
 
 func _hide_info() -> void:
+	if _info_overlay.visible:
+		AudioManager.play_music(MAIN_MENU_MUSIC)
 	_info_overlay.visible = false
 
 
