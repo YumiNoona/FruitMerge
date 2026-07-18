@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bscpop0000000000000000001"]
 
 [ext_resource type="Script" path="res://Scripts/UI/Components/score_pop.gd" id="1"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Cloudy.otf" id="2"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="2"]
 
 [node name="ScorePop" type="Control"]
 z_index = 200

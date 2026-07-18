@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c0vforfkqalk1" path="res://Scripts/UI/Components/shop_item_button.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="2"]
-[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/UI/Ticket.png" id="4"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="2_27bgg"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l3tvs"]
 font_size = 24
@@ -11,28 +10,11 @@ font_color = Color(1, 0.98, 0.86, 1)
 outline_size = 2
 outline_color = Color(0.27, 0.38, 0.1, 0.9)
 
-[sub_resource type="StyleBoxFlat" id="CompactPriceStyle"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.66, 0.79, 0.31, 0.98)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.95, 0.76, 0.95)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0.28, 0.2, 0.08, 0.2)
-shadow_size = 4
-shadow_offset = Vector2(0, 3)
-
 [node name="ShopItemButton" type="Button" unique_id=1280928594]
-custom_minimum_size = Vector2(204, 292)
+custom_minimum_size = Vector2(210, 320)
 clip_contents = true
+offset_right = 204.0
+offset_bottom = 320.0
 theme_type_variation = &"ShopCardButton"
 script = ExtResource("1")
 
@@ -52,13 +34,13 @@ theme_override_constants/margin_bottom = 10
 [node name="Content" type="VBoxContainer" parent="ContentMargin" unique_id=80947497]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 5
 
 [node name="NameLabel" type="Label" parent="ContentMargin/Content" unique_id=1824040140]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3")
+theme_override_fonts/font = ExtResource("2_27bgg")
 theme_override_font_sizes/font_size = 17
 text = "Item"
 horizontal_alignment = 1
@@ -66,7 +48,7 @@ vertical_alignment = 1
 
 [node name="IconRect" type="TextureRect" parent="ContentMargin/Content" unique_id=756411312]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 126)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
@@ -77,6 +59,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_fonts/font = ExtResource("2_27bgg")
 theme_override_font_sizes/font_size = 13
 text = "A cozy collectible"
 horizontal_alignment = 1
@@ -84,10 +67,11 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="PricePanel" type="PanelContainer" parent="ContentMargin/Content" unique_id=848542178]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("CompactPriceStyle")
+theme_type_variation = &"ShopActionReady"
 
 [node name="PriceRow" type="HBoxContainer" parent="ContentMargin/Content/PricePanel" unique_id=1541507854]
 layout_mode = 2
@@ -107,42 +91,23 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"WhiteLabel"
+theme_override_fonts/font = ExtResource("2_27bgg")
 text = "100"
 label_settings = SubResource("LabelSettings_l3tvs")
-
-[node name="OwnedBadge" type="PanelContainer" parent="." unique_id=258772887]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -112.0
-offset_top = 43.0
-offset_right = -8.0
-offset_bottom = 74.0
-grow_horizontal = 0
-mouse_filter = 2
-theme_type_variation = &"GreenPanel"
-
-[node name="StatusLabel" type="Label" parent="OwnedBadge" unique_id=1049763321]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"WhiteLabel"
-theme_override_font_sizes/font_size = 12
-text = "OWNED"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="CountLabel" type="Label" parent="." unique_id=2020832619]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
-offset_left = 12.0
-offset_top = 45.0
-offset_right = 72.0
-offset_bottom = 79.0
+offset_left = 169.0
+offset_top = 190.0
+offset_right = 204.0
+offset_bottom = 225.0
 theme_override_colors/font_color = Color(0.97, 0.4, 0.31, 1)
 theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_27bgg")
 theme_override_font_sizes/font_size = 20
 text = "x1"
+horizontal_alignment = 1
+vertical_alignment = 1

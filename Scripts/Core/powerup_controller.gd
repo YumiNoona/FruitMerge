@@ -17,6 +17,20 @@ const POWERUP_PATHS := {
 	HAMMER: "res://Data/ShopItems/powerup_hammer.tres",
 	BOMB: "res://Data/ShopItems/powerup_bomb.tres",
 }
+const SHAKE_PATH := [
+	Vector2(-1.0, 0.08),
+	Vector2(1.0, -0.08),
+	Vector2(0.0, -0.82),
+	Vector2(0.0, 0.78),
+	Vector2(-0.88, -0.62),
+	Vector2(0.92, 0.66),
+	Vector2(0.86, -0.64),
+	Vector2(-0.9, 0.62),
+	Vector2(-0.72, 0.0),
+	Vector2(0.7, 0.0),
+	Vector2(0.0, -0.52),
+	Vector2(0.0, 0.42),
+]
 
 var box: Box
 var box_container: Node2D
@@ -33,6 +47,10 @@ var _grab_velocity := Vector2.ZERO
 var _ring_phase := 0.0
 var _powerup_data: Dictionary = {}
 var _sequence_active := false
+var _container_shake_tween: Tween
+var _box_container_origin := Vector2.ZERO
+var _container_art_origin := Vector2.ZERO
+var _shake_sequence_id := 0
 
 
 func configure(game_box: Box, box_node: Node2D, art: Sprite2D, fruits: Node, feedback: GameplayJuice) -> void:
@@ -41,6 +59,8 @@ func configure(game_box: Box, box_node: Node2D, art: Sprite2D, fruits: Node, fee
 	container_art = art
 	fruit_container = fruits
 	juice = feedback
+	_box_container_origin = box_container.position if box_container else Vector2.ZERO
+	_container_art_origin = container_art.position if container_art else Vector2.ZERO
 	EventBus.powerup_requested.connect(_on_requested)
 	EventBus.state_changed.connect(_on_state_changed)
 
@@ -180,24 +200,98 @@ func _shake_box() -> void:
 		return
 	var impulse := _data_value(SHAKE_BOX, "fruit_impulse_strength", 235.0)
 	var spin := _data_value(SHAKE_BOX, "fruit_spin_strength", 6.0)
+	var motion_strength := _data_value(SHAKE_BOX, "container_motion_strength", 28.0)
+	var motion_duration := _data_value(SHAKE_BOX, "container_motion_duration", 1.15)
+	var followup_ratio := _data_value(SHAKE_BOX, "fruit_followup_impulse_ratio", 0.4)
+	_shake_sequence_id += 1
+	_apply_initial_shake_impulse(fruits, impulse, spin)
+	_apply_followup_shake_impulse(
+		fruits,
+		impulse * followup_ratio,
+		spin * followup_ratio,
+		motion_duration * 0.18,
+		_shake_sequence_id
+	)
+	_animate_container_shake(motion_strength, motion_duration)
+	juice.powerup_feedback(
+		Enums.FruitTier.WATERMELON,
+		box.global_position,
+		_data_value(SHAKE_BOX, "camera_shake_strength", 0.78),
+		_data_value(SHAKE_BOX, "camera_shake_duration", 1.45)
+	)
+
+
+func _apply_initial_shake_impulse(fruits: Array[Fruit], impulse: float, spin: float) -> void:
 	for fruit in fruits:
+		if not is_instance_valid(fruit) or fruit.freeze:
+			continue
 		fruit.sleeping = false
-		fruit.apply_central_impulse(Vector2(randf_range(-impulse, impulse), randf_range(-impulse * 1.35, -impulse * 0.55)))
+		fruit.apply_central_impulse(Vector2(
+			randf_range(-impulse, impulse),
+			randf_range(-impulse * 1.45, -impulse * 0.72)
+		))
 		fruit.angular_velocity += randf_range(-spin, spin)
-	_shake_node(box_container, _data_value(SHAKE_BOX, "container_motion_strength", 17.0), _data_value(SHAKE_BOX, "container_motion_duration", 1.2))
-	_shake_node(container_art, _data_value(SHAKE_BOX, "container_motion_strength", 17.0), _data_value(SHAKE_BOX, "container_motion_duration", 1.2))
-	juice.powerup_feedback(Enums.FruitTier.WATERMELON, box.global_position, 0.65)
 
 
-func _shake_node(node: Node2D, strength: float, duration: float) -> void:
-	if not node or bool(SaveManager.get_setting("reduced_motion", false)):
+func _apply_followup_shake_impulse(
+	fruits: Array[Fruit],
+	impulse: float,
+	spin: float,
+	delay: float,
+	sequence_id: int
+) -> void:
+	await get_tree().create_timer(delay).timeout
+	if sequence_id != _shake_sequence_id or GameManager.current_state != Enums.GameState.PLAYING:
 		return
-	var origin := node.position
+	for fruit in fruits:
+		if not is_instance_valid(fruit) or not fruit.is_inside_tree() or fruit.is_merging or fruit.freeze:
+			continue
+		fruit.sleeping = false
+		fruit.apply_central_impulse(Vector2(
+			randf_range(-impulse, impulse),
+			randf_range(-impulse * 0.28, impulse * 0.12)
+		))
+		fruit.angular_velocity += randf_range(-spin, spin)
+	HapticManager.pulse(HapticManager.Feedback.POWERUP)
+
+
+func _animate_container_shake(strength: float, duration: float) -> void:
+	_stop_container_shake()
+	if bool(SaveManager.get_setting("reduced_motion", false)) or strength <= 0.0 or duration <= 0.0:
+		return
+	if not is_instance_valid(box_container) and not is_instance_valid(container_art):
+		return
 	var tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	for index in 8:
-		var falloff := 1.0 - float(index) / 10.0
-		tween.tween_property(node, "position", origin + Vector2(randf_range(-strength, strength), randf_range(-strength, strength)) * falloff, duration / 10.0)
-	tween.tween_property(node, "position", origin, duration / 5.0)
+	_container_shake_tween = tween
+	var step_duration := duration / float(SHAKE_PATH.size() + 1)
+	for index in SHAKE_PATH.size():
+		var progress := float(index) / float(maxi(SHAKE_PATH.size() - 1, 1))
+		var offset: Vector2 = SHAKE_PATH[index] * strength * lerpf(1.0, 0.48, progress)
+		_tween_container_positions(tween, _box_container_origin + offset, _container_art_origin + offset, step_duration)
+	_tween_container_positions(tween, _box_container_origin, _container_art_origin, step_duration)
+	tween.finished.connect(_restore_container_positions)
+
+
+func _tween_container_positions(tween: Tween, box_position: Vector2, art_position: Vector2, duration: float) -> void:
+	if is_instance_valid(box_container):
+		tween.tween_property(box_container, "position", box_position, duration)
+		if is_instance_valid(container_art):
+			tween.parallel().tween_property(container_art, "position", art_position, duration)
+	elif is_instance_valid(container_art):
+		tween.tween_property(container_art, "position", art_position, duration)
+
+
+func _stop_container_shake() -> void:
+	if _container_shake_tween and _container_shake_tween.is_valid():
+		_container_shake_tween.kill()
+	_restore_container_positions()
+
+
+func _restore_container_positions() -> void:
+	if is_instance_valid(box_container):
+		box_container.position = _box_container_origin
+	if is_instance_valid(container_art):
+		container_art.position = _container_art_origin
 
 
 func _remove_smallest() -> void:
@@ -289,7 +383,10 @@ func _begin_grab(world_position: Vector2) -> void:
 func _update_grab(world_position: Vector2) -> void:
 	if not is_instance_valid(grabbed_fruit): return
 	var radius := FruitDatabase.get_collision_radius(grabbed_fruit.data.tier)
-	var clamped := Vector2(clampf(world_position.x, -248 + radius, 248 - radius), clampf(world_position.y, box.global_position.y - 800 + radius, box.global_position.y - 16 - radius))
+	var clamped := Vector2(
+		clampf(world_position.x, box.global_position.x - 248 + radius, box.global_position.x + 248 - radius),
+		clampf(world_position.y, box.global_position.y - 800 + radius, box.global_position.y - 16 - radius)
+	)
 	_grab_velocity = (clamped - _grab_last_position) * 8.0
 	_grab_last_position = clamped
 	grabbed_fruit.global_position = clamped

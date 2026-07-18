@@ -74,6 +74,25 @@ track's end. `music_fade_in_duration`, `music_crossfade_duration`, and
 
 ## Danger line and overflow
 
+`Scenes/Core/main.tscn` exposes a `WorldOrigin` at `(360, 1280)`. It translates the
+Camera2D and authored gameplay world together so the camera's 720×1280 rectangle
+overlaps the fixed-screen HUD in the 2D editor without changing runtime composition.
+Inside it, a scene-authored `ContainerRig` contains both `ContainerArt` and the
+physical `BoxContainer/Box` instance. Moving that one rig keeps the artwork, walls,
+floor, and danger line aligned; its shipped local Y offset is 50 pixels. The Box
+instance remains expandable in Main and its collision shapes are edited in
+`Scenes/Entities/Box/box.tscn`. The standalone HUD scene intentionally contains no
+world visuals or physics. World-space clamps must use the Box's global center and
+must not assume that gameplay is centered around global X zero.
+
+The central peach Play button on the Home and Shop docks shares
+`Scripts/UI/Components/floating_button_animator.gd`. It runs a subtle looping
+rise/dip/settle sine tween with small scale and rotation accents, starts after
+safe-area placement, and stays static when reduced motion is requested. Shop's
+dock script uses the scene-authored `HomeButton`, `AchievementsButton`,
+`PlayButton`, `ShopButton`, and `SettingsButton` node contracts; validation checks
+that all five remain present.
+
 The dashed line measures a sustained pile overflow, not a fruit passing through it.
 `Box` records that each fruit has entered the container, reads the top and bottom
 extents from that fruit's scene-owned collision shape, and starts its danger dwell
@@ -98,10 +117,11 @@ the same physics contact.
 
 ## Portrait shop containment
 
-The three-column shop grid uses compact 204 x 292 cards with a card-local price
+The three-column shop grid uses compact 210 x 320 minimum cards with a card-local price
 panel style. Card contents now fit their declared minimum height, titles have a
-dedicated row, ownership/count badges sit over the icon instead of the name, and
-both cards and the catalog panel clip their children. Category repopulation frees
+dedicated row, and the optional stacked power-up count sits over the icon. The
+owned badge was removed; owned cosmetics reuse the action label for `SELECT` and
+`ACTIVE`. Both cards and the catalog panel clip their children. Category repopulation frees
 old cards immediately, preventing one-frame overlap. Header ad copy is ASCII-only
 and sized for the 720-wide portrait canvas.
 
@@ -111,6 +131,9 @@ The HUD and shop support Level Up, Shake Box, Remove Smallest, Grab 'Em, Hammer,
 and Juice Bomb. Tunable feedback values live in each `ShopItemData` resource.
 New power-ups need a shop resource, catalog entry, HUD entry, and controller
 implementation. The debug validator ensures every required power-up is catalogued.
+Shake Box uses one synchronized directional tween for its physical walls and
+container art, plus an upward fruit impulse, delayed lateral kick, spin, camera
+feedback, and two-stage haptics. Its strength and timing values remain data-driven.
 
 ## Cosmetics
 

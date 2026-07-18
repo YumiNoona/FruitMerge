@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/UI/Mascot.png" id="4_3c04x"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://c672wgorvvbgn" path="res://Assets/UI/Logo.png" id="7"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="7_xwepa"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="8_8t05w"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ocdlv"]
 font_size = 35
@@ -162,7 +164,8 @@ grow_horizontal = 2
 [node name="Tip" type="Label" parent="TipPanel" unique_id=1089297883]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Tip: Gravity is free. Floor space is definitely not."
+theme_override_fonts/font = ExtResource("7_xwepa")
+text = "Gravity is free • Floor space is definitely not"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -189,13 +192,15 @@ show_percentage = false
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
-text = "Loading..."
+theme_override_fonts/font = ExtResource("7_xwepa")
+text = "Loading•••"
 label_settings = SubResource("LabelSettings_ocdlv")
 horizontal_alignment = 1
 
 [node name="Rule" type="Label" parent="Footer" unique_id=1123255085]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.46, 0.31, 0.2, 1)
+theme_override_fonts/font = ExtResource("8_8t05w")
 theme_override_font_sizes/font_size = 18
 text = "Made With 💙 By Veil"
 horizontal_alignment = 1

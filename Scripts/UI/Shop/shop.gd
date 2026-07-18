@@ -1,6 +1,7 @@
 extends Control
 
 const CATALOG: ShopCatalogData = preload("res://Data/ShopCatalog.tres")
+const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
 
 var _current_category: StringName = &"pet"
 var _shop_items: Array[ShopItemData] = []
@@ -29,16 +30,21 @@ func _ready() -> void:
 	EventBus.powerup_count_changed.connect(_on_powerup_count_changed)
 	_on_coins_changed(EconomyManager.coins)
 	_on_tickets_changed(EconomyManager.tickets)
-	%HomeNavButton.pressed.connect(_on_back_pressed)
-	%QuestsNavButton.pressed.connect(_on_back_pressed)
-	%SettingsNavButton.pressed.connect(_open_settings)
-	%ShopNavButton.pressed.connect(_bounce_shop_header)
+	%HomeButton.pressed.connect(_on_back_pressed)
+	%AchievementsButton.pressed.connect(_on_back_pressed)
+	%SettingsButton.pressed.connect(_open_settings)
+	%ShopButton.pressed.connect(_bounce_shop_header)
 	_play_button.pressed.connect(_on_play_pressed)
 	_rewarded_ad_button.pressed.connect(_on_rewarded_ad_pressed)
 	AdManager.ad_message.connect(_on_ad_message)
 	AdManager.rewarded_ad_availability_changed.connect(_on_rewarded_ad_availability_changed)
 	_on_rewarded_ad_availability_changed(AdManager.is_rewarded_ad_available(), AdManager.get_rewarded_ad_message())
 	_apply_safe_area()
+	FloatingButtonAnimatorScript.start(
+		self,
+		_play_button,
+		bool(SaveManager.get_setting("reduced_motion", false))
+	)
 	_connect_tabs()
 	_filter_category(&"pet")
 	_play_intro.call_deferred()
@@ -139,5 +145,5 @@ func _play_intro() -> void:
 func _apply_safe_area() -> void:
 	for control in [$CoinPanel, $TicketPanel, $RewardedAdButton, $ShopHeader, $ShopTitle]:
 		MobileSafeArea.apply_top_inset(control, control.position.y)
-	for control in [$Dock, %HomeNavButton, %QuestsNavButton, _play_button, %ShopNavButton, %SettingsNavButton]:
+	for control in [$Dock, %HomeButton, %AchievementsButton, _play_button, %ShopButton, %SettingsButton]:
 		MobileSafeArea.apply_bottom_inset(control, control.position.y)

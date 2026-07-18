@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://ceskw6bkk262q"]
 
-[ext_resource type="Script" path="res://Scripts/Data/shop_item_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/ShakeIT.png" id="2"]
+[ext_resource type="Script" uid="uid://3ptbmu8qpv2h" path="res://Scripts/Data/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cf2ma74f64wdy" path="res://Assets/PowerUps/ShakeIT.png" id="2"]
 
 [resource]
 script = ExtResource("1")
@@ -12,10 +12,11 @@ cost = 2
 currency = &"tickets"
 category = "powerup"
 description = "Shake and mix the whole pile"
-effect_duration = 1.45
-camera_shake_strength = 0.58
-camera_shake_duration = 1.8
-container_motion_strength = 17.0
-container_motion_duration = 1.45
-fruit_impulse_strength = 235.0
-fruit_spin_strength = 6.0
+effect_duration = 1.15
+camera_shake_strength = 0.78
+camera_shake_duration = 1.45
+container_motion_strength = 28.0
+container_motion_duration = 1.15
+fruit_impulse_strength = 280.0
+fruit_spin_strength = 8.0
+fruit_followup_impulse_ratio = 0.42

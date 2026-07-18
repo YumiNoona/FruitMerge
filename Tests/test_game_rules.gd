@@ -1,6 +1,7 @@
 extends RefCounted
 
-const ShopItemButtonScript = preload("res://Scripts/UI/Components/shop_item_button.gd")
+const ShopItemDisplayRulesScript = preload("res://Scripts/UI/Components/shop_item_display_rules.gd")
+const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
 
 
 static func run() -> PackedStringArray:
@@ -25,10 +26,21 @@ static func run() -> PackedStringArray:
 		failures.append("Unknown currency must be rejected")
 	if Bootstrap.DEBUG_POWERUP_COUNT != 1:
 		failures.append("Debug builds must seed exactly one of each power-up")
-	if ShopItemButtonScript.should_show_inventory_count(1):
+	if ShopItemDisplayRulesScript.should_show_inventory_count(1):
 		failures.append("The shop must hide redundant x1 power-up inventory badges")
-	if not ShopItemButtonScript.should_show_inventory_count(2):
+	if not ShopItemDisplayRulesScript.should_show_inventory_count(2):
 		failures.append("The shop must show power-up inventory badges for stacked quantities")
+	if FloatingButtonAnimatorScript.DEFAULT_FLOAT_HEIGHT < 6.0 \
+		or FloatingButtonAnimatorScript.DEFAULT_FLOAT_HEIGHT > 12.0 \
+		or FloatingButtonAnimatorScript.DEFAULT_TRAVEL_DURATION < 0.8:
+		failures.append("The dock Play button float must remain gentle and readable")
+	var shake_data: Resource = load("res://Data/ShopItems/powerup_shake_box.tres")
+	if not shake_data:
+		failures.append("Shake Box tuning data must load")
+	elif float(shake_data.get("container_motion_strength")) < 25.0 \
+		or float(shake_data.get("fruit_impulse_strength")) < 250.0 \
+		or float(shake_data.get("fruit_followup_impulse_ratio")) <= 0.0:
+		failures.append("Shake Box must retain strong container motion and its follow-up fruit impulse")
 	if AudioManager.get_music_track_count() != 4:
 		failures.append("Persistent music playlist must contain all four authored tracks")
 	if not AudioManager.are_music_tracks_one_shot():

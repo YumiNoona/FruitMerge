@@ -74,6 +74,20 @@ static func _validate_scenes() -> PackedStringArray:
 	for path in [SceneRouter.HOME_SCENE, SceneRouter.GAME_SCENE, SceneRouter.SHOP_SCENE, SceneRouter.DAILY_REWARD_SCENE]:
 		if not ResourceLoader.exists(path):
 			issues.append("Missing core scene: %s" % path)
+	var gameplay_scene := load(SceneRouter.GAME_SCENE) as PackedScene
+	if gameplay_scene:
+		var gameplay := gameplay_scene.instantiate()
+		var world_origin := gameplay.get_node_or_null("WorldOrigin") as Node2D
+		var rig := gameplay.get_node_or_null("WorldOrigin/ContainerRig")
+		if not world_origin:
+			issues.append("Gameplay scene is missing its editor-aligned WorldOrigin")
+		elif world_origin.position != Vector2(360, 1280):
+			issues.append("WorldOrigin must align the 720x1280 gameplay world with the editor canvas")
+		if not rig:
+			issues.append("Gameplay scene is missing its movable ContainerRig")
+		elif not rig.get_node_or_null("ContainerArt") or not rig.get_node_or_null("BoxContainer/Box"):
+			issues.append("ContainerRig must own both the visible container and physical Box instance")
+		gameplay.free()
 	return issues
 
 
@@ -92,8 +106,19 @@ static func _validate_ui_contracts() -> PackedStringArray:
 	var card_scene := load("res://Scenes/UI/Components/shop_item_button.tscn") as PackedScene
 	if card_scene:
 		var card := card_scene.instantiate() as Control
-		if card and (card.custom_minimum_size.y < 290.0 or not card.clip_contents):
+		if card and (card.custom_minimum_size.y < 320.0 or not card.clip_contents):
 			issues.append("Shop cards must contain and clip their portrait layout")
+		if card and card.find_child("OwnedBadge", true, false):
+			issues.append("Removed Shop OwnedBadge returned; owned state belongs in the action label")
+		if card and not card.find_child("CountLabel", true, false):
+			issues.append("Shop cards must retain the stacked power-up count label")
 		if card:
 			card.free()
+	var shop_scene := load(SceneRouter.SHOP_SCENE) as PackedScene
+	if shop_scene:
+		var shop := shop_scene.instantiate()
+		for node_name in ["HomeButton", "AchievementsButton", "PlayButton", "ShopButton", "SettingsButton"]:
+			if not shop.find_child(node_name, true, false):
+				issues.append("Shop dock is missing %s required by shop.gd" % node_name)
+		shop.free()
 	return issues

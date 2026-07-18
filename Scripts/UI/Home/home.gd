@@ -1,5 +1,7 @@
 extends Control
 
+const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
+
 @onready var _best_score_label: Label = %BestScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
 @onready var _tickets_label: Label = $TicketPanel/TicketRow/TicketLabel
@@ -40,6 +42,11 @@ func _ready() -> void:
 	_mode_button.pressed.connect(_cycle_mode)
 	_close_info_button.pressed.connect(_hide_info)
 
+	FloatingButtonAnimatorScript.start(
+		self,
+		_play_button,
+		bool(SaveManager.get_setting("reduced_motion", false))
+	)
 	_play_intro.call_deferred()
 	_show_first_run_tutorial.call_deferred()
 

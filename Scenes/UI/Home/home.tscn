@@ -15,8 +15,9 @@
 [ext_resource type="Texture2D" uid="uid://bebnxvysq4bx" path="res://Assets/Menu/Shop.png" id="10"]
 [ext_resource type="Texture2D" uid="uid://ynpc7wv52gl0" path="res://Assets/Menu/Play.png" id="11"]
 [ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="12"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/Settings/settings_menu.tscn" id="13"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/NoAds/no_ads_purchase.tscn" id="14"]
+[ext_resource type="PackedScene" uid="uid://curl0kqpuh6dx" path="res://Scenes/UI/Settings/settings_menu.tscn" id="13"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="13_8vbvv"]
+[ext_resource type="PackedScene" uid="uid://b2qw4dofqp0f7" path="res://Scenes/UI/NoAds/no_ads_purchase.tscn" id="14"]
 
 [node name="Home" type="Control" unique_id=1077973259]
 layout_mode = 3
@@ -62,7 +63,7 @@ layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="Trophy" type="TextureRect" parent="BestPanel/BestRow" unique_id=77971374]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(100, 70)
 layout_mode = 2
 texture = ExtResource("4_loy6l")
 expand_mode = 1
@@ -77,11 +78,13 @@ alignment = 1
 [node name="Caption" type="Label" parent="BestPanel/BestRow/Score" unique_id=1039141340]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_fonts/font = ExtResource("13_8vbvv")
 text = "BEST SCORE"
 
 [node name="BestScoreLabel" type="Label" parent="BestPanel/BestRow/Score" unique_id=70521302]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_fonts/font = ExtResource("13_8vbvv")
 theme_override_font_sizes/font_size = 27
 text = "0"
 horizontal_alignment = 1
@@ -108,6 +111,7 @@ stretch_mode = 5
 [node name="CoinsLabel" type="Label" parent="CoinPanel/CoinRow" unique_id=1405005119]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_fonts/font = ExtResource("13_8vbvv")
 theme_override_font_sizes/font_size = 27
 text = "0"
 horizontal_alignment = 1
@@ -133,6 +137,7 @@ stretch_mode = 5
 
 [node name="TicketLabel" type="Label" parent="TicketPanel/TicketRow" unique_id=1042006569]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("13_8vbvv")
 theme_override_font_sizes/font_size = 27
 text = "0"
 horizontal_alignment = 1
@@ -152,7 +157,7 @@ stretch_mode = 5
 [node name="Dock" type="TextureRect" parent="." unique_id=899878851]
 layout_mode = 0
 offset_left = 16.0
-offset_top = 1042.0
+offset_top = 1086.0
 offset_right = 704.0
 offset_bottom = 1258.0
 mouse_filter = 2
@@ -163,9 +168,9 @@ expand_mode = 1
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 24.0
-offset_top = 123.0
+offset_top = 137.0
 offset_right = 104.0
-offset_bottom = 223.0
+offset_bottom = 237.0
 texture_normal = ExtResource("5_s3cbl")
 ignore_texture_size = true
 stretch_mode = 5
@@ -174,9 +179,9 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 44.0
-offset_top = 1084.0
+offset_top = 1110.0
 offset_right = 169.0
-offset_bottom = 1209.0
+offset_bottom = 1235.0
 texture_normal = ExtResource("7")
 ignore_texture_size = true
 stretch_mode = 5
@@ -186,9 +191,9 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
 layout_mode = 0
 offset_left = 174.0
-offset_top = 1084.0
+offset_top = 1091.0
 offset_right = 299.0
-offset_bottom = 1209.0
+offset_bottom = 1216.0
 texture_normal = ExtResource("8")
 ignore_texture_size = true
 stretch_mode = 5
@@ -196,15 +201,15 @@ stretch_mode = 5
 [node name="PlayButton" type="TextureButton" parent="." unique_id=1437492734]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 301.0
-offset_top = 1075.0
-offset_right = 419.0
-offset_bottom = 1195.0
+offset_left = 288.0
+offset_top = 1035.0
+offset_right = 438.0
+offset_bottom = 1185.0
 texture_normal = ExtResource("11")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ModeButton" type="Button" parent="."]
+[node name="ModeButton" type="Button" parent="." unique_id=153993009]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 250.0
@@ -212,17 +217,18 @@ offset_top = 1205.0
 offset_right = 470.0
 offset_bottom = 1253.0
 theme_type_variation = &"CreamButton"
+theme_override_fonts/font = ExtResource("13_8vbvv")
 theme_override_font_sizes/font_size = 18
-text = "MODE: CLASSIC"
+text = "MODE - CLASSIC"
 
 [node name="ShopButton" type="TextureButton" parent="." unique_id=825035934]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
 layout_mode = 0
 offset_left = 421.0
-offset_top = 1082.0
+offset_top = 1089.0
 offset_right = 546.0
-offset_bottom = 1207.0
+offset_bottom = 1214.0
 texture_normal = ExtResource("10")
 ignore_texture_size = true
 stretch_mode = 5
@@ -232,9 +238,9 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
 layout_mode = 0
 offset_left = 551.0
-offset_top = 1083.0
+offset_top = 1109.0
 offset_right = 676.0
-offset_bottom = 1208.0
+offset_bottom = 1234.0
 texture_normal = ExtResource("9")
 ignore_texture_size = true
 stretch_mode = 5
@@ -304,5 +310,5 @@ script = ExtResource("12")
 [node name="SettingsMenu" parent="." unique_id=1908337641 instance=ExtResource("13")]
 layout_mode = 1
 
-[node name="NoAdsPurchase" parent="." instance=ExtResource("14")]
+[node name="NoAdsPurchase" parent="." unique_id=2116753313 instance=ExtResource("14")]
 layout_mode = 1

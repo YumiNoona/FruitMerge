@@ -1,21 +1,21 @@
 extends Node2D
 
-@export var box_scene: PackedScene
 @export var spawner_scene: PackedScene
 @export var pet_scene: PackedScene
 @export var merge_burst_scene: PackedScene
 
 @onready var _box_container: Node2D = %BoxContainer
+@onready var _box: Box = %Box
 @onready var _spawner_container: Node2D = %SpawnerContainer
 @onready var _pet_container: Node2D = %PetContainer
 @onready var _fruit_container: Node2D = %FruitContainer
 @onready var _game_over_panel: Control = %GameOverPanel
-@onready var _container_art: Sprite2D = $ContainerArt
+@onready var _container_art: Sprite2D = %ContainerArt
+@onready var _background: Sprite2D = %Background
 @onready var _hud: Control = %HUD
 @onready var _juice: GameplayJuice = %GameplayJuice
 @onready var _powerups: PowerupController = %PowerupController
 
-var _box: Box
 var _spawner: Spawner
 
 
@@ -30,9 +30,6 @@ func _ready() -> void:
 
 
 func _setup_world() -> void:
-	if box_scene:
-		_box = box_scene.instantiate()
-		_box_container.add_child(_box)
 	if spawner_scene:
 		_spawner = spawner_scene.instantiate()
 		_spawner_container.add_child(_spawner)
@@ -47,7 +44,7 @@ func _apply_equipped_cosmetics() -> void:
 		&"skin_pastel": _container_art.modulate = Color(1.0, 0.94, 0.66, 1.0)
 		&"skin_pineapple": _container_art.modulate = Color(1.0, 0.79, 0.3, 1.0)
 		_: _container_art.modulate = Color.WHITE
-	$Background.visible = EconomyManager.get_equipped_item(&"background") == &"background_garden"
+	_background.visible = EconomyManager.get_equipped_item(&"background") == &"background_garden"
 
 
 func _on_state_changed(state: Enums.GameState) -> void:

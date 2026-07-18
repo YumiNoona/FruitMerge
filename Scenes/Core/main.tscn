@@ -9,53 +9,65 @@
 [ext_resource type="PackedScene" uid="uid://5lrjra080tca" path="res://Scenes/UI/GameOver/game_over.tscn" id="7"]
 [ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://bf34mdo5qit6q" path="res://Assets/UI/Container.png" id="9"]
-[ext_resource type="Script" path="res://Scripts/Core/gameplay_juice.gd" id="10"]
-[ext_resource type="Script" path="res://Scripts/Core/powerup_controller.gd" id="11"]
+[ext_resource type="Script" uid="uid://ebvlmnxboh7x" path="res://Scripts/Core/gameplay_juice.gd" id="10"]
+[ext_resource type="Script" uid="uid://daj20d2yayq5d" path="res://Scripts/Core/powerup_controller.gd" id="11"]
 
 [node name="Main" type="Node2D" unique_id=1137529470]
 script = ExtResource("1")
-box_scene = ExtResource("2")
 spawner_scene = ExtResource("3")
 pet_scene = ExtResource("4")
 merge_burst_scene = ExtResource("5")
 
-[node name="Background" type="Sprite2D" parent="." unique_id=902294362]
+[node name="WorldOrigin" type="Node2D" parent="." unique_id=279369810]
+unique_name_in_owner = true
+position = Vector2(360, 1280)
+
+[node name="Background" type="Sprite2D" parent="WorldOrigin" unique_id=902294362]
+unique_name_in_owner = true
 visible = false
 z_index = -100
 position = Vector2(0, -640)
 scale = Vector2(0.766, 0.766)
 texture = ExtResource("8")
 
-[node name="ContainerArt" type="Sprite2D" parent="." unique_id=1674211724]
+[node name="ContainerRig" type="Node2D" parent="WorldOrigin" unique_id=1138380202]
+unique_name_in_owner = true
+position = Vector2(0, 50)
+
+[node name="ContainerArt" type="Sprite2D" parent="WorldOrigin/ContainerRig" unique_id=1674211724]
+unique_name_in_owner = true
 z_index = -10
 position = Vector2(0, -640)
 scale = Vector2(0.603, 0.603)
 texture = ExtResource("9")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=29525824]
-position = Vector2(0, -640)
-
-[node name="BoxContainer" type="Node2D" parent="." unique_id=687075484]
+[node name="BoxContainer" type="Node2D" parent="WorldOrigin/ContainerRig" unique_id=687075484]
 unique_name_in_owner = true
 position = Vector2(0, -230)
 
-[node name="SpawnerContainer" type="Node2D" parent="." unique_id=1110466877]
+[node name="Box" parent="WorldOrigin/ContainerRig/BoxContainer" unique_id=1956642608 instance=ExtResource("2")]
+unique_name_in_owner = true
+
+[node name="Camera2D" type="Camera2D" parent="WorldOrigin" unique_id=29525824]
+position = Vector2(0, -640)
+
+[node name="SpawnerContainer" type="Node2D" parent="WorldOrigin" unique_id=1110466877]
 unique_name_in_owner = true
 position = Vector2(0, -990)
 
-[node name="PetContainer" type="Node2D" parent="." unique_id=1142105273]
+[node name="PetContainer" type="Node2D" parent="WorldOrigin" unique_id=1142105273]
 unique_name_in_owner = true
 z_index = 30
 position = Vector2(282, -340)
 
-[node name="FruitContainer" type="Node2D" parent="."]
+[node name="FruitContainer" type="Node2D" parent="." unique_id=238491061]
 unique_name_in_owner = true
 
-[node name="GameplayJuice" type="Node2D" parent="."]
+[node name="GameplayJuice" type="Node2D" parent="." unique_id=1454232356]
 unique_name_in_owner = true
 script = ExtResource("10")
 
-[node name="PowerupController" type="Node2D" parent="."]
+[node name="PowerupController" type="Node2D" parent="." unique_id=941024042]
 unique_name_in_owner = true
 z_index = 70
 script = ExtResource("11")

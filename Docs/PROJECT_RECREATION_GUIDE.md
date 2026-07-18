@@ -481,7 +481,11 @@ This stateful check is important: a newly dropped fruit normally crosses the das
 
 ### Important layout relationship
 
-The visual container art is a Sprite2D in Main; the physical Box sits in `BoxContainer`. Their relative positions must remain aligned. If the box looks “in the air” in the editor, remember the gameplay world uses a camera offset. Judge this relationship in the running game, not by the raw world origin in the 2D editor.
+The visual `ContainerArt` and physical `BoxContainer/Box` are authored together under `Main/WorldOrigin/ContainerRig`. Open `Scenes/Core/main.tscn` and move `ContainerRig.position` to reposition the complete container without desynchronizing its artwork, floor, walls, or danger line. The shipped rig has a local `y = 50` downward offset. Do not try to position the gameplay container from `hud.tscn`: HUD is a CanvasLayer-only reusable UI scene and intentionally has no world physics.
+
+The Box scene is an authored child instance, so it appears in Main's scene tree. Expand `WorldOrigin/ContainerRig/BoxContainer/Box` to locate it; open `box.tscn` to edit the three collision shapes, or enable editable children on the instance when inspecting them in Main.
+
+`WorldOrigin` exists only to make the Main editor composition intuitive. A fixed-screen CanvasLayer HUD uses screen coordinates from `(0, 0)` to `(720, 1280)`, while the original gameplay camera viewed world coordinates from `(-360, -1280)` to `(360, 0)`. That made the correctly positioned container look one screen above the HUD in the 2D editor. `WorldOrigin.position = Vector2(360, 1280)` translates the camera and authored world together so its purple viewport rectangle overlaps the HUD in the editor. Because camera and world receive the same translation, the running game looks and behaves exactly the same.
 
 ---
 
@@ -587,18 +591,22 @@ The `fruit_merged` event reports the old tier, so Main checks `tier + 1` when de
 
 ```text
 Main (Node2D, main.gd)
-├─ Background (Sprite2D; currently hidden)
-├─ ContainerArt (Sprite2D)
-├─ Camera2D
-├─ BoxContainer (Node2D → Box instance)
-├─ SpawnerContainer (Node2D → Spawner instance)
-├─ PetContainer (Node2D → optional Pet instance)
+├─ WorldOrigin (Node2D at 360,1280; aligns world and HUD in the editor)
+│  ├─ Background (Sprite2D; currently hidden)
+│  ├─ ContainerRig (Node2D; move this to reposition the whole container)
+│  │  ├─ ContainerArt (Sprite2D)
+│  │  └─ BoxContainer (Node2D)
+│  │     └─ Box (authored scene instance with walls, floor, and danger line)
+│  ├─ Camera2D
+│  ├─ SpawnerContainer (Node2D → Spawner instance)
+│  └─ PetContainer (Node2D → optional Pet instance)
+├─ FruitContainer
 └─ Interface (CanvasLayer)
    ├─ HUD
    └─ GameOverPanel
 ```
 
-The camera is placed at `(0, -640)`. This makes the world’s physical floor land low in the phone viewport while keeping room for the top HUD and bottom FruitDock. UI should not be placed in world coordinates unless it deliberately belongs to a fruit/physics effect.
+The camera keeps a local position of `(0, -640)` inside `WorldOrigin`. Its global editor position is therefore `(360, 640)`, aligning the 720×1280 Camera2D rectangle with the HUD canvas. This makes the world’s physical floor land low in the phone viewport while keeping room for the top HUD and bottom FruitDock. UI should not be placed in world coordinates unless it deliberately belongs to a fruit/physics effect.
 
 ### Coordinate conversion
 
@@ -666,6 +674,8 @@ Files:
 
 Home shows the mascot, best score, currencies, Play, Shop, Achievements, Settings, and No Ads. The bottom dock uses MenuDock art and is the only navigation system. Avoid duplicate floating Play/Settings controls elsewhere on the screen.
 
+The dock's central peach `PlayButton` uses the reusable `floating_button_animator.gd` on both Home and Shop. Its looping sine tween rises 8 pixels with a slight counter-clockwise tilt and scale-up, dips softly with the opposite tilt, then restores the exact authored position, rotation, and scale before repeating. Start it only after mobile safe-area offsets are applied. The animator accepts height and duration parameters and remains still when reduced motion is active.
+
 Achievements is currently an informative overlay, not a full achievement-tracking system.
 
 ### Daily reward
@@ -699,11 +709,15 @@ Files:
 
 Shop loads the `ShopCatalog` resource, filters entries into skins/pets/power-ups, and creates one reusable card per item. To add a shop item, create its `.tres`, register it in the catalog, and ensure the icon/resource path is valid.
 
-The portrait catalog is a clipped three-column grid. Each card is 204 x 292 with a
+The Shop dock keeps the authored scene names `HomeButton`, `AchievementsButton`, `PlayButton`, `ShopButton`, and `SettingsButton`; `shop.gd` and the project validator use those exact contracts. Do not introduce alternate `*NavButton` names in only the script. The peach `PlayButton` uses the same shared float animator as Home.
+
+The portrait catalog is a clipped three-column grid. Each card has a 210 x 320 minimum with a
 compact local price style; do not reuse the normal `GreenPanel` padding inside the
 card because its large content margins make rows overlap. The name row is reserved
-above the icon, badges begin below it, and both the card root and catalog panel clip
-children. Free filtered cards immediately before repopulating so old/new categories
+above the icon, the optional stacked power-up count stays over the icon, and both
+the card root and catalog panel clip children. The old owned badge and its status
+label were removed; an owned cosmetic uses the existing action label to show
+`SELECT` or `ACTIVE` instead. Free filtered cards immediately before repopulating so old/new categories
 cannot share a layout frame.
 
 ---
@@ -765,7 +779,7 @@ id, display_name, icon, cost, currency, category, description
 - **Power-ups:** consumable; each purchase increments `powerup_counts[id]`. The shop hides the redundant inventory badge for counts of zero or one and only shows `xN` when the player has two or more.
 - **Equipped item:** saved in a setting such as `equipped_pet`.
 
-`shop_item_button.gd` does presentation and button handling. `EconomyManager` is the authority for affordability, spending, ownership, and save calls. Do not let a UI card edit money dictionaries directly.
+`shop_item_button.gd` does presentation and button handling. The dependency-free `shop_item_display_rules.gd` owns small display policies such as hiding a redundant `x1` consumable badge; keeping those rules separate also lets tests load them without compiling the scene-bound button and its autoload dependencies. `EconomyManager` is the authority for affordability, spending, ownership, and save calls. Do not let a UI card edit money dictionaries directly.
 
 ### Pets
 
@@ -813,6 +827,7 @@ Every active power uses a resource in `Data/ShopItems/`. `ShopItemData` now has 
 | `container_motion_duration` | Shake | entire box movement duration |
 | `fruit_impulse_strength` | Shake | launch/mix force |
 | `fruit_spin_strength` | Shake | angular velocity variation |
+| `fruit_followup_impulse_ratio` | Shake | fraction of the main force used by the delayed sideways follow-up kick |
 | `target_marker_scale` | Remove | crosshair size relative to fruit collision |
 | `target_marker_hold_time` | Remove | time all smallest fruits remain marked |
 | `target_lock_time` | Remove | final selected-target pause |
@@ -829,7 +844,7 @@ left → right → up → down → upper-left → lower-right
 	 → upper-right → lower-left → left → right → up → down → settle
 ```
 
-Both the visual container art and physical BoxContainer follow the same smooth sine tween, so walls and art remain aligned. Camera movement is intentionally weaker and is restored to the exact original camera position if interrupted by another shake.
+Both the visual container art and physical BoxContainer use one shared smooth sine tween, so every directional offset is identical and the walls cannot drift away from the art. The path uses a strong opening movement followed by a gradual falloff and exact restoration to the authored positions. Fruit receive an upward launch followed shortly by a smaller sideways kick and a second mobile haptic pulse, making the pile tumble instead of only hopping once. Container travel, duration, both impulse stages, spin, and camera feedback remain tunable in `powerup_shake_box.tres`. Camera movement is restored to the exact original position if interrupted by another shake.
 
 ### Remove Smallest sequence
 

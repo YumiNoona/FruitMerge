@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://d0jgs76v321fr" path="res://Scripts/UI/HUD/hud.gd" id="1"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="4"]
-[ext_resource type="FontFile" uid="uid://b7jjn4abg7gyt" path="res://Assets/Fonts/Cloudy.otf" id="5"]
-[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="6"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="6"]
 [ext_resource type="Texture2D" uid="uid://nopddh48kk0t" path="res://Assets/PowerUps/LevelUP.png" id="7"]
 [ext_resource type="Texture2D" uid="uid://cf2ma74f64wdy" path="res://Assets/PowerUps/ShakeIT.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://v65d1o5qctqf" path="res://Assets/PowerUps/SuckUP.png" id="9"]
@@ -13,8 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/UI/Ticket.png" id="11"]
 [ext_resource type="Texture2D" uid="uid://bmf0as558h4ei" path="res://Assets/UI/PauseButton.png" id="12"]
 [ext_resource type="Texture2D" uid="uid://xyonurfkvoux" path="res://Assets/UI/FruitsDock.png" id="13"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/Hammer.png" id="14"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/Bomb.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://dxp8v48shmhwe" path="res://Assets/PowerUps/Hammer.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://mxy37l8rbxq4" path="res://Assets/PowerUps/Bomb.png" id="15"]
 
 [node name="HUD" type="Control" unique_id=761868550]
 process_mode = 3
@@ -192,10 +192,10 @@ stretch_mode = 5
 [node name="LevelUpCount" type="Label" parent="PowerupTray/PowerupColumn/LevelUpSlot" unique_id=1224270999]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 35.0
-offset_top = 37.0
-offset_right = 72.0
-offset_bottom = 66.0
+offset_left = 44.0
+offset_top = 40.0
+offset_right = 81.0
+offset_bottom = 69.0
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -223,10 +223,10 @@ stretch_mode = 5
 [node name="ShakeCount" type="Label" parent="PowerupTray/PowerupColumn/ShakeSlot" unique_id=1821510251]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 35.0
-offset_top = 37.0
-offset_right = 72.0
-offset_bottom = 66.0
+offset_left = 44.0
+offset_top = 40.165
+offset_right = 81.0
+offset_bottom = 69.16513
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -254,10 +254,10 @@ stretch_mode = 5
 [node name="RemoveCount" type="Label" parent="PowerupTray/PowerupColumn/RemoveSlot" unique_id=1273027438]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 35.0
-offset_top = 37.0
-offset_right = 72.0
-offset_bottom = 66.0
+offset_left = 44.0
+offset_top = 39.6
+offset_right = 81.0
+offset_bottom = 68.600044
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -285,10 +285,10 @@ stretch_mode = 5
 [node name="GrabCount" type="Label" parent="PowerupTray/PowerupColumn/GrabSlot" unique_id=893376141]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 35.0
-offset_top = 37.0
-offset_right = 72.0
-offset_bottom = 66.0
+offset_left = 42.0
+offset_top = 36.0
+offset_right = 79.0
+offset_bottom = 65.0
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -297,11 +297,11 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HammerSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+[node name="HammerSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=2081980764]
 custom_minimum_size = Vector2(62, 62)
 layout_mode = 2
 
-[node name="HammerButton" type="TextureButton" parent="PowerupTray/PowerupColumn/HammerSlot"]
+[node name="HammerButton" type="TextureButton" parent="PowerupTray/PowerupColumn/HammerSlot" unique_id=1249503864]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -313,13 +313,13 @@ texture_normal = ExtResource("14")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="HammerCount" type="Label" parent="PowerupTray/PowerupColumn/HammerSlot"]
+[node name="HammerCount" type="Label" parent="PowerupTray/PowerupColumn/HammerSlot" unique_id=1831492700]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 35.0
-offset_top = 37.0
-offset_right = 72.0
-offset_bottom = 66.0
+offset_left = 42.0
+offset_top = 36.0
+offset_right = 79.0
+offset_bottom = 65.0
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -328,11 +328,11 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BombSlot" type="Control" parent="PowerupTray/PowerupColumn"]
+[node name="BombSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=528797845]
 custom_minimum_size = Vector2(62, 62)
 layout_mode = 2
 
-[node name="BombButton" type="TextureButton" parent="PowerupTray/PowerupColumn/BombSlot"]
+[node name="BombButton" type="TextureButton" parent="PowerupTray/PowerupColumn/BombSlot" unique_id=1434903665]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -344,13 +344,13 @@ texture_normal = ExtResource("15")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BombCount" type="Label" parent="PowerupTray/PowerupColumn/BombSlot"]
+[node name="BombCount" type="Label" parent="PowerupTray/PowerupColumn/BombSlot" unique_id=87191656]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 35.0
-offset_top = 37.0
-offset_right = 72.0
-offset_bottom = 66.0
+offset_left = 42.0
+offset_top = 36.0
+offset_right = 79.0
+offset_bottom = 65.0
 theme_override_colors/font_color = Color(1, 1, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.42, 0.19, 0.06, 0.96)
 theme_override_constants/outline_size = 5
@@ -367,23 +367,7 @@ anchor_right = 1.0
 offset_left = -202.0
 offset_top = 112.0
 offset_right = -19.0
-
-[node name="ModeLabel" type="Label" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 245.0
-offset_top = 208.0
-offset_right = 475.0
-offset_bottom = 242.0
-theme_override_colors/font_color = Color(1, 0.98, 0.82, 1)
-theme_override_colors/font_outline_color = Color(0.35, 0.16, 0.06, 0.85)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 18
-text = "CLASSIC"
-horizontal_alignment = 1
-offset_bottom = 202.0
 grow_horizontal = 0
-mouse_filter = 2
 
 [node name="NextRow" type="HBoxContainer" parent="NextPanel" unique_id=772076108]
 layout_mode = 2
@@ -404,6 +388,21 @@ layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ModeLabel" type="Label" parent="." unique_id=1835369932]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 245.0
+offset_top = 208.0
+offset_right = 475.0
+offset_bottom = 202.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.98, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.35, 0.16, 0.06, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "CLASSIC"
+horizontal_alignment = 1
 
 [node name="DangerWarning" type="Label" parent="." unique_id=1049890252]
 unique_name_in_owner = true
@@ -551,8 +550,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -8.0
-offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

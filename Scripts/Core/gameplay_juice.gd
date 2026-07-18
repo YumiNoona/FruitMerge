@@ -33,10 +33,10 @@ func on_fruit_merged(tier: int, world_position: Vector2, _score: int) -> void:
 	award_high_tier_ticket(tier + 1)
 
 
-func powerup_feedback(tier: int, world_position: Vector2, shake := 0.45) -> void:
+func powerup_feedback(tier: int, world_position: Vector2, shake := 0.45, shake_duration_scale := 0.85) -> void:
 	spawn_burst(tier, world_position)
 	spawn_particles(world_position, tier, Color(0.45, 0.9, 1.0, 1.0))
-	apply_screen_shake(tier, shake, 0.85)
+	apply_screen_shake(tier, shake, shake_duration_scale)
 	HapticManager.pulse(HapticManager.Feedback.POWERUP)
 
 

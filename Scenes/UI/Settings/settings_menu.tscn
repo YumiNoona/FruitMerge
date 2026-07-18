@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://d3tj7kibfap70" path="res://Assets/UI/SettingPanel.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/UI/Close.png" id="3"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="4"]
-[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="5"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5"]
 
 [node name="SettingsMenu" type="Control" unique_id=1895896605]
 unique_name_in_owner = true

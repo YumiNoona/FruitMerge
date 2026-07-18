@@ -2,6 +2,7 @@ extends Button
 
 const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
 const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
+const ShopItemDisplayRulesScript = preload("res://Scripts/UI/Components/shop_item_display_rules.gd")
 
 var shop_item: ShopItemData
 
@@ -10,13 +11,8 @@ var shop_item: ShopItemData
 @onready var _cost_label: Label = %CostLabel
 @onready var _icon_rect: TextureRect = %IconRect
 @onready var _currency_glyph: TextureRect = %CurrencyGlyph
-@onready var _owned_badge: PanelContainer = %OwnedBadge
-@onready var _status_label: Label = %StatusLabel
 @onready var _count_label: Label = %CountLabel
-
-
-static func should_show_inventory_count(count: int) -> bool:
-	return count > 1
+@onready var _price_panel: PanelContainer = %PricePanel
 
 
 func _ready() -> void:
@@ -36,6 +32,9 @@ func setup(item: ShopItemData) -> void:
 func _apply_item() -> void:
 	_name_label.text = shop_item.display_name
 	_description_label.text = shop_item.description
+	var is_pet := shop_item.category == &"pet"
+	_description_label.visible = not is_pet
+	_icon_rect.custom_minimum_size.y = 200.0 if is_pet else 160.0
 	_icon_rect.texture = shop_item.icon
 	_icon_rect.visible = shop_item.icon != null
 	_currency_glyph.texture = TICKET_ICON if shop_item.currency == &"tickets" else COIN_ICON
@@ -50,9 +49,7 @@ func _update_button_state() -> void:
 	var equipped := EconomyManager.is_item_equipped(shop_item.id, shop_item.category)
 	var powerup_count := EconomyManager.get_powerup_count(shop_item.id)
 
-	_owned_badge.visible = owned and not is_consumable
-	_status_label.text = "EQUIPPED" if equipped else "OWNED"
-	_count_label.visible = is_consumable and should_show_inventory_count(powerup_count)
+	_count_label.visible = is_consumable and ShopItemDisplayRulesScript.should_show_inventory_count(powerup_count)
 	_count_label.text = "x%d" % powerup_count
 
 	if is_consumable:
@@ -65,12 +62,23 @@ func _update_button_state() -> void:
 	var is_price_visible := is_consumable or not owned
 	_currency_glyph.visible = is_price_visible and shop_item.cost > 0
 	var can_afford := EconomyManager.can_afford(shop_item.currency, shop_item.cost)
+	var action_style := &"ShopActionReady"
+	if not is_price_visible:
+		action_style = &"ShopActionActive" if equipped else &"ShopActionSelect"
+	elif not can_afford:
+		action_style = &"ShopActionLocked"
+	_price_panel.theme_type_variation = action_style
+	_cost_label.modulate = Color.WHITE
 	if is_price_visible and not can_afford:
-		_cost_label.modulate = Color(1.0, 0.75, 0.7, 1.0)
 		tooltip_text = "Need %d %s" % [shop_item.cost, "tickets" if shop_item.currency == &"tickets" else "coins"]
+	elif equipped:
+		tooltip_text = "%s is active" % shop_item.display_name
+	elif owned:
+		tooltip_text = "Tap to select %s" % shop_item.display_name
+	elif is_consumable:
+		tooltip_text = "Buy one %s" % shop_item.display_name
 	else:
-		_cost_label.modulate = Color.WHITE
-		tooltip_text = shop_item.description
+		tooltip_text = "Unlock %s" % shop_item.display_name
 
 
 func _on_coins_changed(_amount: int) -> void:

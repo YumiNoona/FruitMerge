@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://dofjhgwgbnm11" path="res://Assets/UI/PausePanel.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/UI/Close.png" id="3"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="4"]
-[ext_resource type="FontFile" uid="uid://dj4311ru2bs2w" path="res://Assets/Fonts/Atop.ttf" id="5"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/Settings/settings_menu.tscn" id="6"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5"]
+[ext_resource type="PackedScene" uid="uid://curl0kqpuh6dx" path="res://Scenes/UI/Settings/settings_menu.tscn" id="6"]
 
 [node name="PauseMenu" type="Control" unique_id=1441074638]
 unique_name_in_owner = true
@@ -42,6 +42,8 @@ offset_left = -320.0
 offset_top = -348.0
 offset_right = 320.0
 offset_bottom = 348.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="PanelArt" type="TextureRect" parent="PanelRoot" unique_id=1714751581]
 layout_mode = 1

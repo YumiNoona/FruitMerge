@@ -2,8 +2,30 @@
 
 [ext_resource type="Script" uid="uid://dwit82np30oi3" path="res://Scripts/UI/GameOver/game_over.gd" id="1"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
-[ext_resource type="Texture2D" path="res://Assets/Fruits/Watermelon.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://5yb55rdk1qho" path="res://Assets/UI/FruitBasket.png" id="3_ksv1s"]
 [ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="4"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="4_7rrlc"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5_7rrlc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rrlc"]
+content_margin_left = 22.0
+content_margin_top = 18.0
+content_margin_right = 22.0
+content_margin_bottom = 18.0
+bg_color = Color(0.25049934, 0.78951913, 0.7431826, 0.9411765)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(1, 0.94, 0.82, 0.9)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+
+[sub_resource type="LabelSettings" id="LabelSettings_sa15m"]
+font = ExtResource("4_7rrlc")
+font_size = 39
 
 [node name="GameOver" type="Control" unique_id=79099277]
 process_mode = 3
@@ -38,6 +60,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(540, 650)
 layout_mode = 2
 theme_type_variation = &"PeachPanel"
+theme_override_styles/panel = SubResource("StyleBoxFlat_7rrlc")
 
 [node name="Content" type="VBoxContainer" parent="Center/ResultCard" unique_id=1848023079]
 layout_mode = 2
@@ -45,17 +68,21 @@ theme_override_constants/separation = 12
 alignment = 1
 
 [node name="FruitIcon" type="TextureRect" parent="Center/ResultCard/Content" unique_id=14189788]
-custom_minimum_size = Vector2(0, 145)
+custom_minimum_size = Vector2(500, 330.21)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
 mouse_filter = 2
-texture = ExtResource("3")
+texture = ExtResource("3_ksv1s")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Title" type="Label" parent="Center/ResultCard/Content" unique_id=1697401222]
 layout_mode = 2
 theme_type_variation = &"HeadingLabel"
-text = "FRUIT BASKET FULL!"
+theme_override_font_sizes/font_size = 41
+text = "FRUIT BASKET FULL"
+label_settings = SubResource("LabelSettings_sa15m")
 horizontal_alignment = 1
 
 [node name="NewHighLabel" type="Label" parent="Center/ResultCard/Content" unique_id=45744338]
@@ -72,6 +99,7 @@ horizontal_alignment = 1
 [node name="ScoreCaption" type="Label" parent="Center/ResultCard/Content" unique_id=1834759168]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_fonts/font = ExtResource("4_7rrlc")
 text = "YOUR SCORE"
 horizontal_alignment = 1
 
@@ -81,6 +109,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.47, 0.22, 1)
 theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 1)
 theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("4_7rrlc")
 theme_override_font_sizes/font_size = 56
 text = "0"
 horizontal_alignment = 1
@@ -93,25 +122,30 @@ alignment = 1
 [node name="HighScoreLabel" type="Label" parent="Center/ResultCard/Content/RewardRow" unique_id=2082222930]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_7rrlc")
 text = "Best  0"
 
 [node name="CoinsEarnedLabel" type="Label" parent="Center/ResultCard/Content/RewardRow" unique_id=2110257755]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.66, 0.22, 1)
+theme_override_fonts/font = ExtResource("4_7rrlc")
 text = "+0 coins"
 
 [node name="Encouragement" type="Label" parent="Center/ResultCard/Content" unique_id=1418125610]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_fonts/font = ExtResource("4_7rrlc")
 theme_override_font_sizes/font_size = 18
-text = "Every drop grows your garden."
+text = "Every drop grows your garden"
 horizontal_alignment = 1
 
 [node name="RestartButton" type="Button" parent="Center/ResultCard/Content" unique_id=1317943307]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("5_7rrlc")
+theme_override_font_sizes/font_size = 40
 text = "PLAY AGAIN"
 script = ExtResource("4")
 
@@ -120,5 +154,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
 theme_type_variation = &"CreamButton"
+theme_override_fonts/font = ExtResource("5_7rrlc")
+theme_override_font_sizes/font_size = 40
 text = "MAIN MENU"
 script = ExtResource("4")

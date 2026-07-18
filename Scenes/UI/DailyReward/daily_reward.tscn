@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/UI/Close.png" id="4"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="5"]
 [ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="6"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="6_0c6mg"]
 
 [node name="DailyReward" type="Control" unique_id=582529172]
 layout_mode = 3
@@ -132,7 +133,8 @@ offset_right = 91.0
 offset_bottom = -139.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_type_variation = &"OrangeButton"
+theme_type_variation = &"FlatButton"
+theme_override_fonts/font = ExtResource("6_0c6mg")
 theme_override_font_sizes/font_size = 26
 text = "CLAIM"
 script = ExtResource("6")
