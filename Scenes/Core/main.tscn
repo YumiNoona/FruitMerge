@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://5lrjra080tca" path="res://Scenes/UI/GameOver/game_over.tscn" id="7"]
 [ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://bf34mdo5qit6q" path="res://Assets/UI/Container.png" id="9"]
+[ext_resource type="Script" path="res://Scripts/Core/gameplay_juice.gd" id="10"]
+[ext_resource type="Script" path="res://Scripts/Core/powerup_controller.gd" id="11"]
 
 [node name="Main" type="Node2D" unique_id=1137529470]
 script = ExtResource("1")
@@ -45,6 +47,18 @@ position = Vector2(0, -990)
 unique_name_in_owner = true
 z_index = 30
 position = Vector2(282, -340)
+
+[node name="FruitContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="GameplayJuice" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("10")
+
+[node name="PowerupController" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = 70
+script = ExtResource("11")
 
 [node name="Interface" type="CanvasLayer" parent="." unique_id=1980987107]
 

@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Language: es\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "SETTINGS"
+msgstr "AJUSTES"
+
+msgid "Music"
+msgstr "Música"
+
+msgid "Sound Effects"
+msgstr "Efectos de sonido"
+
+msgid "Vibration"
+msgstr "Vibración"
+
+msgid "Game Feel"
+msgstr "Sensación del juego"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "PAUSED"
+msgstr "PAUSA"
+
+msgid "CONTINUE"
+msgstr "CONTINUAR"
+
+msgid "RESTART"
+msgstr "REINICIAR"
+
+msgid "HOME"
+msgstr "INICIO"
+
+msgid "ACHIEVEMENTS"
+msgstr "LOGROS"
+
+msgid "HOW TO PLAY"
+msgstr "CÓMO JUGAR"
+
+msgid "COINS"
+msgstr "MONEDAS"
+
+msgid "TICKETS"
+msgstr "BOLETOS"
+
+msgid "SCORE"
+msgstr "PUNTOS"
+
+msgid "NEXT"
+msgstr "SIGUIENTE"
+
+msgid "SKINS"
+msgstr "ASPECTOS"
+
+msgid "PETS"
+msgstr "MASCOTAS"
+
+msgid "POWER-UPS"
+msgstr "PODERES"
+
+msgid "PLAY"
+msgstr "JUGAR"
+
+msgid "SHOP"
+msgstr "TIENDA"

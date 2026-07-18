@@ -2,6 +2,8 @@ class_name Enums
 
 enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, SHOP }
 
+enum GameMode { CLASSIC, RELAXED, TIME_ATTACK, DAILY_CHALLENGE }
+
 enum FruitTier {
 	CHERRY = 0,
 	BERRIES = 1,
@@ -19,6 +21,10 @@ enum FruitTier {
 	WATERMELON = 13,
 }
 
-enum PowerUpType { HAMMER, BOMB, UNDO, SHUFFLE }
+enum PowerUpType { LEVEL_UP, SHAKE_BOX, REMOVE_SMALLEST, GRAB, HAMMER, BOMB }
+
+enum Currency { COINS, TICKETS }
+
+enum ShopCategory { SKIN, PET, POWERUP, BACKGROUND }
 
 enum FruitEmotion { IDLE, HAPPY, EXCITED, DIZZY, WORRIED, SLEEPY }

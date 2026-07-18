@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="ShopCatalogData" load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/shop_catalog_data.gd" id="1"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_strawberry_cat.tres" id="2"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_watermelon_pup.tres" id="3"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_peach_bunny.tres" id="4"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_pineapple_meow.tres" id="5"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_melon_bear.tres" id="6"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_banana_fox.tres" id="7"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_berry_hamster.tres" id="8"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_cherry_bird.tres" id="9"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_lemon_frog.tres" id="10"]
+[ext_resource type="Resource" path="res://Data/ShopItems/pet_cat.tres" id="11"]
+[ext_resource type="Resource" path="res://Data/ShopItems/skin_default.tres" id="12"]
+[ext_resource type="Resource" path="res://Data/ShopItems/skin_pastel.tres" id="13"]
+[ext_resource type="Resource" path="res://Data/ShopItems/skin_pineapple.tres" id="14"]
+[ext_resource type="Resource" path="res://Data/ShopItems/background_garden.tres" id="15"]
+[ext_resource type="Resource" path="res://Data/ShopItems/powerup_level_up.tres" id="16"]
+[ext_resource type="Resource" path="res://Data/ShopItems/powerup_shake_box.tres" id="17"]
+[ext_resource type="Resource" path="res://Data/ShopItems/powerup_remove_smallest.tres" id="18"]
+[ext_resource type="Resource" path="res://Data/ShopItems/powerup_grab_em.tres" id="19"]
+[ext_resource type="Resource" path="res://Data/ShopItems/powerup_hammer.tres" id="20"]
+[ext_resource type="Resource" path="res://Data/ShopItems/powerup_bomb.tres" id="21"]
+[ext_resource type="Script" path="res://Scripts/Data/shop_item_data.gd" id="22"]
+
+[resource]
+script = ExtResource("1")
+items = Array[ExtResource("22")]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21")])

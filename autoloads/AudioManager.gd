@@ -1,7 +1,21 @@
 extends Node
 
+const MUSIC_TRACK_SOURCES: Array[AudioStream] = [
+	preload("res://Audio/Music/Main Menu.wav"),
+	preload("res://Audio/Music/Gameplay.wav"),
+	preload("res://Audio/Music/Shop.wav"),
+	preload("res://Audio/Music/Achievements.wav"),
+]
+const SFX_POOL_SIZE := 8
+const SPATIAL_SFX_POOL_SIZE := 12
+const PROCEDURAL_SFX_RATE := 44100
+
 @export var music_bus: StringName = &"Music"
 @export var sfx_bus: StringName = &"SFX"
+@export_category("Music playlist")
+@export_range(0.1, 5.0, 0.05) var music_fade_in_duration: float = 1.25
+@export_range(0.25, 8.0, 0.05) var music_crossfade_duration: float = 2.0
+@export_range(-60.0, -12.0, 1.0) var music_silent_db: float = -36.0
 
 var music_vol: float = 0.8:
 	set(v):
@@ -13,18 +27,56 @@ var sfx_vol: float = 0.8:
 		sfx_vol = clampf(v, 0.0, 1.0)
 		_apply_sfx_vol()
 
-var _music_player: AudioStreamPlayer
+var _music_players: Array[AudioStreamPlayer] = []
+var _music_tracks: Array[AudioStream] = []
+var _shuffled_track_indices: Array[int] = []
+var _music_tween: Tween
+var _active_music_player_index: int = 0
+var _last_track_index: int = -1
+var _playlist_started: bool = false
+var _music_transitioning: bool = false
 var _sfx_pool: Array[AudioStreamPlayer] = []
+var _spatial_sfx_pool: Array[AudioStreamPlayer2D] = []
 var _pool_index: int = 0
+var _spatial_pool_index: int = 0
 var _merge_sfx_cache: Dictionary = {}
-const SFX_POOL_SIZE := 8
-const PROCEDURAL_SFX_RATE := 44100
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_buses()
-	_create_music_player()
+	_prepare_music_tracks()
+	_create_music_players()
 	_create_sfx_pool()
+	_create_spatial_sfx_pool()
+
+
+func _process(_delta: float) -> void:
+	if not _playlist_started or _music_transitioning or _music_players.is_empty():
+		return
+	var active_player := _music_players[_active_music_player_index]
+	if not active_player.playing:
+		_music_transitioning = true
+		_start_next_after_finished.call_deferred()
+		return
+	var track_length := active_player.stream.get_length() if active_player.stream else 0.0
+	if track_length <= music_crossfade_duration:
+		return
+	var remaining := track_length - active_player.get_playback_position()
+	if remaining <= music_crossfade_duration:
+		_crossfade_to_next()
+
+
+func _exit_tree() -> void:
+	_playlist_started = false
+	_music_transitioning = false
+	if _music_tween and _music_tween.is_valid():
+		_music_tween.kill()
+	for player in _music_players:
+		player.stop()
+		player.stream = null
+	_music_tracks.clear()
+	_shuffled_track_indices.clear()
 
 func _setup_buses() -> void:
 	var music_idx := AudioServer.get_bus_index(music_bus)
@@ -45,10 +97,24 @@ func _apply_sfx_vol() -> void:
 	if idx >= 0:
 		AudioServer.set_bus_volume_db(idx, linear_to_db(sfx_vol))
 
-func _create_music_player() -> void:
-	_music_player = AudioStreamPlayer.new()
-	_music_player.bus = music_bus
-	add_child(_music_player)
+func _prepare_music_tracks() -> void:
+	_music_tracks.clear()
+	for source in MUSIC_TRACK_SOURCES:
+		var track := source.duplicate(true) as AudioStream
+		if track is AudioStreamWAV:
+			(track as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_DISABLED
+		_music_tracks.append(track)
+
+
+func _create_music_players() -> void:
+	for player_index in 2:
+		var player := AudioStreamPlayer.new()
+		player.name = "MusicPlayer%d" % (player_index + 1)
+		player.bus = music_bus
+		player.volume_db = music_silent_db
+		player.finished.connect(_on_music_player_finished.bind(player))
+		add_child(player)
+		_music_players.append(player)
 
 func _create_sfx_pool() -> void:
 	for i in SFX_POOL_SIZE:
@@ -57,14 +123,130 @@ func _create_sfx_pool() -> void:
 		add_child(p)
 		_sfx_pool.append(p)
 
-func play_music(stream: AudioStream) -> void:
-	if _music_player.stream == stream and _music_player.playing:
-		return
-	_music_player.stream = stream
-	_music_player.play()
 
-func stop_music() -> void:
-	_music_player.stop()
+func _create_spatial_sfx_pool() -> void:
+	for _index in SPATIAL_SFX_POOL_SIZE:
+		var player := AudioStreamPlayer2D.new()
+		player.bus = sfx_bus
+		add_child(player)
+		_spatial_sfx_pool.append(player)
+
+func start_music_playlist() -> void:
+	if _playlist_started:
+		return
+	if _music_tracks.is_empty() or _music_players.is_empty():
+		push_warning("Music playlist has no playable tracks")
+		return
+	if _music_tween and _music_tween.is_valid():
+		_music_tween.kill()
+	for player in _music_players:
+		player.stop()
+		player.stream = null
+		player.volume_db = music_silent_db
+	_playlist_started = true
+	_music_transitioning = true
+	_active_music_player_index = 0
+	var first_player := _music_players[_active_music_player_index]
+	first_player.stream = _take_next_music_track()
+	first_player.play()
+	_music_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_music_tween.tween_property(first_player, "volume_db", 0.0, music_fade_in_duration)
+	_music_tween.finished.connect(func(): _music_transitioning = false)
+
+
+func stop_music(fade_duration: float = 0.6) -> void:
+	_playlist_started = false
+	_music_transitioning = true
+	if _music_tween and _music_tween.is_valid():
+		_music_tween.kill()
+	_music_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for player in _music_players:
+		if player.playing:
+			_music_tween.tween_property(player, "volume_db", music_silent_db, maxf(fade_duration, 0.01))
+	_music_tween.finished.connect(func():
+		for player in _music_players:
+			player.stop()
+			player.stream = null
+		_music_transitioning = false
+	)
+
+
+func _crossfade_to_next() -> void:
+	if _music_transitioning:
+		return
+	_music_transitioning = true
+	var outgoing_player := _music_players[_active_music_player_index]
+	var incoming_index := 1 - _active_music_player_index
+	var incoming_player := _music_players[incoming_index]
+	incoming_player.stop()
+	incoming_player.stream = _take_next_music_track()
+	incoming_player.volume_db = music_silent_db
+	incoming_player.play()
+	_active_music_player_index = incoming_index
+	_music_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_music_tween.tween_property(outgoing_player, "volume_db", music_silent_db, music_crossfade_duration)
+	_music_tween.tween_property(incoming_player, "volume_db", 0.0, music_crossfade_duration)
+	_music_tween.finished.connect(func():
+		outgoing_player.stop()
+		outgoing_player.stream = null
+		_music_transitioning = false
+	)
+
+
+func _on_music_player_finished(player: AudioStreamPlayer) -> void:
+	if not _playlist_started or _music_transitioning:
+		return
+	if player != _music_players[_active_music_player_index]:
+		return
+	_music_transitioning = true
+	_start_next_after_finished.call_deferred()
+
+
+func _start_next_after_finished() -> void:
+	if not _playlist_started:
+		_music_transitioning = false
+		return
+	var incoming_index := 1 - _active_music_player_index
+	var incoming_player := _music_players[incoming_index]
+	incoming_player.stop()
+	incoming_player.stream = _take_next_music_track()
+	incoming_player.volume_db = music_silent_db
+	incoming_player.play()
+	_active_music_player_index = incoming_index
+	_music_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_music_tween.tween_property(incoming_player, "volume_db", 0.0, music_fade_in_duration)
+	_music_tween.finished.connect(func(): _music_transitioning = false)
+
+
+func _take_next_music_track() -> AudioStream:
+	if _shuffled_track_indices.is_empty():
+		_refill_shuffled_track_indices()
+	var next_index: int = _shuffled_track_indices.pop_front()
+	_last_track_index = next_index
+	return _music_tracks[next_index]
+
+
+func _refill_shuffled_track_indices() -> void:
+	_shuffled_track_indices.clear()
+	for track_index in _music_tracks.size():
+		_shuffled_track_indices.append(track_index)
+	_shuffled_track_indices.shuffle()
+	if _shuffled_track_indices.size() > 1 and _shuffled_track_indices[0] == _last_track_index:
+		var swap_index := randi_range(1, _shuffled_track_indices.size() - 1)
+		var repeated_index := _shuffled_track_indices[0]
+		_shuffled_track_indices[0] = _shuffled_track_indices[swap_index]
+		_shuffled_track_indices[swap_index] = repeated_index
+
+
+func get_music_track_count() -> int:
+	return _music_tracks.size()
+
+
+func are_music_tracks_one_shot() -> bool:
+	for track in _music_tracks:
+		if track is AudioStreamWAV and (track as AudioStreamWAV).loop_mode != AudioStreamWAV.LOOP_DISABLED:
+			return false
+	return true
 
 func play_sfx(stream: AudioStream) -> void:
 	if not stream:
@@ -77,13 +259,11 @@ func play_sfx(stream: AudioStream) -> void:
 func play_sfx_at(stream: AudioStream, position: Vector2) -> void:
 	if not stream:
 		return
-	var p := AudioStreamPlayer2D.new()
-	p.bus = sfx_bus
-	p.stream = stream
-	p.global_position = position
-	p.finished.connect(p.queue_free)
-	p.ready.connect(p.play, CONNECT_ONE_SHOT)
-	get_tree().root.add_child.call_deferred(p)
+	var player := _spatial_sfx_pool[_spatial_pool_index]
+	_spatial_pool_index = wrapi(_spatial_pool_index + 1, 0, _spatial_sfx_pool.size())
+	player.stream = stream
+	player.global_position = position
+	player.play()
 
 
 func play_merge_sfx(tier: int, custom_stream: AudioStream, position: Vector2) -> void:

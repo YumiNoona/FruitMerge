@@ -11,3 +11,6 @@ icon = ExtResource("2")
 cost = 75
 category = "powerup"
 description = "Clear a tricky cluster"
+blast_radius = 155.0
+camera_shake_strength = 0.9
+camera_shake_duration = 1.0

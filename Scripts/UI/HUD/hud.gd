@@ -17,13 +17,21 @@ extends Control
 @onready var _shake_button: TextureButton = %ShakeButton
 @onready var _remove_button: TextureButton = %RemoveButton
 @onready var _grab_button: TextureButton = %GrabButton
+@onready var _hammer_button: TextureButton = %HammerButton
+@onready var _bomb_button: TextureButton = %BombButton
 @onready var _level_up_count: Label = %LevelUpCount
 @onready var _shake_count: Label = %ShakeCount
 @onready var _remove_count: Label = %RemoveCount
 @onready var _grab_count: Label = %GrabCount
+@onready var _hammer_count: Label = %HammerCount
+@onready var _bomb_count: Label = %BombCount
 @onready var _powerup_hint: Label = %PowerupHint
 @onready var _tier_reward_banner: Control = %TierRewardBanner
 @onready var _tier_reward_label: Label = %TierRewardLabel
+@onready var _mode_label: Label = %ModeLabel
+@onready var _top_panel: Control = $TopPanel
+@onready var _powerup_tray: Control = $PowerupTray
+@onready var _next_panel: Control = $NextPanel
 
 var _danger_tween: Tween
 var _combo_tween: Tween
@@ -52,6 +60,8 @@ func _ready() -> void:
 	_shake_button.pressed.connect(func(): _request_powerup(&"powerup_shake_box"))
 	_remove_button.pressed.connect(func(): _request_powerup(&"powerup_remove_smallest"))
 	_grab_button.pressed.connect(func(): _request_powerup(&"powerup_grab_em"))
+	_hammer_button.pressed.connect(func(): _request_powerup(&"powerup_hammer"))
+	_bomb_button.pressed.connect(func(): _request_powerup(&"powerup_bomb"))
 	EventBus.powerup_count_changed.connect(_on_powerup_count_changed)
 	EventBus.powerup_targeting_changed.connect(_on_powerup_targeting_changed)
 	_danger_overlay.modulate.a = 0.0
@@ -62,6 +72,17 @@ func _ready() -> void:
 	_update_tickets(EconomyManager.tickets)
 	_update_next_fruit()
 	_update_powerup_buttons()
+	_update_mode_label()
+	MobileSafeArea.apply_top_inset(_top_panel, _top_panel.position.y)
+	MobileSafeArea.apply_top_inset(_powerup_tray, _powerup_tray.position.y)
+	MobileSafeArea.apply_top_inset(_next_panel, _next_panel.position.y)
+
+
+func _process(_delta: float) -> void:
+	if GameManager.current_mode == Enums.GameMode.TIME_ATTACK:
+		var whole_seconds := floori(GameManager.run_time_remaining)
+		var minutes := floori(float(whole_seconds) / 60.0)
+		_mode_label.text = "TIME ATTACK  %02d:%02d" % [minutes, whole_seconds % 60]
 
 
 func _on_score_changed(new_score: int) -> void:
@@ -121,6 +142,7 @@ func _get_combo_callout(combo: int) -> String:
 
 
 func _on_danger_entered() -> void:
+	HapticManager.pulse(HapticManager.Feedback.DANGER)
 	if _danger_tween and _danger_tween.is_valid():
 		_danger_tween.kill()
 	_danger_warning.visible = true
@@ -143,6 +165,7 @@ func _on_danger_exited() -> void:
 
 
 func _on_pause_pressed() -> void:
+	HapticManager.pulse(HapticManager.Feedback.TAP)
 	_pause_menu.open()
 
 
@@ -162,6 +185,8 @@ func _update_powerup_buttons() -> void:
 	_update_powerup_button(_shake_button, _shake_count, &"powerup_shake_box")
 	_update_powerup_button(_remove_button, _remove_count, &"powerup_remove_smallest")
 	_update_powerup_button(_grab_button, _grab_count, &"powerup_grab_em")
+	_update_powerup_button(_hammer_button, _hammer_count, &"powerup_hammer")
+	_update_powerup_button(_bomb_button, _bomb_count, &"powerup_bomb")
 
 
 func _update_powerup_button(button: TextureButton, count_label: Label, item_id: StringName) -> void:
@@ -179,6 +204,12 @@ func _on_powerup_targeting_changed(active: bool, message: String) -> void:
 	_level_up_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_level_up" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_level_up") > 0 else Color(0.62, 0.62, 0.62, 0.52))
 	if _grab_button:
 		_grab_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_grab_em" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_grab_em") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+	_hammer_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_hammer" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_hammer") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+	_bomb_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_bomb" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_bomb") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+
+
+func _update_mode_label() -> void:
+	_mode_label.text = GameManager.get_mode_name().to_upper()
 
 
 func _update_score(value: int) -> void:
@@ -226,7 +257,7 @@ func show_tier_ticket_reward(created_tier: int, ticket_amount: int) -> void:
 
 
 func _spawn_score_pop(world_pos: Vector2, score: int) -> void:
-	var pop_scene := load("res://Scenes/UI/Components/score_pop.tscn") as PackedScene
+	var pop_scene := preload("res://Scenes/UI/Components/score_pop.tscn")
 	if not pop_scene:
 		return
 	var pop: Control = pop_scene.instantiate()

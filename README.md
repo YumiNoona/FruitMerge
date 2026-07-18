@@ -11,3 +11,12 @@ To tune one fruit:
 5. Save that scene and test it in the game.
 
 Keep `Use Scene Visuals` and `Use Scene Collision` enabled on the fruit root. The scene's circle controls physics contact and safe horizontal drop spacing. `FruitData.radius` still controls the displayed preview size.
+
+## Architecture and features
+
+See `Docs/ARCHITECTURE_AND_FEATURES.md` for the save/profile design, game modes,
+power-up flow, mobile haptics and safe-area behavior, cosmetics, localization,
+and the headless validation command.
+
+For PC debugging, the window is resizable and `F11` toggles fullscreen in debug
+builds. Mobile safe-area offsets intentionally do not run on desktop platforms.

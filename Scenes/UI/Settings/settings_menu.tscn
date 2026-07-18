@@ -87,18 +87,18 @@ offset_left = 72.0
 offset_top = 176.0
 offset_right = 588.0
 offset_bottom = 808.0
-theme_override_constants/separation = 9
+theme_override_constants/separation = 5
 
 [node name="MusicRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=639020471]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Icon" type="Label" parent="PanelRoot/Content/MusicRow" unique_id=187829061]
 custom_minimum_size = Vector2(48, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "♫"
+theme_override_font_sizes/font_size = 20
+text = "M"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -110,14 +110,22 @@ theme_override_font_sizes/font_size = 24
 text = "Music"
 vertical_alignment = 1
 
-[node name="MusicToggle" type="Button" parent="PanelRoot/Content/MusicRow" unique_id=29266475]
+[node name="MusicSlider" type="HSlider" parent="PanelRoot/Content/MusicRow" unique_id=29266475]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(132, 54)
+custom_minimum_size = Vector2(220, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-toggle_mode = true
-button_pressed = true
-text = "ON"
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="MusicValueLabel" type="Label" parent="PanelRoot/Content/MusicRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "80%"
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="Line1" type="ColorRect" parent="PanelRoot/Content" unique_id=2070621243]
 custom_minimum_size = Vector2(0, 2)
@@ -126,15 +134,15 @@ mouse_filter = 2
 color = Color(0.73, 0.48, 0.24, 0.28)
 
 [node name="SfxRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=1353736461]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Icon" type="Label" parent="PanelRoot/Content/SfxRow" unique_id=1008834184]
 custom_minimum_size = Vector2(48, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "♪"
+theme_override_font_sizes/font_size = 15
+text = "SFX"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -146,14 +154,22 @@ theme_override_font_sizes/font_size = 24
 text = "Sound Effects"
 vertical_alignment = 1
 
-[node name="SfxToggle" type="Button" parent="PanelRoot/Content/SfxRow" unique_id=1580055465]
+[node name="SfxSlider" type="HSlider" parent="PanelRoot/Content/SfxRow" unique_id=1580055465]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(132, 54)
+custom_minimum_size = Vector2(220, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-toggle_mode = true
-button_pressed = true
-text = "ON"
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="SfxValueLabel" type="Label" parent="PanelRoot/Content/SfxRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "80%"
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="Line2" type="ColorRect" parent="PanelRoot/Content" unique_id=1880750497]
 custom_minimum_size = Vector2(0, 2)
@@ -162,15 +178,15 @@ mouse_filter = 2
 color = Color(0.73, 0.48, 0.24, 0.28)
 
 [node name="VibrationRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=353220532]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Icon" type="Label" parent="PanelRoot/Content/VibrationRow" unique_id=229866222]
 custom_minimum_size = Vector2(48, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 27
-text = "▣"
+theme_override_font_sizes/font_size = 14
+text = "VIB"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -198,15 +214,15 @@ mouse_filter = 2
 color = Color(0.73, 0.48, 0.24, 0.28)
 
 [node name="LanguageRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=1219272059]
-custom_minimum_size = Vector2(0, 58)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Icon" type="Label" parent="PanelRoot/Content/LanguageRow" unique_id=219173393]
 custom_minimum_size = Vector2(48, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "◎"
+theme_override_font_sizes/font_size = 12
+text = "LANG"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -225,57 +241,29 @@ layout_mode = 2
 theme_type_variation = &"CreamButton"
 theme_override_font_sizes/font_size = 19
 
-[node name="ThemeRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=1217290846]
-custom_minimum_size = Vector2(0, 58)
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Icon" type="Label" parent="PanelRoot/Content/ThemeRow" unique_id=882940998]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "●"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label" type="Label" parent="PanelRoot/Content/ThemeRow" unique_id=163400464]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 24
-text = "Theme"
-vertical_alignment = 1
-
-[node name="ThemeOption" type="OptionButton" parent="PanelRoot/Content/ThemeRow" unique_id=1373077836]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 52)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_font_sizes/font_size = 19
-
 [node name="PrivacyButton" type="Button" parent="PanelRoot/Content" unique_id=162908837]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 57)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_type_variation = &"CreamButton"
 theme_override_font_sizes/font_size = 20
-text = "◆   Privacy Policy                                      ›"
+text = "PRIVACY POLICY"
 
 [node name="RestoreButton" type="Button" parent="PanelRoot/Content" unique_id=1611499306]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 57)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_type_variation = &"CreamButton"
 theme_override_font_sizes/font_size = 20
-text = "↻   Restore Purchases                              ›"
+text = "RESTORE PURCHASES"
 
 [node name="AboutButton" type="Button" parent="PanelRoot/Content" unique_id=541487683]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 57)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_type_variation = &"CreamButton"
 theme_override_font_sizes/font_size = 20
-text = "ⓘ   About                                                  ›"
+text = "ABOUT"
 
 [node name="StatusLabel" type="Label" parent="PanelRoot" unique_id=700412006]
 unique_name_in_owner = true

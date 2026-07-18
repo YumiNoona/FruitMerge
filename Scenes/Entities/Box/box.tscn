@@ -11,6 +11,8 @@ size = Vector2(542, 22)
 [node name="Box" type="StaticBody2D" groups=["box"]]
 script = ExtResource("1")
 danger_settle_time = 2.4
+danger_warning_delay = 0.5
+danger_settled_speed = 70.0
 danger_line_y = -700.0
 
 [node name="LeftWall" type="CollisionShape2D" parent="."]

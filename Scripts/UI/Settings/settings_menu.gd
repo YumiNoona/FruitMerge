@@ -4,25 +4,22 @@ extends Control
 signal closed
 
 @onready var _panel: Control = %PanelRoot
-@onready var _music_toggle: Button = %MusicToggle
-@onready var _sfx_toggle: Button = %SfxToggle
+@onready var _music_slider: HSlider = %MusicSlider
+@onready var _music_value_label: Label = %MusicValueLabel
+@onready var _sfx_slider: HSlider = %SfxSlider
+@onready var _sfx_value_label: Label = %SfxValueLabel
 @onready var _vibration_toggle: Button = %VibrationToggle
 @onready var _language: OptionButton = %LanguageOption
-@onready var _theme: OptionButton = %ThemeOption
 @onready var _status_label: Label = %StatusLabel
-
-var _last_music_volume: float = 0.8
-var _last_sfx_volume: float = 0.8
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	%CloseButton.pressed.connect(close)
-	_music_toggle.toggled.connect(_on_music_toggled)
-	_sfx_toggle.toggled.connect(_on_sfx_toggled)
+	_music_slider.value_changed.connect(_on_music_volume_changed)
+	_sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 	_vibration_toggle.toggled.connect(_on_vibration_toggled)
 	_language.item_selected.connect(_on_language_selected)
-	_theme.item_selected.connect(_on_theme_selected)
 	%PrivacyButton.pressed.connect(func(): _show_status("Privacy policy will open here when the store page is connected."))
 	%RestoreButton.pressed.connect(func(): _show_status("Purchases checked — everything is already cozy and accounted for!"))
 	%AboutButton.pressed.connect(func(): _show_status("Fruit Merge • cozy kitchen build 1.0.0"))
@@ -60,22 +57,17 @@ func _setup_choices() -> void:
 		_language.add_item("English")
 		_language.add_item("Hindi")
 		_language.add_item("Spanish")
-	if _theme.item_count == 0:
-		_theme.add_item("Light")
-		_theme.add_item("Warm")
 
 
 func _sync_controls() -> void:
-	_last_music_volume = maxf(AudioManager.music_vol, float(SaveManager.get_setting("music_restore_volume", 0.8)))
-	_last_sfx_volume = maxf(AudioManager.sfx_vol, float(SaveManager.get_setting("sfx_restore_volume", 0.8)))
-	_music_toggle.set_pressed_no_signal(AudioManager.music_vol > 0.001)
-	_sfx_toggle.set_pressed_no_signal(AudioManager.sfx_vol > 0.001)
+	_music_slider.set_value_no_signal(AudioManager.music_vol)
+	_sfx_slider.set_value_no_signal(AudioManager.sfx_vol)
 	_vibration_toggle.set_pressed_no_signal(bool(SaveManager.get_setting("vibration_enabled", true)))
-	_update_toggle_copy(_music_toggle)
-	_update_toggle_copy(_sfx_toggle)
+	_update_volume_copy(_music_value_label, AudioManager.music_vol)
+	_update_volume_copy(_sfx_value_label, AudioManager.sfx_vol)
 	_update_toggle_copy(_vibration_toggle)
-	_select_option(_language, str(SaveManager.get_setting("language", "English")))
-	_select_option(_theme, str(SaveManager.get_setting("theme", "Light")))
+	var locale_names := {"en": "English", "hi": "Hindi", "es": "Spanish"}
+	_select_option(_language, locale_names.get(str(SaveManager.get_setting("locale", "en")), "English"))
 
 
 func _select_option(option: OptionButton, saved_text: String) -> void:
@@ -86,18 +78,16 @@ func _select_option(option: OptionButton, saved_text: String) -> void:
 	option.select(0)
 
 
-func _on_music_toggled(enabled: bool) -> void:
-	AudioManager.music_vol = _last_music_volume if enabled else 0.0
-	SaveManager.set_setting("music_volume", AudioManager.music_vol)
-	SaveManager.set_setting("music_restore_volume", _last_music_volume)
-	_update_toggle_copy(_music_toggle)
+func _on_music_volume_changed(value: float) -> void:
+	AudioManager.music_vol = value
+	SaveManager.set_setting("music_volume", value)
+	_update_volume_copy(_music_value_label, value)
 
 
-func _on_sfx_toggled(enabled: bool) -> void:
-	AudioManager.sfx_vol = _last_sfx_volume if enabled else 0.0
-	SaveManager.set_setting("sfx_volume", AudioManager.sfx_vol)
-	SaveManager.set_setting("sfx_restore_volume", _last_sfx_volume)
-	_update_toggle_copy(_sfx_toggle)
+func _on_sfx_volume_changed(value: float) -> void:
+	AudioManager.sfx_vol = value
+	SaveManager.set_setting("sfx_volume", value)
+	_update_volume_copy(_sfx_value_label, value)
 
 
 func _on_vibration_toggled(enabled: bool) -> void:
@@ -110,16 +100,17 @@ func _update_toggle_copy(toggle: Button) -> void:
 	toggle.modulate = Color.WHITE if toggle.button_pressed else Color(0.82, 0.76, 0.68, 0.9)
 
 
+func _update_volume_copy(label: Label, value: float) -> void:
+	label.text = "%d%%" % roundi(clampf(value, 0.0, 1.0) * 100.0)
+
+
 func _on_language_selected(index: int) -> void:
-	SaveManager.set_setting("language", _language.get_item_text(index))
-	_show_status("Language preference saved.")
-
-
-func _on_theme_selected(index: int) -> void:
-	SaveManager.set_setting("theme", _theme.get_item_text(index))
-	_show_status("Theme preference saved for the next style pass.")
+	var locales := ["en", "hi", "es"]
+	var locale: String = locales[clampi(index, 0, locales.size() - 1)]
+	TranslationServer.set_locale(locale)
+	SaveManager.set_setting("locale", locale)
+	_show_status("Language applied. Some new content may still use English.")
 
 
 func _show_status(message: String) -> void:
 	_status_label.text = message
-

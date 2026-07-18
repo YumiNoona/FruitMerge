@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Language: hi\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "SETTINGS"
+msgstr "सेटिंग्स"
+
+msgid "Music"
+msgstr "संगीत"
+
+msgid "Sound Effects"
+msgstr "ध्वनि प्रभाव"
+
+msgid "Vibration"
+msgstr "कंपन"
+
+msgid "Game Feel"
+msgstr "गेम अनुभव"
+
+msgid "Language"
+msgstr "भाषा"
+
+msgid "Theme"
+msgstr "थीम"
+
+msgid "PAUSED"
+msgstr "रुका हुआ"
+
+msgid "CONTINUE"
+msgstr "जारी रखें"
+
+msgid "RESTART"
+msgstr "फिर शुरू करें"
+
+msgid "HOME"
+msgstr "होम"
+
+msgid "ACHIEVEMENTS"
+msgstr "उपलब्धियां"
+
+msgid "HOW TO PLAY"
+msgstr "कैसे खेलें"
+
+msgid "COINS"
+msgstr "सिक्के"
+
+msgid "TICKETS"
+msgstr "टिकट"
+
+msgid "SCORE"
+msgstr "स्कोर"
+
+msgid "NEXT"
+msgstr "अगला"
+
+msgid "SKINS"
+msgstr "स्किन"
+
+msgid "PETS"
+msgstr "पालतू"
+
+msgid "POWER-UPS"
+msgstr "पावर-अप"
+
+msgid "PLAY"
+msgstr "खेलें"
+
+msgid "SHOP"
+msgstr "दुकान"

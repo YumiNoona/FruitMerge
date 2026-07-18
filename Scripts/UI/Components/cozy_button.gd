@@ -31,6 +31,7 @@ func _on_mouse_exited() -> void:
 
 func _on_button_down() -> void:
 	if not disabled:
+		HapticManager.pulse(HapticManager.Feedback.TAP)
 		_animate_scale(Vector2.ONE * pressed_scale, 0.07)
 
 
@@ -44,4 +45,3 @@ func _animate_scale(target: Vector2, duration: float) -> void:
 		_motion_tween.kill()
 	_motion_tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_motion_tween.tween_property(self, "scale", target, duration)
-

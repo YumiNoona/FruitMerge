@@ -13,16 +13,20 @@ func set_debug_powerups(amount: int) -> void:
 		&"powerup_shake_box",
 		&"powerup_remove_smallest",
 		&"powerup_grab_em",
+		&"powerup_hammer",
+		&"powerup_bomb",
 	]:
 		powerup_counts[item_id] = amount
 		EventBus.powerup_count_changed.emit(item_id, amount)
 
 func add_coins(amount: int) -> void:
+	if amount <= 0:
+		return
 	coins += amount
 	EventBus.coins_changed.emit(coins)
 
 func spend_coins(amount: int) -> bool:
-	if coins < amount:
+	if amount < 0 or coins < amount:
 		return false
 	coins -= amount
 	EventBus.coins_changed.emit(coins)
@@ -45,15 +49,21 @@ func spend_tickets(amount: int) -> bool:
 
 
 func get_currency_balance(currency: StringName) -> int:
-	return tickets if currency == &"tickets" else coins
+	match currency:
+		&"coins": return coins
+		&"tickets": return tickets
+		_: return -1
 
 
 func can_afford(currency: StringName, amount: int) -> bool:
-	return get_currency_balance(currency) >= amount
+	return amount >= 0 and get_currency_balance(currency) >= amount
 
 
 func spend_currency(currency: StringName, amount: int) -> bool:
-	return spend_tickets(amount) if currency == &"tickets" else spend_coins(amount)
+	match currency:
+		&"coins": return spend_coins(amount)
+		&"tickets": return spend_tickets(amount)
+		_: return false
 
 func try_purchase(item: ShopItemData) -> bool:
 	if item.category == &"powerup":
@@ -86,6 +96,7 @@ func consume_powerup(item_id: StringName) -> bool:
 	if count <= 0:
 		return false
 	powerup_counts[item_id] = count - 1
+	GameManager.record_powerup_used()
 	EventBus.powerup_count_changed.emit(item_id, count - 1)
 	SaveManager.save_game()
 	return true

@@ -2,7 +2,6 @@ class_name DailyReward
 extends Control
 
 const HOME_SCENE := "res://Scenes/UI/Home/home.tscn"
-const MAIN_MENU_MUSIC: AudioStream = preload("res://Audio/Music/Main Menu.wav")
 const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
 const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
 
@@ -29,7 +28,6 @@ var _claimed_today := false
 
 
 func _ready() -> void:
-	AudioManager.play_music(MAIN_MENU_MUSIC)
 	_day_index = _get_current_day_index()
 	_claimed_today = str(SaveManager.get_setting("daily_reward_last_claim", "")) == _today_string()
 	_claim_button.pressed.connect(_on_claim_pressed)
@@ -260,8 +258,8 @@ func _on_claim_pressed() -> void:
 		_go_home()
 		return
 	_grant_reward(_day_index)
-	SaveManager.set_setting("daily_reward_day_index", _day_index)
-	SaveManager.set_setting("daily_reward_last_claim", _today_string())
+	SaveManager.set_settings({"daily_reward_day_index": _day_index, "daily_reward_last_claim": _today_string()})
+	HapticManager.pulse(HapticManager.Feedback.REWARD)
 	_claimed_today = true
 	_populate_rewards()
 	_update_claim_button()
@@ -271,7 +269,7 @@ func _on_claim_pressed() -> void:
 
 
 func _go_home() -> void:
-	get_tree().change_scene_to_file(HOME_SCENE)
+	SceneRouter.go_home()
 
 
 func _play_intro() -> void:

@@ -15,6 +15,10 @@ var shop_item: ShopItemData
 @onready var _count_label: Label = %CountLabel
 
 
+static func should_show_inventory_count(count: int) -> bool:
+	return count > 1
+
+
 func _ready() -> void:
 	pressed.connect(_on_pressed)
 	EventBus.coins_changed.connect(_on_coins_changed)
@@ -48,7 +52,7 @@ func _update_button_state() -> void:
 
 	_owned_badge.visible = owned and not is_consumable
 	_status_label.text = "EQUIPPED" if equipped else "OWNED"
-	_count_label.visible = is_consumable and powerup_count > 0
+	_count_label.visible = is_consumable and should_show_inventory_count(powerup_count)
 	_count_label.text = "x%d" % powerup_count
 
 	if is_consumable:
@@ -78,6 +82,7 @@ func _on_tickets_changed(_amount: int) -> void:
 
 
 func _on_pressed() -> void:
+	HapticManager.pulse(HapticManager.Feedback.TAP)
 	if not shop_item:
 		return
 	var is_consumable := shop_item.category == &"powerup"

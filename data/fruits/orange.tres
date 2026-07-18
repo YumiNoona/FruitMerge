@@ -14,3 +14,4 @@ score_value = 28
 next_tier = 7
 mass = 1.48
 color = Color(1, 1, 1, 1)
+guide_color = Color(0.97, 0.43, 0.08, 1)

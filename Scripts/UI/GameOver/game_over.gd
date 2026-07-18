@@ -17,6 +17,7 @@ func _ready() -> void:
 
 
 func _on_game_over(final_score: int) -> void:
+	HapticManager.pulse(HapticManager.Feedback.GAME_OVER)
 	_populate(final_score)
 	visible = true
 	_play_intro.call_deferred()
@@ -47,4 +48,4 @@ func _on_restart() -> void:
 
 func _on_menu() -> void:
 	GameManager.change_state(Enums.GameState.MENU)
-	get_tree().change_scene_to_file("res://Scenes/UI/Home/home.tscn")
+	SceneRouter.go_home()

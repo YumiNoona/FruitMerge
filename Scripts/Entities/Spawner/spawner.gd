@@ -1,27 +1,41 @@
 class_name Spawner
 extends Node2D
 
+const FruitFactoryScript = preload("res://Scripts/Entities/Fruit/fruit_factory.gd")
+
 const SPAWN_TIERS: Array[Enums.FruitTier] = [
 	Enums.FruitTier.CHERRY,
 	Enums.FruitTier.BERRIES,
 	Enums.FruitTier.STRAWBERRY,
 	Enums.FruitTier.GRAPE,
 ]
-const GUIDE_DASH_LENGTH: float = 18.0
-const GUIDE_GAP_LENGTH: float = 13.0
-const GUIDE_SPEED: float = 72.0
-const GUIDE_FOREGROUND := Color(1.0, 0.96, 0.76, 0.94)
-const GUIDE_SHADOW := Color(0.55, 0.29, 0.09, 0.22)
+const GUIDE_FALLBACK_COLOR := Color(1.0, 0.72, 0.2, 1.0)
 
 @export var drop_cooldown: float = 0.55
 @export var max_x_spread: float = 238.0
+@export_category("Drop guide")
+@export var guide_use_fruit_color: bool = true
+@export var guide_override_color: Color = GUIDE_FALLBACK_COLOR
+@export_range(4.0, 48.0, 1.0) var guide_dash_length: float = 16.0
+@export_range(2.0, 40.0, 1.0) var guide_gap_length: float = 12.0
+@export_range(0.0, 180.0, 1.0) var guide_scroll_speed: float = 64.0
+@export_range(0.5, 8.0, 0.25) var guide_shadow_width: float = 4.5
+@export_range(0.5, 8.0, 0.25) var guide_glow_width: float = 3.0
+@export_range(0.5, 5.0, 0.25) var guide_core_width: float = 1.5
+@export_range(0.0, 1.0, 0.01) var guide_shadow_opacity: float = 0.22
+@export_range(0.0, 1.0, 0.01) var guide_glow_opacity: float = 0.30
+@export_range(0.0, 1.0, 0.01) var guide_core_opacity: float = 0.94
+@export_range(0.0, 1.0, 0.01) var guide_shadow_darkening: float = 0.62
+@export_range(0.0, 1.0, 0.01) var guide_core_lightening: float = 0.14
 
 var _can_drop: bool = true
 var _is_aiming: bool = false
 var _aim_start: Vector2
 var _guide_phase: float = 0.0
+var _guide_color: Color = GUIDE_FALLBACK_COLOR
 var _current_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var _next_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
+var _fruit_parent: Node
 
 @onready var _cooldown_timer: Timer = $CooldownTimer
 @onready var _preview: Sprite2D = $Preview
@@ -32,6 +46,10 @@ func _ready() -> void:
 	_update_tiers()
 	EventBus.state_changed.connect(_on_state_changed)
 	_refresh_preview()
+
+
+func configure(fruit_parent: Node) -> void:
+	_fruit_parent = fruit_parent
 
 
 func _process(delta: float) -> void:
@@ -45,7 +63,8 @@ func _process(delta: float) -> void:
 	_preview.visible = true
 	var target_x := _clamp_x(get_global_mouse_position().x)
 	_preview.position.x = target_x - global_position.x
-	_guide_phase = fmod(_guide_phase + GUIDE_SPEED * delta, GUIDE_DASH_LENGTH + GUIDE_GAP_LENGTH)
+	var guide_cycle := maxf(guide_dash_length + guide_gap_length, 1.0)
+	_guide_phase = fmod(_guide_phase + guide_scroll_speed * delta, guide_cycle)
 	queue_redraw()
 
 
@@ -62,16 +81,23 @@ func _draw_animated_guide(start: Vector2, end: Vector2) -> void:
 	var distance := end.y - start.y
 	if distance <= 4.0:
 		return
-	var cycle := GUIDE_DASH_LENGTH + GUIDE_GAP_LENGTH
+	var cycle := maxf(guide_dash_length + guide_gap_length, 1.0)
 	var cursor := _guide_phase - cycle
+	var guide_shadow := _guide_color.darkened(guide_shadow_darkening)
+	guide_shadow.a = guide_shadow_opacity
+	var guide_glow := _guide_color
+	guide_glow.a = guide_glow_opacity
+	var guide_core := _guide_color.lightened(guide_core_lightening)
+	guide_core.a = guide_core_opacity
 	while cursor < distance:
 		var segment_start := maxf(cursor, 0.0)
-		var segment_end := minf(cursor + GUIDE_DASH_LENGTH, distance)
+		var segment_end := minf(cursor + guide_dash_length, distance)
 		if segment_end > segment_start:
 			var from := Vector2(start.x, start.y + segment_start)
 			var to := Vector2(start.x, start.y + segment_end)
-			draw_line(from, to, GUIDE_SHADOW, 7.0, true)
-			draw_line(from, to, GUIDE_FOREGROUND, 4.0, true)
+			draw_line(from, to, guide_shadow, guide_shadow_width, true)
+			draw_line(from, to, guide_glow, guide_glow_width, true)
+			draw_line(from, to, guide_core, guide_core_width, true)
 		cursor += cycle
 
 
@@ -94,28 +120,12 @@ func _refresh_preview() -> void:
 	_preview.texture = FruitDatabase.get_visual_texture(_current_tier)
 	_preview.scale = FruitDatabase.get_visual_scale(_current_tier)
 	_preview.position.y = -16.0
+	_guide_color = FruitDatabase.get_guide_color(_current_tier) if guide_use_fruit_color else guide_override_color
+	queue_redraw()
 
 
 func _get_random_spawn_tier() -> Enums.FruitTier:
-	return SPAWN_TIERS[randi() % SPAWN_TIERS.size()]
-
-
-static func spawn_at(fruit_data: FruitData, world_pos: Vector2) -> Fruit:
-	if not fruit_data:
-		return null
-	var fruit: Fruit = FruitDatabase.create_fruit(fruit_data.tier)
-	if not fruit:
-		return null
-	fruit.data = fruit_data
-	fruit.global_position = world_pos
-	fruit.sleeping = false
-	fruit.linear_velocity = Vector2(0, -70)
-	fruit.angular_velocity = _random_drop_spin()
-
-	var tree := Engine.get_main_loop() as SceneTree
-	if tree and tree.current_scene:
-		tree.current_scene.call_deferred("add_child", fruit)
-	return fruit
+	return SPAWN_TIERS[GameManager.get_random_spawn_index(SPAWN_TIERS.size())]
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -196,8 +206,9 @@ func _drop_at(x: float) -> void:
 	fruit.data = fruit_data
 	fruit.freeze = true
 	fruit.linear_velocity = Vector2(0, 35)
-	fruit.angular_velocity = _random_drop_spin()
-	get_parent().add_child(fruit)
+	fruit.angular_velocity = FruitFactoryScript.random_drop_spin()
+	var parent := _fruit_parent if is_instance_valid(_fruit_parent) else get_parent()
+	parent.add_child(fruit)
 	fruit.global_position = spawn_position
 
 	await get_tree().physics_frame
@@ -206,6 +217,8 @@ func _drop_at(x: float) -> void:
 		fruit.sleeping = false
 
 	_update_tiers()
+	GameManager.record_drop(dropped_tier)
+	HapticManager.pulse(HapticManager.Feedback.DROP)
 	EventBus.fruit_dropped.emit(dropped_tier)
 
 
@@ -213,10 +226,3 @@ func _on_cooldown_ready() -> void:
 	_can_drop = GameManager.current_state == Enums.GameState.PLAYING
 	_preview.visible = _can_drop
 	queue_redraw()
-
-
-static func _random_drop_spin() -> float:
-	var spin := randf_range(-0.9, 0.9)
-	if absf(spin) < 0.28:
-		spin = 0.28 if randf() > 0.5 else -0.28
-	return spin

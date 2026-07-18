@@ -24,22 +24,34 @@ buses/default_bus_layout="res://MusicBus.tres"
 EventBus="*res://Autoloads/EventBus.gd"
 SaveManager="*res://Autoloads/SaveManager.gd"
 EconomyManager="*res://Autoloads/EconomyManager.gd"
+SceneRouter="*res://Autoloads/SceneRouter.gd"
 GameManager="*res://Autoloads/GameManager.gd"
 AudioManager="*res://Autoloads/AudioManager.gd"
 FruitDatabase="*res://Autoloads/FruitDatabase.gd"
 Bootstrap="*res://Autoloads/Bootstrap.gd"
 AdManager="*res://Autoloads/AdManager.gd"
+HapticManager="*res://Autoloads/HapticManager.gd"
+DailyMissionManager="*res://Autoloads/DailyMissionManager.gd"
+AchievementManager="*res://Autoloads/AchievementManager.gd"
 
 [display]
 
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/size/resizable=false
+window/size/resizable=true
 window/size/window_width_override=495
 window/size/window_height_override=880
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=1
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://Data/Localization/ui.hi.po", "res://Data/Localization/ui.es.po")
 
 [physics]
 
@@ -49,3 +61,5 @@ window/handheld/orientation=1
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"

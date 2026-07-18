@@ -6,6 +6,19 @@
 script = ExtResource("1")
 drop_cooldown = 0.55
 max_x_spread = 238.0
+guide_use_fruit_color = true
+guide_override_color = Color(1, 0.72, 0.2, 1)
+guide_dash_length = 16.0
+guide_gap_length = 12.0
+guide_scroll_speed = 64.0
+guide_shadow_width = 4.5
+guide_glow_width = 3.0
+guide_core_width = 1.5
+guide_shadow_opacity = 0.22
+guide_glow_opacity = 0.3
+guide_core_opacity = 0.94
+guide_shadow_darkening = 0.62
+guide_core_lightening = 0.14
 
 [node name="CooldownTimer" type="Timer" parent="."]
 one_shot = true

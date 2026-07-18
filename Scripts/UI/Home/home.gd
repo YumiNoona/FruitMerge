@@ -1,8 +1,5 @@
 extends Control
 
-const MAIN_MENU_MUSIC: AudioStream = preload("res://Audio/Music/Main Menu.wav")
-const ACHIEVEMENTS_MUSIC: AudioStream = preload("res://Audio/Music/Achievements.wav")
-
 @onready var _best_score_label: Label = %BestScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
 @onready var _tickets_label: Label = $TicketPanel/TicketRow/TicketLabel
@@ -16,15 +13,14 @@ const ACHIEVEMENTS_MUSIC: AudioStream = preload("res://Audio/Music/Achievements.
 @onready var _info_overlay: Control = %InfoOverlay
 @onready var _info_title: Label = %InfoTitle
 @onready var _info_body: Label = %InfoBody
-@onready var _settings_controls: VBoxContainer = %SettingsControls
 @onready var _close_info_button: Button = %CloseInfoButton
 @onready var _settings_menu = $SettingsMenu
 @onready var _no_ads_purchase: NoAdsPurchase = $NoAdsPurchase
+@onready var _mode_button: Button = %ModeButton
 
 
 func _ready() -> void:
 	GameManager.change_state(Enums.GameState.MENU)
-	AudioManager.play_music(MAIN_MENU_MUSIC)
 	_best_score_label.text = "%d" % GameManager.high_score
 	_update_coins(EconomyManager.coins)
 	_update_tickets(EconomyManager.tickets)
@@ -32,6 +28,8 @@ func _ready() -> void:
 	EventBus.tickets_changed.connect(_update_tickets)
 	AdManager.no_ads_changed.connect(_on_no_ads_changed)
 	_no_ads_button.visible = not AdManager.has_no_ads()
+	_apply_equipped_background()
+	_apply_safe_area()
 
 	_play_button.pressed.connect(_start_game)
 	_home_button.pressed.connect(_on_home_pressed)
@@ -39,9 +37,11 @@ func _ready() -> void:
 	_shop_button.pressed.connect(_open_shop)
 	_settings_button.pressed.connect(_show_settings)
 	_no_ads_button.pressed.connect(_show_no_ads_purchase)
+	_mode_button.pressed.connect(_cycle_mode)
 	_close_info_button.pressed.connect(_hide_info)
 
 	_play_intro.call_deferred()
+	_show_first_run_tutorial.call_deferred()
 
 
 func _update_coins(amount: int) -> void:
@@ -54,13 +54,13 @@ func _update_tickets(amount: int) -> void:
 
 func _start_game() -> void:
 	_play_button.disabled = true
-	GameManager.start_new_run()
+	GameManager.start_new_run(GameManager.current_mode)
 
 
 func _open_shop() -> void:
 	_shop_button.disabled = true
 	GameManager.change_state(Enums.GameState.SHOP)
-	get_tree().change_scene_to_file("res://Scenes/UI/Shop/shop.tscn")
+	SceneRouter.go_shop()
 
 
 func _on_home_pressed() -> void:
@@ -71,14 +71,20 @@ func _on_home_pressed() -> void:
 
 
 func _show_achievements() -> void:
-	AudioManager.play_music(ACHIEVEMENTS_MUSIC)
 	_info_title.text = "ACHIEVEMENTS"
-	_info_body.text = "Best score: %d\n\nFruit discovered: %d / %d\n\nReach the watermelon to complete your first cozy collection!" % [
+	var stats := GameManager.statistics
+	_info_body.text = "Best score: %d\nFruit discovered: %d / %d\nDrops: %d   Merges: %d   Best combo: %d\nWatermelons: %d   Runs: %d\n\nACHIEVEMENTS\n%s\n\nDAILY MISSIONS\n%s" % [
 		GameManager.high_score,
-		mini(GameManager.highest_tier_reached + 1, FruitDatabase.get_tier_count()),
+		GameManager.discovered_tiers.size(),
 		FruitDatabase.get_tier_count(),
+		int(stats.get("fruits_dropped", 0)),
+		int(stats.get("total_merges", 0)),
+		int(stats.get("largest_combo", 0)),
+		int(stats.get("watermelons_created", 0)),
+		int(stats.get("runs_completed", 0)),
+		AchievementManager.get_summary(),
+		DailyMissionManager.get_summary(),
 	]
-	_settings_controls.visible = false
 	_show_info()
 
 
@@ -106,9 +112,33 @@ func _show_info() -> void:
 	tween.tween_property(panel, "scale", Vector2.ONE, 0.28)
 
 
+func _cycle_mode() -> void:
+	HapticManager.pulse(HapticManager.Feedback.TAP)
+	GameManager.current_mode = wrapi(int(GameManager.current_mode) + 1, 0, Enums.GameMode.size()) as Enums.GameMode
+	_mode_button.text = "MODE: %s" % GameManager.get_mode_name().to_upper()
+
+
+func _apply_equipped_background() -> void:
+	$Background.modulate = Color(0.92, 1.0, 0.92, 1.0) if EconomyManager.get_equipped_item(&"background") == &"background_garden" else Color.WHITE
+
+
+func _apply_safe_area() -> void:
+	for control in [$BestPanel, $CoinPanel, $TicketPanel]:
+		MobileSafeArea.apply_top_inset(control, control.position.y)
+	for control in [$Dock, _home_button, _achievements_button, _play_button, _shop_button, _settings_button, _mode_button]:
+		MobileSafeArea.apply_bottom_inset(control, control.position.y)
+
+
+func _show_first_run_tutorial() -> void:
+	if bool(SaveManager.get_setting("tutorial_seen", false)):
+		return
+	SaveManager.set_setting("tutorial_seen", true)
+	_info_title.text = "HOW TO PLAY"
+	_info_body.text = "Drag left or right, then release to drop.\n\nMatch two identical fruits to grow a bigger one.\n\nKeep settled fruit below the danger line.\n\nPower-ups can rescue a crowded box. Have fun!"
+	_show_info()
+
+
 func _hide_info() -> void:
-	if _info_overlay.visible:
-		AudioManager.play_music(MAIN_MENU_MUSIC)
 	_info_overlay.visible = false
 
 

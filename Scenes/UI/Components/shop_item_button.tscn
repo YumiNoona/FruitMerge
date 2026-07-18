@@ -6,10 +6,33 @@
 [ext_resource type="Texture2D" path="res://Assets/UI/Ticket.png" id="4"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l3tvs"]
-font_size = 30
+font_size = 24
+font_color = Color(1, 0.98, 0.86, 1)
+outline_size = 2
+outline_color = Color(0.27, 0.38, 0.1, 0.9)
+
+[sub_resource type="StyleBoxFlat" id="CompactPriceStyle"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.66, 0.79, 0.31, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.95, 0.76, 0.95)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.28, 0.2, 0.08, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
 
 [node name="ShopItemButton" type="Button" unique_id=1280928594]
-custom_minimum_size = Vector2(209, 282)
+custom_minimum_size = Vector2(204, 292)
+clip_contents = true
 theme_type_variation = &"ShopCardButton"
 script = ExtResource("1")
 
@@ -33,17 +56,17 @@ theme_override_constants/separation = 4
 
 [node name="NameLabel" type="Label" parent="ContentMargin/Content" unique_id=1824040140]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 19
+theme_override_font_sizes/font_size = 17
 text = "Item"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="IconRect" type="TextureRect" parent="ContentMargin/Content" unique_id=756411312]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 142)
+custom_minimum_size = Vector2(0, 126)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
@@ -51,20 +74,20 @@ stretch_mode = 5
 
 [node name="DescriptionLabel" type="Label" parent="ContentMargin/Content" unique_id=1617042781]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 37)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 13
 text = "A cozy collectible"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="PricePanel" type="PanelContainer" parent="ContentMargin/Content" unique_id=848542178]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"GreenPanel"
+theme_override_styles/panel = SubResource("CompactPriceStyle")
 
 [node name="PriceRow" type="HBoxContainer" parent="ContentMargin/Content/PricePanel" unique_id=1541507854]
 layout_mode = 2
@@ -74,7 +97,7 @@ alignment = 1
 
 [node name="CurrencyGlyph" type="TextureRect" parent="ContentMargin/Content/PricePanel/PriceRow" unique_id=1362080417]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 texture = ExtResource("2")
 expand_mode = 1
@@ -94,9 +117,9 @@ layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -112.0
-offset_top = 8.0
+offset_top = 43.0
 offset_right = -8.0
-offset_bottom = 41.0
+offset_bottom = 74.0
 grow_horizontal = 0
 mouse_filter = 2
 theme_type_variation = &"GreenPanel"
@@ -115,9 +138,9 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 0
 offset_left = 12.0
-offset_top = 12.0
+offset_top = 45.0
 offset_right = 72.0
-offset_bottom = 48.0
+offset_bottom = 79.0
 theme_override_colors/font_color = Color(0.97, 0.4, 0.31, 1)
 theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 1)
 theme_override_constants/outline_size = 4

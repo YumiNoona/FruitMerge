@@ -262,7 +262,7 @@ Examples:
 - Fruit emits a physical contact → `MergeService` merges → `EventBus.fruit_merged`.
 - `GameManager.add_score()` updates the score → `EventBus.score_changed`.
 - HUD presses a power button → `EventBus.powerup_requested`.
-- Box danger area changes state → `EventBus.danger_line_entered/exited`.
+- Box settled-overflow detector changes state → `EventBus.danger_line_entered/exited`.
 
 ### `GameManager.gd`
 
@@ -298,11 +298,11 @@ Writes one JSON save file. It serializes non-JSON Godot values such as `owned_it
 
 ### `AudioManager.gd`
 
-Owns one music player and a pool of eight SFX players. It creates a short procedural merge pop if a fruit has no authored merge sound.
+Owns two persistent music players for shuffled crossfades and a pool of eight SFX players. Bootstrap starts the four-track playlist once; scene/tab navigation never selects or restarts music. It creates a short procedural merge pop if a fruit has no authored merge sound.
 
 ### `Bootstrap.gd`
 
-Restores saved data and settings at startup. In debug builds it calls `EconomyManager.set_debug_powerups(5)`, so every implemented power begins at ×5 for testing. Remove or gate this before release.
+Restores saved data and settings at startup. In debug builds it calls `EconomyManager.set_debug_powerups(1)`, so every implemented power begins at ×1 for testing. This overwrites any previous debug-session inventory on each launch; remove or gate the grant before release.
 
 ### `AdManager.gd`
 
@@ -466,17 +466,18 @@ The fruit script handles:
 - right wall;
 - floor.
 
-The box script dynamically creates an `Area2D` at `danger_line_y`. It draws the dashed line itself using `draw_dashed_line`, so the visual and trigger position stay together.
+The box script draws its dashed limit at `danger_line_y` and polls active fruit during physics updates. It uses the scene-owned collision top and bottom extents cached by `FruitDatabase`, so offset capsule, circle, and rectangle shapes are measured correctly without a separate generic trigger shape.
 
 ### Danger sequence
 
-1. A `Fruit` body enters the danger area.
-2. Box increments `_fruits_in_danger`, sets the fruit emotion to worried, and emits `danger_line_entered` when the first fruit arrives.
-3. A timer accumulates while one or more fruit remain in the area.
-4. At `danger_settle_time` (currently 2 seconds), Box requests `GameManager.GAME_OVER`.
-5. If all fruits leave, the timer resets and `danger_line_exited` restores normal HUD/Pet state.
+1. A fruit is marked as having entered only after its collision bottom passes the danger line inside the container width.
+2. Crossing fruit, grabbed/frozen fruit, merging fruit, and fast-moving fruit do not accumulate danger.
+3. Once an entered fruit's collision top remains above the line while sleeping or moving slowly, its per-fruit dwell starts accumulating.
+4. At `danger_warning_delay` (0.5 seconds in the box scene), Box sets the highest fruit's emotion to worried and emits `danger_line_entered`; the HUD/Pet then show the warning state.
+5. At `danger_settle_time` (2.4 seconds), Box requests `GameManager.GAME_OVER`.
+6. If the pile drops, the dwell recovers faster than it accumulates. Once below the warning threshold, `danger_line_exited` restores normal HUD/Pet state.
 
-The danger area is intentionally narrow. It tests whether fruit has *settled too high*, not whether it merely passes briefly while bouncing.
+This stateful check is important: a newly dropped fruit normally crosses the dashed line on its way to the bottom, but that transit must never flash the warning tint. Relaxed mode clears all tracked danger dwell and disables this sequence.
 
 ### Important layout relationship
 
@@ -490,8 +491,12 @@ The visual container art is a Sprite2D in Main; the physical Box sits in `BoxCon
 
 1. Choose the current and next fruit tiers.
 2. Show a preview at the pointer X position.
-3. Draw an animated dashed vertical landing guide.
+3. Draw an animated dashed vertical landing guide using the current fruit's UI accent color.
 4. Spawn a frozen fruit on release, then unfreeze it on the next physics frame.
+
+Each `FruitData` resource supplies an opaque `guide_color` chosen to match its artwork. The guide draws a dark outline, translucent colored glow, and lighter core from that accent. Keep this separate from `FruitData.color`: `color` modulates the actual sprite, while `guide_color` changes only the aiming UI.
+
+Spawner exposes the complete guide style under the `Drop guide` Inspector category: `guide_use_fruit_color`, `guide_override_color`, dash length, gap length, scroll speed, shadow/glow/core widths and opacities, plus shadow darkening and core lightening. The shipped thin preset is 4.5 px shadow, 3 px glow, and 1.5 px core. Adjust the scene values instead of editing `_draw()` when tuning presentation.
 
 Only the first four tiers can spawn directly:
 
@@ -530,19 +535,24 @@ Hide the preview and guide whenever `GameManager.is_powerup_targeting` is true. 
 - tiers match;
 - the source fruit has a next tier.
 
-After a brief 0.18-second anticipation delay, it performs all validity checks again. This second check is intentional. It fixes the class of error where a coroutine tries to access `global_position` on a fruit that was freed between frames.
+After a brief 0.075-second convergence, it performs all validity checks again. This second check is intentional. It fixes the class of error where a coroutine tries to access a fruit that was freed between frames while keeping the merge response immediate.
 
 ### Successful merge flow
 
 1. Mark both fruits `is_merging = true`.
 2. Set their emotion to excited.
-3. Wait 0.18 seconds.
+3. Pull both fruit to the midpoint over 0.075 seconds.
 4. Calculate the midpoint and inherited upward velocity.
 5. Ask `GameManager.add_score()` for the combo-adjusted score.
 6. Emit `fruit_merged(source_tier, midpoint, score_gained)`.
 7. Play merge audio.
 8. Start exit animations on source fruits.
 9. Spawn one instance of the next fruit at the midpoint.
+
+Source fruit complete their shrink/fade in 0.10 seconds. `FruitFactory` gives the
+replacement fruit only a 0.035-second contact lock so chain reactions can continue
+quickly; normally dropped fruit use a 0.10-second lock to avoid spawn-frame double
+contacts. Keep the merge lock and second validity check even when tuning timings.
 
 ### Score formula
 
@@ -687,7 +697,14 @@ Files:
 - Script: `Scripts/UI/Shop/shop.gd`
 - Item card: `Scenes/UI/Components/shop_item_button.tscn`
 
-Shop loads resources from `ITEM_PATHS`, filters them into skins/pets/power-ups, and creates one reusable card per item. To add a shop item, create its `.tres`, add it to `ITEM_PATHS`, and ensure the icon/resource path is valid.
+Shop loads the `ShopCatalog` resource, filters entries into skins/pets/power-ups, and creates one reusable card per item. To add a shop item, create its `.tres`, register it in the catalog, and ensure the icon/resource path is valid.
+
+The portrait catalog is a clipped three-column grid. Each card is 204 x 292 with a
+compact local price style; do not reuse the normal `GreenPanel` padding inside the
+card because its large content margins make rows overlap. The name row is reserved
+above the icon, badges begin below it, and both the card root and catalog panel clip
+children. Free filtered cards immediately before repopulating so old/new categories
+cannot share a layout frame.
 
 ---
 
@@ -701,13 +718,21 @@ Shop loads resources from `ITEM_PATHS`, filters them into skins/pets/power-ups, 
 
 `settings_menu.tscn` persists:
 
-- music on/off and restore volume;
-- sound effects on/off and restore volume;
+- continuous music volume from 0–100%;
+- continuous sound-effects volume from 0–100%;
 - vibration preference;
-- selected language text;
-- selected theme text.
+- selected language.
 
-Only audio settings currently modify behavior immediately. Language/theme selection are saved preferences for a future localization/theme implementation; they do not translate or recolor the game yet.
+Both sliders apply immediately through `AudioManager` and save `music_volume` or
+`sfx_volume`; a value of zero is mute. Theme and Game Feel were removed because
+they did not provide reliable user-visible behavior. Do not re-add placeholder
+options without implementing and validating the complete feature first.
+
+Save migration version 7 erases the retired theme/feedback/audio-restore keys and
+normalizes haptic strength, screen shake, and reduced motion to the standard
+baseline. This prevents an old Minimal/Off preset from remaining invisible and
+unrecoverable after its selector is removed. It does not change saved volume,
+locale, or the independent vibration-enabled value.
 
 ### Game Over
 
@@ -737,7 +762,7 @@ id, display_name, icon, cost, currency, category, description
 ### Ownership rules
 
 - **Pets/skins:** bought once, added to `owned_items`, then equipped by category.
-- **Power-ups:** consumable; each purchase increments `powerup_counts[id]`.
+- **Power-ups:** consumable; each purchase increments `powerup_counts[id]`. The shop hides the redundant inventory badge for counts of zero or one and only shows `xN` when the player has two or more.
 - **Equipped item:** saved in a setting such as `equipped_pet`.
 
 `shop_item_button.gd` does presentation and button handling. `EconomyManager` is the authority for affordability, spending, ownership, and save calls. Do not let a UI card edit money dictionaries directly.
@@ -801,7 +826,7 @@ Shake It uses an explicit movement sequence rather than random left/right jitter
 
 ```text
 left → right → up → down → upper-left → lower-right
-     → upper-right → lower-left → left → right → up → down → settle
+	 → upper-right → lower-left → left → right → up → down → settle
 ```
 
 Both the visual container art and physical BoxContainer follow the same smooth sine tween, so walls and art remain aligned. Camera movement is intentionally weaker and is restored to the exact original camera position if interrupted by another shake.
@@ -842,7 +867,9 @@ Music files are in `Audio/Music/`:
 - `Shop.wav`
 - `Achievements.wav`
 
-Scenes select music through `AudioManager.play_music()`. It avoids restarting the same currently playing stream.
+`Bootstrap` calls `AudioManager.start_music_playlist()` once after loading saved volume. The manager duplicates the four imported WAV resources, disables their per-file loop flags on those private copies, and plays a shuffled bag containing every track. At the end of a four-track cycle it reshuffles while preventing an immediate repeat across the cycle boundary.
+
+Two persistent `AudioStreamPlayer` nodes provide sine-eased overlap: the outgoing track fades down while the incoming track fades up. The initial track also fades in. Configure `music_fade_in_duration`, `music_crossfade_duration`, and `music_silent_db` on the AudioManager autoload script. Do not add music-selection calls to scene or tab scripts; doing so would break uninterrupted navigation playback.
 
 ### SFX
 
@@ -887,12 +914,9 @@ Important setting keys currently include:
 - `daily_reward_day_index`
 - `daily_reward_last_claim`
 - `music_volume`
-- `music_restore_volume`
 - `sfx_volume`
-- `sfx_restore_volume`
 - `vibration_enabled`
-- `language`
-- `theme`
+- `locale`
 - `equipped_pet`
 - `no_ads_purchased`
 
@@ -1068,7 +1092,7 @@ Also run `git diff --check` if using Git to catch whitespace errors.
 - physics material live-tuning panel;
 - an event log for merges and power consumption.
 
-The current debug build grants each implemented power ×5 at launch. Remove this behavior before a production release.
+The current debug build grants each implemented power ×1 at launch and overwrites any previous debug-session count. Remove this behavior before a production release.
 
 ---
 

@@ -1,13 +1,14 @@
 class_name Fruit
 extends RigidBody2D
 
-const FACE_SIZE: int = 24
+const FruitFaceFactoryScript = preload("res://Scripts/Entities/Fruit/fruit_face_factory.gd")
 const DIZZY_IMPACT: float = 280.0
 const SLEEPY_IDLE_MIN: float = 8.0
 const SLEEPY_IDLE_MAX: float = 12.0
+const MERGE_EXIT_DURATION: float = 0.10
 
 @export var data: FruitData
-@export var merge_cooldown: float = 0.4
+@export_range(0.0, 0.5, 0.005) var spawn_merge_lock_time: float = 0.10
 @export var face_frames: SpriteFrames
 @export var use_procedural_face: bool = false
 @export_category("Scene-owned setup")
@@ -66,6 +67,9 @@ func _apply_data() -> void:
 					face.scale = _visual_base_scale
 	if _sprite:
 		_sprite.self_modulate = data.color
+		match EconomyManager.get_equipped_item(&"skin"):
+			&"skin_pastel": _sprite.self_modulate *= Color(1.0, 0.88, 1.0, 1.0)
+			&"skin_pineapple": _sprite.self_modulate *= Color(1.0, 0.93, 0.62, 1.0)
 	if _collision and not use_scene_collision:
 		var shape: CircleShape2D = CircleShape2D.new()
 		shape.radius = data.radius
@@ -75,7 +79,7 @@ func _apply_data() -> void:
 
 
 func _clear_just_spawned() -> void:
-	await get_tree().create_timer(0.12).timeout
+	await get_tree().create_timer(spawn_merge_lock_time).timeout
 	_just_spawned = false
 	_check_contacts_for_merge()
 
@@ -91,125 +95,8 @@ func _setup_face() -> void:
 	if face_frames:
 		face.sprite_frames = face_frames
 	else:
-		face.sprite_frames = _build_procedural_frames()
+		face.sprite_frames = FruitFaceFactoryScript.get_frames()
 	face.play("idle")
-
-
-func _build_procedural_frames() -> SpriteFrames:
-	var sf: SpriteFrames = SpriteFrames.new()
-	var emotions: Array[Enums.FruitEmotion] = [
-		Enums.FruitEmotion.IDLE,
-		Enums.FruitEmotion.HAPPY,
-		Enums.FruitEmotion.EXCITED,
-		Enums.FruitEmotion.DIZZY,
-		Enums.FruitEmotion.WORRIED,
-		Enums.FruitEmotion.SLEEPY,
-	]
-	for em: Enums.FruitEmotion in emotions:
-		var img: Image = _make_emotion_image(em)
-		var tex: ImageTexture = ImageTexture.create_from_image(img)
-		var anim_name: String = Enums.FruitEmotion.keys()[em].to_lower()
-		sf.add_animation(anim_name)
-		sf.set_animation_speed(anim_name, 1.0)
-		sf.set_animation_loop(anim_name, false)
-		sf.add_frame(anim_name, tex)
-	return sf
-
-
-func _make_emotion_image(emotion: Enums.FruitEmotion) -> Image:
-	var img: Image = Image.create(FACE_SIZE, FACE_SIZE, false, Image.FORMAT_RGBA8)
-	img.fill(Color.TRANSPARENT)
-	var c: Color = Color.BLACK
-	var w: Color = Color.WHITE
-	match emotion:
-		Enums.FruitEmotion.IDLE:
-			_draw_eye(img, 6, 8, c, false)
-			_draw_eye(img, 16, 8, c, false)
-			_draw_smile(img, 9, 15, c)
-		Enums.FruitEmotion.HAPPY:
-			_draw_eye(img, 5, 7, c, true)
-			_draw_eye(img, 17, 7, c, true)
-			_draw_smile(img, 9, 15, c)
-			# blush
-			_draw_rect(img, 9, 12, 3, 2, Color(1, 0.5, 0.6, 0.5))
-		Enums.FruitEmotion.EXCITED:
-			_draw_star_eye(img, 6, 8, c)
-			_draw_star_eye(img, 16, 8, c)
-			_draw_rect(img, 9, 14, 6, 3, c)
-		Enums.FruitEmotion.DIZZY:
-			# X eyes
-			_draw_x_eye(img, 5, 7, 4, c)
-			_draw_x_eye(img, 15, 7, 4, c)
-			_draw_wavy_mouth(img, 9, 15, 6, c)
-		Enums.FruitEmotion.WORRIED:
-			_draw_rect(img, 5, 7, 4, 4, w)
-			_draw_pixel(img, 6, 8, c)
-			_draw_pixel(img, 7, 8, c)
-			_draw_rect(img, 15, 7, 4, 4, w)
-			_draw_pixel(img, 16, 8, c)
-			_draw_pixel(img, 17, 8, c)
-			_draw_pixel(img, 11, 17, c)
-			_draw_pixel(img, 12, 17, c)
-		Enums.FruitEmotion.SLEEPY:
-			# Closed eyes (horizontal lines)
-			_draw_rect(img, 5, 8, 4, 1, c)
-			_draw_rect(img, 15, 8, 4, 1, c)
-			_draw_smile(img, 9, 16, c)
-	return img
-
-
-func _draw_eye(img: Image, x: int, y: int, col: Color, happy: bool) -> void:
-	if happy:
-		# ^ shape for happy: two pixels wide
-		_draw_pixel(img, x + 1, y, col)
-		_draw_pixel(img, x, y + 1, col)
-		_draw_pixel(img, x + 2, y + 1, col)
-	else:
-		_draw_rect(img, x, y, 2, 2, col)
-
-
-func _draw_star_eye(img: Image, x: int, y: int, col: Color) -> void:
-	var offsets: Array[int] = [0, 1, 2]
-	for dx: int in offsets:
-		for dy: int in offsets:
-			var sum: int = dx + dy
-			if sum == 0 or sum == 2:
-				_draw_pixel(img, x + dx, y + dy, col)
-
-
-func _draw_x_eye(img: Image, x: int, y: int, s: int, col: Color) -> void:
-	for i: int in range(s):
-		_draw_pixel(img, x + i, y + i, col)
-		_draw_pixel(img, x + i, y + s - 1 - i, col)
-
-
-func _draw_smile(img: Image, x: int, y: int, col: Color) -> void:
-	_draw_pixel(img, x, y, col)
-	_draw_pixel(img, x + 1, y + 1, col)
-	for i: int in range(4):
-		_draw_pixel(img, x + 2 + i, y + 2, col)
-	_draw_pixel(img, x + 4, y + 1, col)
-	_draw_pixel(img, x + 5, y, col)
-
-
-func _draw_wavy_mouth(img: Image, x: int, y: int, _w: int, col: Color) -> void:
-	_draw_pixel(img, x, y, col)
-	_draw_pixel(img, x + 1, y - 1, col)
-	_draw_pixel(img, x + 2, y, col)
-	_draw_pixel(img, x + 3, y - 1, col)
-	_draw_pixel(img, x + 4, y, col)
-	_draw_pixel(img, x + 5, y - 1, col)
-
-
-func _draw_pixel(img: Image, x: int, y: int, col: Color) -> void:
-	if x >= 0 and x < FACE_SIZE and y >= 0 and y < FACE_SIZE:
-		img.set_pixel(x, y, col)
-
-
-func _draw_rect(img: Image, x: int, y: int, w: int, h: int, col: Color) -> void:
-	for dx: int in range(w):
-		for dy: int in range(h):
-			_draw_pixel(img, x + dx, y + dy, col)
 
 
 func set_emotion(emotion: Enums.FruitEmotion, hold_time: float = -1.0) -> void:
@@ -339,8 +226,8 @@ func play_merge_exit_animation(on_complete: Callable) -> void:
 		_visual_tween.kill()
 	_visual_tween = create_tween().set_parallel(true)
 	_visual_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	_visual_tween.tween_property(_sprite, "scale", Vector2.ZERO, 0.18)
-	_visual_tween.tween_property(_sprite, "modulate:a", 0.0, 0.16)
+	_visual_tween.tween_property(_sprite, "scale", Vector2.ZERO, MERGE_EXIT_DURATION)
+	_visual_tween.tween_property(_sprite, "modulate:a", 0.0, MERGE_EXIT_DURATION * 0.85)
 	_visual_tween.chain().tween_callback(on_complete)
 
 

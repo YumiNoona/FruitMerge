@@ -55,9 +55,8 @@ func _restart_game() -> void:
 func _go_home() -> void:
 	visible = false
 	GameManager.change_state(Enums.GameState.MENU)
-	get_tree().change_scene_to_file("res://Scenes/UI/Home/home.tscn")
+	SceneRouter.go_home()
 
 
 func _open_settings() -> void:
 	_settings_menu.open()
-

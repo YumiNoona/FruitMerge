@@ -1,6 +1,9 @@
 class_name MergeService
 extends RefCounted
 
+const FruitFactoryScript = preload("res://Scripts/Entities/Fruit/fruit_factory.gd")
+const MERGE_CONVERGE_DURATION: float = 0.075
+
 static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 	if not is_instance_valid(fruit_a) or not is_instance_valid(fruit_b):
 		return false
@@ -23,12 +26,18 @@ static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 
 	fruit_a.is_merging = true
 	fruit_b.is_merging = true
+	var midpoint: Vector2 = (fruit_a.global_position + fruit_b.global_position) / 2.0
+	var merged_velocity := (fruit_a.linear_velocity + fruit_b.linear_velocity) * 0.22 + Vector2(0, -45)
+	fruit_a.linear_velocity *= 0.2
+	fruit_b.linear_velocity *= 0.2
+	fruit_a.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN).tween_property(fruit_a, "global_position", midpoint, MERGE_CONVERGE_DURATION)
+	fruit_b.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN).tween_property(fruit_b, "global_position", midpoint, MERGE_CONVERGE_DURATION)
 
 	fruit_a.set_emotion(Enums.FruitEmotion.EXCITED)
 	fruit_b.set_emotion(Enums.FruitEmotion.EXCITED)
 
 	var tree := fruit_a.get_tree()
-	await tree.create_timer(0.18).timeout
+	await tree.create_timer(MERGE_CONVERGE_DURATION).timeout
 
 	if not is_instance_valid(fruit_a) or not is_instance_valid(fruit_b):
 		_release_merge_lock(fruit_a)
@@ -43,19 +52,17 @@ static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 		_release_merge_lock(fruit_b)
 		return false
 
-	var midpoint: Vector2 = (fruit_a.global_position + fruit_b.global_position) / 2.0
 	var score_gained: int = GameManager.add_score(fruit_a.data.score_value)
 	var tier: int = fruit_a.data.tier as int
-	var merged_velocity := (fruit_a.linear_velocity + fruit_b.linear_velocity) * 0.22 + Vector2(0, -45)
 
-	GameManager.highest_tier_reached = max(GameManager.highest_tier_reached, next_data.tier)
+	GameManager.record_merge(next_data.tier)
 	EventBus.fruit_merged.emit(tier, midpoint, score_gained)
 	AudioManager.play_merge_sfx(tier, next_data.merge_sfx, midpoint)
 
 	fruit_a.start_merge_exit()
 	fruit_b.start_merge_exit()
 
-	var merged_fruit := Spawner.spawn_at(next_data, midpoint)
+	var merged_fruit: Fruit = FruitFactoryScript.create(next_data, midpoint, fruit_a.get_parent())
 	if merged_fruit:
 		merged_fruit.linear_velocity = merged_velocity
 	return true

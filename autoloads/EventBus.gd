@@ -47,3 +47,15 @@ signal state_changed(new_state: Enums.GameState)
 
 @warning_ignore("unused_signal")
 signal game_restarted
+
+@warning_ignore("unused_signal")
+signal fruit_discovered(tier: int)
+
+@warning_ignore("unused_signal")
+signal statistics_changed
+
+@warning_ignore("unused_signal")
+signal accessibility_changed
+
+@warning_ignore("unused_signal")
+signal daily_missions_changed

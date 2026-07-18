@@ -23,3 +23,12 @@ extends Resource
 @export_range(1.0, 1.5, 0.01, "suffix:x") var grab_held_scale := 1.13
 @export_range(20.0, 500.0, 1.0) var grab_release_speed := 180.0
 @export_range(1.0, 16.0, 0.1) var grab_ring_speed := 5.5
+@export_range(40.0, 320.0, 1.0, "suffix:px") var blast_radius := 150.0
+
+
+func is_valid_definition() -> bool:
+	return not id.is_empty() \
+		and not display_name.is_empty() \
+		and cost >= 0 \
+		and currency in [&"coins", &"tickets"] \
+		and category in [&"skin", &"pet", &"powerup", &"background"]
