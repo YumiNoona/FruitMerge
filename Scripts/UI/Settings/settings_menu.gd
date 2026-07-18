@@ -9,7 +9,6 @@ signal closed
 @onready var _sfx_slider: HSlider = %SfxSlider
 @onready var _sfx_value_label: Label = %SfxValueLabel
 @onready var _vibration_toggle: Button = %VibrationToggle
-@onready var _language: OptionButton = %LanguageOption
 @onready var _status_label: Label = %StatusLabel
 
 
@@ -19,11 +18,9 @@ func _ready() -> void:
 	_music_slider.value_changed.connect(_on_music_volume_changed)
 	_sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 	_vibration_toggle.toggled.connect(_on_vibration_toggled)
-	_language.item_selected.connect(_on_language_selected)
 	%PrivacyButton.pressed.connect(func(): _show_status("Privacy policy will open here when the store page is connected."))
 	%RestoreButton.pressed.connect(func(): _show_status("Purchases checked — everything is already cozy and accounted for!"))
 	%AboutButton.pressed.connect(func(): _show_status("Fruit Merge • cozy kitchen build 1.0.0"))
-	_setup_choices()
 	visible = false
 
 
@@ -52,13 +49,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		close()
 
 
-func _setup_choices() -> void:
-	if _language.item_count == 0:
-		_language.add_item("English")
-		_language.add_item("Hindi")
-		_language.add_item("Spanish")
-
-
 func _sync_controls() -> void:
 	_music_slider.set_value_no_signal(AudioManager.music_vol)
 	_sfx_slider.set_value_no_signal(AudioManager.sfx_vol)
@@ -66,16 +56,6 @@ func _sync_controls() -> void:
 	_update_volume_copy(_music_value_label, AudioManager.music_vol)
 	_update_volume_copy(_sfx_value_label, AudioManager.sfx_vol)
 	_update_toggle_copy(_vibration_toggle)
-	var locale_names := {"en": "English", "hi": "Hindi", "es": "Spanish"}
-	_select_option(_language, locale_names.get(str(SaveManager.get_setting("locale", "en")), "English"))
-
-
-func _select_option(option: OptionButton, saved_text: String) -> void:
-	for index in option.item_count:
-		if option.get_item_text(index) == saved_text:
-			option.select(index)
-			return
-	option.select(0)
 
 
 func _on_music_volume_changed(value: float) -> void:
@@ -102,14 +82,6 @@ func _update_toggle_copy(toggle: Button) -> void:
 
 func _update_volume_copy(label: Label, value: float) -> void:
 	label.text = "%d%%" % roundi(clampf(value, 0.0, 1.0) * 100.0)
-
-
-func _on_language_selected(index: int) -> void:
-	var locales := ["en", "hi", "es"]
-	var locale: String = locales[clampi(index, 0, locales.size() - 1)]
-	TranslationServer.set_locale(locale)
-	SaveManager.set_setting("locale", locale)
-	_show_status("Language applied. Some new content may still use English.")
 
 
 func _show_status(message: String) -> void:

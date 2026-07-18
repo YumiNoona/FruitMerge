@@ -5,6 +5,13 @@ const HOME_SCENE := "res://Scenes/UI/Home/home.tscn"
 const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
 const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
 
+# Generated reward cards live inside clipped layout slots. These small insets
+# keep rounded corners and their soft shadow away from the slot boundary.
+const CARD_INSET_LEFT := 2
+const CARD_INSET_TOP := 1
+const CARD_INSET_RIGHT := 2
+const CARD_INSET_BOTTOM := 3
+
 # Coins buy collectible friends; tickets are the special currency for power-ups.
 # Keeping the rewards small and predictable makes the seven-day loop easy to read.
 const DAILY_REWARDS := [
@@ -80,14 +87,28 @@ func _populate_rewards() -> void:
 	day_seven_card.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
-func _create_day_card(index: int, card_size: Vector2) -> PanelContainer:
+func _create_card_slot(card_size := Vector2.ZERO) -> MarginContainer:
+	var slot := MarginContainer.new()
+	if card_size != Vector2.ZERO:
+		slot.custom_minimum_size = card_size
+	slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	slot.add_theme_constant_override("margin_left", CARD_INSET_LEFT)
+	slot.add_theme_constant_override("margin_top", CARD_INSET_TOP)
+	slot.add_theme_constant_override("margin_right", CARD_INSET_RIGHT)
+	slot.add_theme_constant_override("margin_bottom", CARD_INSET_BOTTOM)
+	return slot
+
+
+func _create_day_card(index: int, card_size: Vector2) -> MarginContainer:
+	var slot := _create_card_slot(card_size)
 	var card := PanelContainer.new()
-	card.custom_minimum_size = card_size
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	card.clip_contents = true
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_theme_stylebox_override("panel", _card_style(_get_card_color(index), _get_card_border(index)))
+	slot.add_child(card)
 
 	var content := VBoxContainer.new()
 	content.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -101,40 +122,18 @@ func _create_day_card(index: int, card_size: Vector2) -> PanelContainer:
 	day_label.add_theme_color_override("font_color", Color(1, 0.98, 0.89, 1) if _is_current_day(index) else Color(0.47, 0.27, 0.13, 1))
 	content.add_child(day_label)
 
-	if _is_completed(index):
-		var check := Label.new()
-		check.text = "✓"
-		check.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		check.add_theme_font_size_override("font_size", 43)
-		check.add_theme_color_override("font_color", Color(0.48, 0.75, 0.28, 1))
-		content.add_child(check)
-	else:
-		var reward_row := HBoxContainer.new()
-		reward_row.alignment = BoxContainer.ALIGNMENT_CENTER
-		reward_row.add_theme_constant_override("separation", 4)
-		content.add_child(reward_row)
-
-		var reward_icon := TextureRect.new()
-		reward_icon.custom_minimum_size = Vector2(35, 35)
-		reward_icon.texture = _reward_icon(index)
-		reward_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		reward_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		reward_row.add_child(reward_icon)
-
-		var amount := Label.new()
-		amount.text = "x%d" % _reward_amount(index) if _reward_currency(index) == &"tickets" else "%d" % _reward_amount(index)
-		amount.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		amount.add_theme_font_size_override("font_size", 23)
-		amount.add_theme_color_override("font_color", Color(1, 0.96, 0.78, 1) if _is_current_day(index) else Color(0.48, 0.27, 0.13, 1))
-		reward_row.add_child(amount)
-	return card
+	content.add_child(_create_reward_row(index, 35.0, 23))
+	return slot
 
 
-func _create_day_seven_card() -> PanelContainer:
+func _create_day_seven_card() -> MarginContainer:
+	var slot := _create_card_slot()
 	var card := PanelContainer.new()
-	card.clip_contents = true
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_theme_stylebox_override("panel", _card_style(Color(1.0, 0.77, 0.16, 1), Color(1, 0.96, 0.66, 1), 22))
+	slot.add_child(card)
 
 	var content := VBoxContainer.new()
 	content.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -148,33 +147,32 @@ func _create_day_seven_card() -> PanelContainer:
 	title.add_theme_color_override("font_color", Color(0.45, 0.23, 0.08, 1))
 	content.add_child(title)
 
-	if _is_completed(6):
-		var check := Label.new()
-		check.text = "✓  COLLECTED"
-		check.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		check.add_theme_font_size_override("font_size", 28)
-		check.add_theme_color_override("font_color", Color(0.38, 0.61, 0.18, 1))
-		content.add_child(check)
+	content.add_child(_create_reward_row(6, 42.0, 26, true))
+	return slot
+
+
+func _create_reward_row(index: int, icon_size: float, font_size: int, include_currency_name := false) -> HBoxContainer:
+	var reward_row := HBoxContainer.new()
+	reward_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	reward_row.add_theme_constant_override("separation", 7 if include_currency_name else 4)
+
+	var reward_icon := TextureRect.new()
+	reward_icon.custom_minimum_size = Vector2(icon_size, icon_size)
+	reward_icon.texture = _reward_icon(index)
+	reward_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	reward_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	reward_row.add_child(reward_icon)
+
+	var amount := Label.new()
+	if include_currency_name:
+		amount.text = "x%d %s" % [_reward_amount(index), _reward_name(index)]
 	else:
-		var reward_row := HBoxContainer.new()
-		reward_row.alignment = BoxContainer.ALIGNMENT_CENTER
-		reward_row.add_theme_constant_override("separation", 7)
-		content.add_child(reward_row)
-
-		var reward_icon := TextureRect.new()
-		reward_icon.custom_minimum_size = Vector2(42, 42)
-		reward_icon.texture = _reward_icon(6)
-		reward_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		reward_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		reward_row.add_child(reward_icon)
-
-		var amount := Label.new()
-		amount.text = "x%d TICKETS" % _reward_amount(6)
-		amount.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		amount.add_theme_font_size_override("font_size", 26)
-		amount.add_theme_color_override("font_color", Color(0.45, 0.23, 0.08, 1))
-		reward_row.add_child(amount)
-	return card
+		amount.text = "x%d" % _reward_amount(index) if _reward_currency(index) == &"tickets" else "%d" % _reward_amount(index)
+	amount.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	amount.add_theme_font_size_override("font_size", font_size)
+	amount.add_theme_color_override("font_color", Color(1, 0.96, 0.78, 1) if _is_current_day(index) else Color(0.48, 0.27, 0.13, 1))
+	reward_row.add_child(amount)
+	return reward_row
 
 
 func _get_card_color(index: int) -> Color:
@@ -205,9 +203,11 @@ func _card_style(background: Color, border: Color, radius := 18) -> StyleBoxFlat
 	style.corner_radius_top_right = radius
 	style.corner_radius_bottom_left = radius
 	style.corner_radius_bottom_right = radius
-	style.shadow_color = Color(0.31, 0.16, 0.06, 0.26)
-	style.shadow_size = 5
-	style.shadow_offset = Vector2(0, 4)
+	style.shadow_color = Color(0.31, 0.16, 0.06, 0.12)
+	style.shadow_size = 2
+	style.shadow_offset = Vector2(0, 1)
+	style.anti_aliasing = true
+	style.anti_aliasing_size = 1.25
 	return style
 
 
@@ -257,6 +257,8 @@ func _on_claim_pressed() -> void:
 	if _claimed_today:
 		_go_home()
 		return
+	_claim_button.disabled = true
+	RewardPresentationManager.queue_wallet_reward(_reward_currency(_day_index), _reward_amount(_day_index))
 	_grant_reward(_day_index)
 	SaveManager.set_settings({"daily_reward_day_index": _day_index, "daily_reward_last_claim": _today_string()})
 	HapticManager.pulse(HapticManager.Feedback.REWARD)
@@ -266,6 +268,9 @@ func _on_claim_pressed() -> void:
 	var tween := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_claim_button, "scale", Vector2(1.08, 1.08), 0.12)
 	tween.tween_property(_claim_button, "scale", Vector2.ONE, 0.22)
+	await tween.finished
+	await get_tree().create_timer(0.22).timeout
+	_go_home()
 
 
 func _go_home() -> void:

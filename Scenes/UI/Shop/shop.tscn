@@ -219,6 +219,7 @@ theme_override_constants/margin_bottom = 12
 [node name="ShopScroll" type="ScrollContainer" parent="CatalogPanel/CatalogMargin" unique_id=1294102764]
 layout_mode = 2
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
 
 [node name="ShopList" type="GridContainer" parent="CatalogPanel/CatalogMargin/ShopScroll" unique_id=842318434]
 unique_name_in_owner = true

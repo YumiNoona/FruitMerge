@@ -9,6 +9,21 @@ const REQUIRED_POWERUPS := [
 	&"powerup_hammer",
 	&"powerup_bomb",
 ]
+const UI_SCENE_PATHS := [
+	"res://Scenes/UI/Shop/shop.tscn",
+	"res://Scenes/UI/Settings/settings_menu.tscn",
+	"res://Scenes/UI/MainMenu/main_menu.tscn",
+	"res://Scenes/UI/DailyReward/daily_reward.tscn",
+	"res://Scenes/UI/Home/home.tscn",
+	"res://Scenes/UI/NoAds/no_ads_purchase.tscn",
+	"res://Scenes/UI/HUD/hud.tscn",
+	"res://Scenes/UI/Pause/pause_menu.tscn",
+	"res://Scenes/UI/Components/shop_item_button.tscn",
+	"res://Scenes/UI/Components/score_pop.tscn",
+	"res://Scenes/UI/Components/currency_pill.tscn",
+	"res://Scenes/UI/GameOver/game_over.tscn",
+]
+const RETIRED_UI_FONTS := ["Spenbeb Game.otf", "Atop.ttf", "Cloudy.otf"]
 
 
 static func validate_all() -> PackedStringArray:
@@ -93,6 +108,20 @@ static func _validate_scenes() -> PackedStringArray:
 
 static func _validate_ui_contracts() -> PackedStringArray:
 	var issues: PackedStringArray = []
+	for scene_path in UI_SCENE_PATHS:
+		var source := FileAccess.get_file_as_string(scene_path)
+		for retired_font in RETIRED_UI_FONTS:
+			if source.contains(retired_font):
+				issues.append("%s still uses retired UI font %s" % [scene_path, retired_font])
+	var theme_source := FileAccess.get_file_as_string("res://Data/Themes/cozy_theme.tres")
+	if not theme_source.contains("NERILLKID Trial.ttf") or not theme_source.contains("TooltipPanel/styles/panel"):
+		issues.append("Cozy theme must use NERILLKID and the styled tooltip panel")
+	var daily_reward_source := FileAccess.get_file_as_string("res://Scripts/UI/DailyReward/daily_reward.gd")
+	if daily_reward_source.contains("check.text") or daily_reward_source.contains("COLLECTED"):
+		issues.append("Daily Reward claimed cards must use their subdued style instead of checkmark labels")
+	var home_source := FileAccess.get_file_as_string("res://Scripts/UI/Home/home.gd")
+	if home_source.contains("amount_label"):
+		issues.append("Home wallet flyover must animate only the currency texture")
 	var settings_scene := load("res://Scenes/UI/Settings/settings_menu.tscn") as PackedScene
 	if settings_scene:
 		var settings := settings_scene.instantiate()
@@ -102,6 +131,8 @@ static func _validate_ui_contracts() -> PackedStringArray:
 			issues.append("Settings is missing the SFX volume slider")
 		if settings.find_child("ThemeOption", true, false) or settings.find_child("FeedbackOption", true, false):
 			issues.append("Removed Theme/Game Feel options returned to Settings")
+		if settings.find_child("LanguageOption", true, false) or settings.find_child("LanguageRow", true, false):
+			issues.append("Removed Language selector returned to Settings")
 		settings.free()
 	var card_scene := load("res://Scenes/UI/Components/shop_item_button.tscn") as PackedScene
 	if card_scene:
@@ -112,6 +143,9 @@ static func _validate_ui_contracts() -> PackedStringArray:
 			issues.append("Removed Shop OwnedBadge returned; owned state belongs in the action label")
 		if card and not card.find_child("CountLabel", true, false):
 			issues.append("Shop cards must retain the stacked power-up count label")
+		var description := card.find_child("DescriptionLabel", true, false) as Label if card else null
+		if description and (description.get_theme_font_size("font_size") < 16 or description.get_theme_constant("outline_size") < 2):
+			issues.append("Shop descriptions must retain their readable size and warm outline")
 		if card:
 			card.free()
 	var shop_scene := load(SceneRouter.SHOP_SCENE) as PackedScene
@@ -120,5 +154,14 @@ static func _validate_ui_contracts() -> PackedStringArray:
 		for node_name in ["HomeButton", "AchievementsButton", "PlayButton", "ShopButton", "SettingsButton"]:
 			if not shop.find_child(node_name, true, false):
 				issues.append("Shop dock is missing %s required by shop.gd" % node_name)
+		var shop_scroll := shop.find_child("ShopScroll", true, false) as ScrollContainer
+		if not shop_scroll or shop_scroll.vertical_scroll_mode != ScrollContainer.SCROLL_MODE_SHOW_NEVER:
+			issues.append("Shop must remain touch-scrollable without a visible scrollbar")
 		shop.free()
+	var home_scene := load(SceneRouter.HOME_SCENE) as PackedScene
+	if home_scene:
+		var home := home_scene.instantiate()
+		if not home.find_child("RewardsButton", true, false):
+			issues.append("Home is missing RewardsButton required for Daily Reward access")
+		home.free()
 	return issues

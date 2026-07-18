@@ -65,6 +65,27 @@ Daily Reward, and gameplay leaves the current track and playback position intact
 Headless validation skips audio playback while still loading and checking the
 four-track registration, avoiding audio-server resources during forced test exit.
 
+## Daily reward card containment
+
+`Scenes/UI/DailyReward/daily_reward.tscn` owns the reward grid and day-seven slot,
+while `Scripts/UI/DailyReward/daily_reward.gd` generates their cards after the
+first layout pass. Each rounded card is inset inside a generated
+`MarginContainer`; this reserves space for the anti-aliased corners and small
+shadow while the outer grid continues clipping content to the reward panel.
+Adjust `_card_style()` for radius, border, and shadow appearance, and adjust the
+four `CARD_INSET_*` constants when changing the amount of edge-safe space.
+Completed cards retain their reward icon/amount and use the subdued surface as
+their status; checkmark and `COLLECTED` labels are intentionally omitted.
+
+Daily claims pass a short-lived currency/amount payload through the
+`RewardPresentationManager` autoload before changing to Home. `EconomyManager`
+still grants the balance immediately and remains authoritative. Home consumes the
+payload once, displays the old count during a center hold, flies the matching icon
+into the scene-authored coin/ticket target, then reveals the saved total with a
+panel bounce and reward haptic. Only the currency texture travels—there is no
+duplicate amount label—and the wallet number changes on impact. The target is
+measured after safe-area placement.
+
 Imported WAV loop flags are disabled on private runtime copies. The manager plays
 every track once in a shuffled four-track cycle, reshuffles after the cycle, and
 prevents the last track of one cycle from immediately repeating as the first track
@@ -92,6 +113,11 @@ safe-area placement, and stays static when reduced motion is requested. Shop's
 dock script uses the scene-authored `HomeButton`, `AchievementsButton`,
 `PlayButton`, `ShopButton`, and `SettingsButton` node contracts; validation checks
 that all five remain present.
+
+Home's scene-authored `RewardsButton` opens Daily Reward through
+`SceneRouter.go_daily_reward()`. Keep that exact node name because `home.gd` and
+the project validator treat it as a UI contract; the button remains available
+after today's reward is claimed so the player can review the seven-day sequence.
 
 The dashed line measures a sustained pile overflow, not a fruit passing through it.
 `Box` records that each fruit has entered the container, reads the top and bottom
@@ -121,9 +147,20 @@ The three-column shop grid uses compact 210 x 320 minimum cards with a card-loca
 panel style. Card contents now fit their declared minimum height, titles have a
 dedicated row, and the optional stacked power-up count sits over the icon. The
 owned badge was removed; owned cosmetics reuse the action label for `SELECT` and
-`ACTIVE`. Both cards and the catalog panel clip their children. Category repopulation frees
+`ACTIVE`. Pet descriptions stay hidden and pet icons use the extra vertical room.
+Skin and power-up descriptions use 16 px NERILLKID text, a warm two-pixel outline,
+and a dedicated two-line row. Both cards and the catalog panel clip their children.
+The catalog scrollbar is visually hidden while touch drag and wheel scrolling remain
+available. Category repopulation frees
 old cards immediately, preventing one-frame overlap. Header ad copy is ASCII-only
 and sized for the 720-wide portrait canvas.
+
+Shop presentation comes from `cozy_theme.tres`: cards and buttons use shallow
+2–4 px low-opacity shadows, shop tabs have peach/orange/leaf-green idle/hover/active
+states, and item action panels use green/coral/gold/teal ready/locked/select/active
+states. TooltipPanel and TooltipLabel provide a cream, coral-bordered tooltip instead
+of the engine default. All UI scenes and the shared theme use only
+`Assets/Fonts/NERILLKID Trial.ttf`; validation rejects the retired UI font paths.
 
 ## Power-ups
 
@@ -148,15 +185,15 @@ Safe-area offsets are applied only on Android and iOS. Desktop safe-area values
 describe the monitor/work area rather than a notch inside the game window, so using
 them on Windows can push portrait controls outside the embedded debug viewport.
 Haptics are grouped by tap, drop, merge, big merge, power-up, danger, game over,
-and reward. Settings expose continuous 0–100% Music and Sound Effects sliders, a
-vibration toggle, and language selection. The unused Theme and Game Feel selectors
-were removed; the settings scene has no placeholder controls that claim to apply
-an unavailable visual or effects preset.
+and reward. Settings expose continuous 0–100% Music and Sound Effects sliders plus
+a vibration toggle. Their taller rows and 12 px gaps provide mobile touch and reading
+space. The unused Theme, Game Feel, and Language selectors were removed; the settings
+scene has no placeholder controls that claim to apply an unavailable option.
 
 Save version 7 removes retired `theme`, `feedback_level`, and audio-restore keys.
 It restores standard haptic/shake/motion values so a previously saved Minimal/Off
 preset cannot remain active without a corresponding control. Music/SFX volumes,
-language, and the independent vibration toggle are preserved.
+the internal locale value, and the independent vibration toggle are preserved.
 
 Hindi and Spanish `.po` resources translate the core interface. Newly added copy
 should use stable English source strings so Godot's automatic translation lookup

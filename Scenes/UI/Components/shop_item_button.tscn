@@ -34,7 +34,7 @@ theme_override_constants/margin_bottom = 10
 [node name="Content" type="VBoxContainer" parent="ContentMargin" unique_id=80947497]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 4
 
 [node name="NameLabel" type="Label" parent="ContentMargin/Content" unique_id=1824040140]
 unique_name_in_owner = true
@@ -48,7 +48,7 @@ vertical_alignment = 1
 
 [node name="IconRect" type="TextureRect" parent="ContentMargin/Content" unique_id=756411312]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 160)
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
@@ -56,11 +56,14 @@ stretch_mode = 5
 
 [node name="DescriptionLabel" type="Label" parent="ContentMargin/Content" unique_id=1617042781]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_colors/font_color = Color(0.37, 0.21, 0.11, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 0.95)
+theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("2_27bgg")
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "A cozy collectible"
 horizontal_alignment = 1
 vertical_alignment = 1

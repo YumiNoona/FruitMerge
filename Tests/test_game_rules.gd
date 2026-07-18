@@ -30,10 +30,26 @@ static func run() -> PackedStringArray:
 		failures.append("The shop must hide redundant x1 power-up inventory badges")
 	if not ShopItemDisplayRulesScript.should_show_inventory_count(2):
 		failures.append("The shop must show power-up inventory badges for stacked quantities")
+	if ShopItemDisplayRulesScript.should_show_description(&"pet"):
+		failures.append("Pet cards must keep descriptions hidden")
+	if not ShopItemDisplayRulesScript.should_show_description(&"powerup"):
+		failures.append("Non-pet shop cards must retain useful descriptions")
 	if FloatingButtonAnimatorScript.DEFAULT_FLOAT_HEIGHT < 6.0 \
 		or FloatingButtonAnimatorScript.DEFAULT_FLOAT_HEIGHT > 12.0 \
 		or FloatingButtonAnimatorScript.DEFAULT_TRAVEL_DURATION < 0.8:
 		failures.append("The dock Play button float must remain gentle and readable")
+	RewardPresentationManager.clear_pending_wallet_rewards()
+	if RewardPresentationManager.queue_wallet_reward(&"gems", 2) \
+		or RewardPresentationManager.queue_wallet_reward(&"coins", 0):
+		failures.append("Wallet reward presentation must reject invalid rewards")
+	RewardPresentationManager.queue_wallet_reward(&"tickets", 2)
+	var pending_rewards := RewardPresentationManager.take_pending_wallet_rewards()
+	if pending_rewards.size() != 1 \
+		or StringName(pending_rewards[0].get("currency", &"")) != &"tickets" \
+		or int(pending_rewards[0].get("amount", 0)) != 2:
+		failures.append("Wallet reward presentation must survive a scene transition queue")
+	if not RewardPresentationManager.take_pending_wallet_rewards().is_empty():
+		failures.append("Wallet reward presentation queue must be consumed exactly once")
 	var shake_data: Resource = load("res://Data/ShopItems/powerup_shake_box.tres")
 	if not shake_data:
 		failures.append("Shake Box tuning data must load")

@@ -31,6 +31,7 @@ FruitDatabase="*res://Autoloads/FruitDatabase.gd"
 Bootstrap="*res://Autoloads/Bootstrap.gd"
 AdManager="*res://Autoloads/AdManager.gd"
 HapticManager="*res://Autoloads/HapticManager.gd"
+RewardPresentationManager="*res://Autoloads/RewardPresentationManager.gd"
 DailyMissionManager="*res://Autoloads/DailyMissionManager.gd"
 AchievementManager="*res://Autoloads/AchievementManager.gd"
 

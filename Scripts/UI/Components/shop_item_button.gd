@@ -32,9 +32,9 @@ func setup(item: ShopItemData) -> void:
 func _apply_item() -> void:
 	_name_label.text = shop_item.display_name
 	_description_label.text = shop_item.description
-	var is_pet := shop_item.category == &"pet"
+	var is_pet := not ShopItemDisplayRulesScript.should_show_description(shop_item.category)
 	_description_label.visible = not is_pet
-	_icon_rect.custom_minimum_size.y = 200.0 if is_pet else 160.0
+	_icon_rect.custom_minimum_size.y = 200.0 if is_pet else 150.0
 	_icon_rect.texture = shop_item.icon
 	_icon_rect.visible = shop_item.icon != null
 	_currency_glyph.texture = TICKET_ICON if shop_item.currency == &"tickets" else COIN_ICON
@@ -117,7 +117,8 @@ func _on_pressed() -> void:
 
 
 func _show_not_enough_currency() -> void:
-	_cost_label.modulate = Color(1.0, 0.45, 0.36, 1.0)
 	var pulse := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	pulse.tween_property(_cost_label, "scale", Vector2(1.16, 1.16), 0.1)
+	pulse.tween_property(_cost_label, "scale", Vector2(1.12, 1.12), 0.1)
+	pulse.parallel().tween_property(_cost_label, "modulate", Color(1.0, 0.88, 0.58, 1.0), 0.1)
 	pulse.tween_property(_cost_label, "scale", Vector2.ONE, 0.18)
+	pulse.parallel().tween_property(_cost_label, "modulate", Color.WHITE, 0.18)

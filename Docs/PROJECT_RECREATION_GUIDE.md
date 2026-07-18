@@ -102,7 +102,7 @@ The canonical project layout is:
 ```text
 Merge/
 ├─ Assets/
-│  ├─ Fonts/                  # Cloudy.otf and Atop.ttf
+│  ├─ Fonts/                  # NERILLKID Trial.ttf is the active UI font
 │  ├─ Fruits/                 # Fruit PNGs, one file per tier
 │  ├─ Mascots/                # Optional mascot art
 │  ├─ Menu/                   # Home dock, icons, buttons, currency art
@@ -291,6 +291,10 @@ This cache lets the Spawner preview the correct art and clamp drops to the manua
 ### `EconomyManager.gd`
 
 Owns coins, tickets, item ownership/equipping, and consumable power-up counts. Purchasing always goes through it. It emits events after balances/counts change.
+
+### `RewardPresentationManager.gd`
+
+Keeps short-lived coin/ticket presentation payloads alive across a scene change. It never grants or saves currency; `EconomyManager` remains authoritative. Daily Reward queues the earned currency here, then Home consumes the queue exactly once and animates the matching icon into its real wallet panel.
 
 ### `SaveManager.gd`
 
@@ -672,7 +676,7 @@ Files:
 - Scene: `Scenes/UI/Home/home.tscn`
 - Script: `Scripts/UI/Home/home.gd`
 
-Home shows the mascot, best score, currencies, Play, Shop, Achievements, Settings, and No Ads. The bottom dock uses MenuDock art and is the only navigation system. Avoid duplicate floating Play/Settings controls elsewhere on the screen.
+Home shows the mascot, best score, currencies, Play, Shop, Achievements, Settings, No Ads, and the scene-authored `RewardsButton`. Pressing `RewardsButton` uses `SceneRouter.go_daily_reward()` so the seven-day panel can be reviewed even after the automatic startup gate has been completed. The bottom dock uses MenuDock art and is the only primary navigation system. Avoid duplicate floating Play/Settings controls elsewhere on the screen.
 
 The dock's central peach `PlayButton` uses the reusable `floating_button_animator.gd` on both Home and Shop. Its looping sine tween rises 8 pixels with a slight counter-clockwise tilt and scale-up, dips softly with the opposite tilt, then restores the exact authored position, rotation, and scale before repeating. Start it only after mobile safe-area offsets are applied. The animator accepts height and duration parameters and remains still when reduced motion is active.
 
@@ -697,7 +701,13 @@ The seven-day sequence is presently:
 | 6 | 100 coins |
 | 7 | 3 tickets |
 
-The cards are generated dynamically **after one process frame** because the GridContainer needs its final size before calculations. The grid is clipped and the day-seven slot is explicitly full-rect to prevent reward cards leaking outside the panel.
+The cards are generated dynamically **after one process frame** because the GridContainer needs its final size before calculations. The grid is clipped and the day-seven slot is explicitly full-rect to prevent reward cards leaking outside the panel. Each generated card is wrapped in a small `MarginContainer` safe area before its rounded panel is added. That inset keeps the anti-aliased lower corners and soft shadow inside the clipped grid instead of cutting them into bright wedges at the panel edge.
+
+Claimed days keep displaying their original currency icon and amount. Their subdued card surface is the claimed-state indicator; do not add checkmark or `COLLECTED` labels, which make the compact cards visually noisy.
+
+To tune this presentation later, edit `_card_style()` and the four `CARD_INSET_*` constants in `Scripts/UI/DailyReward/daily_reward.gd`. The shared style currently uses a 2 px, 12%-opacity shadow with a 1 px downward offset. Edit the authored `RewardsGrid` and `DaySevenSlot` bounds in `Scenes/UI/DailyReward/daily_reward.tscn` for layout changes; do not place a full-size shadowed card directly against either clipped boundary.
+
+Claiming queues the earned icon with `RewardPresentationManager`, grants and saves the real balance, then automatically returns Home after the claim-button pop. Home initially displays the pre-claim number, holds only the reward texture at screen center, flies it into the authored coin or ticket icon, updates the wallet number on impact, bounces the destination panel, and triggers reward haptics. No duplicate `+amount` label travels with the artwork. Reduced-motion mode skips the travel while still updating the correct destination. Never hard-code wallet coordinates; Home reads the current global rectangle of its scene-authored target icon after safe-area layout.
 
 ### Shop
 
@@ -717,8 +727,23 @@ card because its large content margins make rows overlap. The name row is reserv
 above the icon, the optional stacked power-up count stays over the icon, and both
 the card root and catalog panel clip children. The old owned badge and its status
 label were removed; an owned cosmetic uses the existing action label to show
-`SELECT` or `ACTIVE` instead. Free filtered cards immediately before repopulating so old/new categories
+`SELECT` or `ACTIVE` instead. Pet descriptions are hidden and their icons expand
+into the reclaimed space; descriptions remain available on skins and power-ups.
+Those descriptions reserve a two-line 50 px row and use 16 px NERILLKID text with
+a light warm outline, while non-pet artwork uses a 150 px row. The catalog remains
+wheel-, drag-, and touch-scrollable, but `ShopScroll.vertical_scroll_mode` is
+`SCROLL_MODE_SHOW_NEVER` so no scrollbar covers the card edge.
+The action panel uses four explicit states: leaf green for a purchasable item,
+coral when currency is insufficient, gold for an owned selectable cosmetic, and
+teal for the active cosmetic. Free filtered cards immediately before repopulating so old/new categories
 cannot share a layout frame.
+
+Shop card and button shadows are intentionally shallow: 2–4 px with low opacity,
+not the old 7–9 px floating blocks. Tabs use `ShopTabButton`: warm peach is idle,
+sunny orange is hover/focus, and vibrant leaf green is selected. Tooltips use the
+theme's cream `TooltipPanel` with coral border and dark-brown `TooltipLabel`; do
+not rely on Godot's unstyled default tooltip. Card tooltip copy is action-oriented
+(`Unlock`, `Need`, `Tap to select`, or `active`) and never restores pet descriptions.
 
 ---
 
@@ -734,13 +759,15 @@ cannot share a layout frame.
 
 - continuous music volume from 0–100%;
 - continuous sound-effects volume from 0–100%;
-- vibration preference;
-- selected language.
+- vibration preference.
 
 Both sliders apply immediately through `AudioManager` and save `music_volume` or
-`sfx_volume`; a value of zero is mute. Theme and Game Feel were removed because
-they did not provide reliable user-visible behavior. Do not re-add placeholder
-options without implementing and validating the complete feature first.
+`sfx_volume`; a value of zero is mute. The three audio/haptic rows are 62 px tall
+with 12 px container separation so labels and sliders do not crowd each other.
+Theme, Game Feel, and the Language selector were removed from this panel. Do not
+re-add placeholder options without implementing and validating the complete
+feature first. Existing locale data remains an internal translation default and
+is not exposed by Settings.
 
 Save migration version 7 erases the retired theme/feedback/audio-restore keys and
 normalizes haptic strength, screen shake, and reduced motion to the standard
@@ -1008,9 +1035,10 @@ Use `Data/Themes/cozy_theme.tres` for normal Control styling. Use the imported a
 
 ### Typography
 
-- `Assets/Fonts/Cloudy.otf`: large expressive score/combo style.
-- `Assets/Fonts/Atop.ttf`: chunky outlined callouts and title moments.
-- Theme fallbacks: Arial Rounded MT Bold, Trebuchet MS, Segoe UI.
+- `Assets/Fonts/NERILLKID Trial.ttf` is the single UI typeface for the shared
+  theme and every scene under `Scenes/UI/`.
+- Do not add scene overrides for Cloudy, Atop, Spenbeb, or system-font fallbacks;
+  the project validator treats them as retired UI fonts.
 
 Large values should use an outline and subtle shadow for readability over art. Body text stays around 16–20 px, touch labels around 21–27 px, and score/title moments can reach 36–76 px.
 

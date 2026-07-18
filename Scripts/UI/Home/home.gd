@@ -1,10 +1,16 @@
 extends Control
 
 const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
+const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
+const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
 
 @onready var _best_score_label: Label = %BestScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
 @onready var _tickets_label: Label = $TicketPanel/TicketRow/TicketLabel
+@onready var _coin_panel: PanelContainer = $CoinPanel
+@onready var _ticket_panel: PanelContainer = $TicketPanel
+@onready var _coin_icon: TextureRect = $CoinPanel/CoinRow/CoinIcon
+@onready var _ticket_icon: TextureRect = $TicketPanel/TicketRow/TicketIcon
 @onready var _mascot: TextureRect = %Mascot
 @onready var _play_button: TextureButton = %PlayButton
 @onready var _home_button: TextureButton = %HomeButton
@@ -12,6 +18,7 @@ const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floati
 @onready var _shop_button: TextureButton = %ShopButton
 @onready var _settings_button: TextureButton = %SettingsButton
 @onready var _no_ads_button: TextureButton = %NoAdsButton
+@onready var _rewards_button: TextureButton = %RewardsButton
 @onready var _info_overlay: Control = %InfoOverlay
 @onready var _info_title: Label = %InfoTitle
 @onready var _info_body: Label = %InfoBody
@@ -20,12 +27,22 @@ const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floati
 @onready var _no_ads_purchase: NoAdsPurchase = $NoAdsPurchase
 @onready var _mode_button: Button = %ModeButton
 
+var _pending_wallet_rewards: Array[Dictionary] = []
+
 
 func _ready() -> void:
 	GameManager.change_state(Enums.GameState.MENU)
+	_pending_wallet_rewards = RewardPresentationManager.take_pending_wallet_rewards()
+	var display_coins := EconomyManager.coins
+	var display_tickets := EconomyManager.tickets
+	for reward in _pending_wallet_rewards:
+		var amount := maxi(0, int(reward.get("amount", 0)))
+		match StringName(reward.get("currency", &"")):
+			&"coins": display_coins = maxi(0, display_coins - amount)
+			&"tickets": display_tickets = maxi(0, display_tickets - amount)
 	_best_score_label.text = "%d" % GameManager.high_score
-	_update_coins(EconomyManager.coins)
-	_update_tickets(EconomyManager.tickets)
+	_update_coins(display_coins)
+	_update_tickets(display_tickets)
 	EventBus.coins_changed.connect(_update_coins)
 	EventBus.tickets_changed.connect(_update_tickets)
 	AdManager.no_ads_changed.connect(_on_no_ads_changed)
@@ -39,6 +56,7 @@ func _ready() -> void:
 	_shop_button.pressed.connect(_open_shop)
 	_settings_button.pressed.connect(_show_settings)
 	_no_ads_button.pressed.connect(_show_no_ads_purchase)
+	_rewards_button.pressed.connect(_open_daily_reward)
 	_mode_button.pressed.connect(_cycle_mode)
 	_close_info_button.pressed.connect(_hide_info)
 
@@ -48,7 +66,106 @@ func _ready() -> void:
 		bool(SaveManager.get_setting("reduced_motion", false))
 	)
 	_play_intro.call_deferred()
-	_show_first_run_tutorial.call_deferred()
+	_run_entry_presentation.call_deferred()
+
+
+func _run_entry_presentation() -> void:
+	await get_tree().process_frame
+	await _play_pending_wallet_rewards()
+	_show_first_run_tutorial()
+
+
+func _play_pending_wallet_rewards() -> void:
+	for reward in _pending_wallet_rewards:
+		await _play_wallet_reward(reward)
+	_pending_wallet_rewards.clear()
+
+
+func _play_wallet_reward(reward: Dictionary) -> void:
+	var currency := StringName(reward.get("currency", &""))
+	var amount := maxi(0, int(reward.get("amount", 0)))
+	if amount <= 0 or currency not in [&"coins", &"tickets"]:
+		return
+
+	var target_panel: PanelContainer = _ticket_panel if currency == &"tickets" else _coin_panel
+	var target_icon: TextureRect = _ticket_icon if currency == &"tickets" else _coin_icon
+	var texture: Texture2D = TICKET_ICON if currency == &"tickets" else COIN_ICON
+	if bool(SaveManager.get_setting("reduced_motion", false)):
+		_finish_wallet_reward(currency, target_panel)
+		return
+
+	var reward_bundle := Control.new()
+	reward_bundle.name = "WalletRewardFlyover"
+	reward_bundle.size = Vector2(112, 112)
+	reward_bundle.position = Vector2(size.x * 0.5, size.y * 0.46) - reward_bundle.size * 0.5
+	reward_bundle.pivot_offset = reward_bundle.size * 0.5
+	reward_bundle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	reward_bundle.z_index = 250
+	add_child(reward_bundle)
+
+	var glow := TextureRect.new()
+	glow.position = Vector2(4, 4)
+	glow.size = Vector2(104, 104)
+	glow.pivot_offset = glow.size * 0.5
+	glow.texture = texture
+	glow.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	glow.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	glow.modulate = Color(1.0, 0.86, 0.42, 0.24)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	reward_bundle.add_child(glow)
+
+	var reward_icon := TextureRect.new()
+	reward_icon.position = Vector2(14, 14)
+	reward_icon.size = Vector2(84, 84)
+	reward_icon.pivot_offset = reward_icon.size * 0.5
+	reward_icon.texture = texture
+	reward_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	reward_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	reward_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	reward_bundle.add_child(reward_icon)
+
+	reward_bundle.scale = Vector2(0.32, 0.32)
+	reward_bundle.rotation = -0.1
+	reward_bundle.modulate.a = 0.0
+	var pop := create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pop.tween_property(reward_bundle, "scale", Vector2.ONE, 0.3)
+	pop.tween_property(reward_bundle, "rotation", 0.0, 0.3)
+	pop.tween_property(reward_bundle, "modulate:a", 1.0, 0.16)
+	pop.tween_property(glow, "scale", Vector2(1.2, 1.2), 0.3)
+	await pop.finished
+
+	var resting_position := reward_bundle.position
+	var hover := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	hover.tween_property(reward_bundle, "position:y", resting_position.y - 9.0, 0.28)
+	hover.tween_property(reward_bundle, "position:y", resting_position.y, 0.28)
+	await hover.finished
+
+	var destination := target_icon.get_global_rect().get_center() - reward_bundle.size * 0.5
+	var lift_position := Vector2(
+		lerpf(reward_bundle.position.x, destination.x, 0.34),
+		reward_bundle.position.y - 74.0
+	)
+	var flight := create_tween()
+	flight.tween_property(reward_bundle, "position", lift_position, 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	flight.parallel().tween_property(reward_bundle, "rotation", 0.12 if destination.x > reward_bundle.position.x else -0.12, 0.16)
+	flight.tween_property(reward_bundle, "position", destination, 0.46).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	flight.parallel().tween_property(reward_bundle, "scale", Vector2(0.42, 0.42), 0.46)
+	await flight.finished
+
+	reward_bundle.queue_free()
+	_finish_wallet_reward(currency, target_panel)
+
+
+func _finish_wallet_reward(currency: StringName, target_panel: PanelContainer) -> void:
+	if currency == &"tickets":
+		_update_tickets(EconomyManager.tickets)
+	else:
+		_update_coins(EconomyManager.coins)
+	HapticManager.pulse(HapticManager.Feedback.REWARD)
+	target_panel.pivot_offset = target_panel.size * 0.5
+	var impact := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	impact.tween_property(target_panel, "scale", Vector2(1.12, 1.12), 0.12)
+	impact.tween_property(target_panel, "scale", Vector2.ONE, 0.2)
 
 
 func _update_coins(amount: int) -> void:
@@ -102,6 +219,12 @@ func _show_settings() -> void:
 
 func _show_no_ads_purchase() -> void:
 	_no_ads_purchase.open()
+
+
+func _open_daily_reward() -> void:
+	HapticManager.pulse(HapticManager.Feedback.TAP)
+	_rewards_button.disabled = true
+	SceneRouter.go_daily_reward()
 
 
 func _on_no_ads_changed(owned: bool) -> void:

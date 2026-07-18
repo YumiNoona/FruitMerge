@@ -279,6 +279,66 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleShopActionActive"]
+bg_color = Color(0.3, 0.75, 0.58, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 1, 0.85, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.08, 0.38, 0.25, 0.1)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleShopActionLocked"]
+bg_color = Color(1, 0.52, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.94, 0.78, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.48, 0.18, 0.1, 0.1)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleShopActionReady"]
+bg_color = Color(0.62, 0.82, 0.27, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.98, 0.79, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.3, 0.38, 0.08, 0.11)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleShopActionSelect"]
+bg_color = Color(1, 0.7, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.98, 0.8, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.48, 0.3, 0.06, 0.1)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
 [sub_resource type="StyleBoxFlat" id="StyleShopCardHover"]
 content_margin_left = 14.0
 content_margin_top = 14.0
@@ -297,25 +357,6 @@ corner_radius_bottom_left = 26
 shadow_color = Color(0.42, 0.22, 0.08, 0.12)
 shadow_size = 4
 shadow_offset = Vector2(0, 3)
-
-[sub_resource type="StyleBoxFlat" id="StyleShopCardNormal"]
-content_margin_left = 14.0
-content_margin_top = 14.0
-content_margin_right = 14.0
-content_margin_bottom = 14.0
-bg_color = Color(1, 0.945, 0.82, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(1, 0.63, 0.35, 0.92)
-corner_radius_top_left = 26
-corner_radius_top_right = 26
-corner_radius_bottom_right = 26
-corner_radius_bottom_left = 26
-shadow_color = Color(0.42, 0.22, 0.08, 0.1)
-shadow_size = 3
-shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleShopCardPressed"]
 content_margin_left = 14.0
@@ -336,21 +377,21 @@ shadow_color = Color(0.42, 0.22, 0.08, 0.08)
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleShopTabNormal"]
-content_margin_left = 18.0
-content_margin_top = 12.0
-content_margin_right = 18.0
-content_margin_bottom = 12.0
-bg_color = Color(1, 0.88, 0.68, 1)
+[sub_resource type="StyleBoxFlat" id="StyleShopCardNormal"]
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+bg_color = Color(1, 0.945, 0.82, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(1, 0.6, 0.32, 1)
-corner_radius_top_left = 22
-corner_radius_top_right = 22
-corner_radius_bottom_right = 22
-corner_radius_bottom_left = 22
+border_color = Color(1, 0.63, 0.35, 0.92)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
 shadow_color = Color(0.42, 0.22, 0.08, 0.1)
 shadow_size = 3
 shadow_offset = Vector2(0, 2)
@@ -393,64 +434,23 @@ shadow_color = Color(0.27, 0.36, 0.08, 0.12)
 shadow_size = 3
 shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleShopActionReady"]
-bg_color = Color(0.62, 0.82, 0.27, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.98, 0.79, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0.3, 0.38, 0.08, 0.11)
-shadow_size = 2
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleShopActionLocked"]
-bg_color = Color(1, 0.52, 0.4, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.94, 0.78, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0.48, 0.18, 0.1, 0.1)
-shadow_size = 2
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleShopActionSelect"]
-bg_color = Color(1, 0.7, 0.25, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.98, 0.8, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0.48, 0.3, 0.06, 0.1)
-shadow_size = 2
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleShopActionActive"]
-bg_color = Color(0.3, 0.75, 0.58, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.9, 1, 0.85, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0.08, 0.38, 0.25, 0.1)
-shadow_size = 2
+[sub_resource type="StyleBoxFlat" id="StyleShopTabNormal"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(1, 0.88, 0.68, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.6, 0.32, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+shadow_color = Color(0.42, 0.22, 0.08, 0.1)
+shadow_size = 3
 shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleTooltip"]
@@ -534,6 +534,14 @@ ProgressBar/styles/fill = SubResource("StyleBarFill")
 ScoreLabel/base_type = &"Label"
 ScoreLabel/colors/font_color = Color(0.47, 0.25, 0.12, 1)
 ScoreLabel/font_sizes/font_size = 36
+ShopActionActive/base_type = &"PanelContainer"
+ShopActionActive/styles/panel = SubResource("StyleShopActionActive")
+ShopActionLocked/base_type = &"PanelContainer"
+ShopActionLocked/styles/panel = SubResource("StyleShopActionLocked")
+ShopActionReady/base_type = &"PanelContainer"
+ShopActionReady/styles/panel = SubResource("StyleShopActionReady")
+ShopActionSelect/base_type = &"PanelContainer"
+ShopActionSelect/styles/panel = SubResource("StyleShopActionSelect")
 ShopCardButton/base_type = &"Button"
 ShopCardButton/colors/font_color = Color(0.36, 0.2, 0.11, 1)
 ShopCardButton/colors/font_hover_color = Color(0.36, 0.2, 0.11, 1)
@@ -548,33 +556,25 @@ ShopCardButton/styles/pressed = SubResource("StyleShopCardPressed")
 ShopTabButton/base_type = &"Button"
 ShopTabButton/colors/font_color = Color(0.42, 0.22, 0.11, 1)
 ShopTabButton/colors/font_hover_color = Color(0.42, 0.22, 0.11, 1)
-ShopTabButton/colors/font_pressed_color = Color(0.27, 0.34, 0.08, 1)
 ShopTabButton/colors/font_outline_color = Color(1, 0.97, 0.82, 0.72)
+ShopTabButton/colors/font_pressed_color = Color(0.27, 0.34, 0.08, 1)
 ShopTabButton/constants/outline_size = 2
 ShopTabButton/styles/focus = SubResource("StyleShopTabHover")
 ShopTabButton/styles/hover = SubResource("StyleShopTabHover")
 ShopTabButton/styles/hover_pressed = SubResource("StyleShopTabActive")
 ShopTabButton/styles/normal = SubResource("StyleShopTabNormal")
 ShopTabButton/styles/pressed = SubResource("StyleShopTabActive")
-ShopActionReady/base_type = &"PanelContainer"
-ShopActionReady/styles/panel = SubResource("StyleShopActionReady")
-ShopActionLocked/base_type = &"PanelContainer"
-ShopActionLocked/styles/panel = SubResource("StyleShopActionLocked")
-ShopActionSelect/base_type = &"PanelContainer"
-ShopActionSelect/styles/panel = SubResource("StyleShopActionSelect")
-ShopActionActive/base_type = &"PanelContainer"
-ShopActionActive/styles/panel = SubResource("StyleShopActionActive")
-TooltipLabel/colors/font_color = Color(0.4, 0.2, 0.1, 1)
-TooltipLabel/colors/font_outline_color = Color(1, 0.97, 0.84, 0.75)
-TooltipLabel/constants/outline_size = 2
-TooltipLabel/font_sizes/font_size = 17
-TooltipPanel/styles/panel = SubResource("StyleTooltip")
 TitleLabel/base_type = &"Label"
 TitleLabel/colors/font_color = Color(0.97, 0.46, 0.22, 1)
 TitleLabel/colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 TitleLabel/constants/outline_size = 10
 TitleLabel/constants/shadow_offset_y = 6
 TitleLabel/font_sizes/font_size = 76
+TooltipLabel/colors/font_color = Color(0.4, 0.2, 0.1, 1)
+TooltipLabel/colors/font_outline_color = Color(1, 0.97, 0.84, 0.75)
+TooltipLabel/constants/outline_size = 2
+TooltipLabel/font_sizes/font_size = 17
+TooltipPanel/styles/panel = SubResource("StyleTooltip")
 WhiteLabel/base_type = &"Label"
 WhiteLabel/colors/font_color = Color(1, 0.98, 0.9, 1)
 WhiteLabel/colors/font_outline_color = Color(0.34, 0.2, 0.09, 0.72)
