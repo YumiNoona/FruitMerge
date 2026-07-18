@@ -231,7 +231,7 @@ offset_bottom = 1253.0
 theme_type_variation = &"CreamButton"
 theme_override_fonts/font = ExtResource("13_8vbvv")
 theme_override_font_sizes/font_size = 18
-text = "MODE - CLASSIC"
+text = "MODE • CLASSIC"
 
 [node name="ShopButton" type="TextureButton" parent="." unique_id=825035934]
 unique_name_in_owner = true
