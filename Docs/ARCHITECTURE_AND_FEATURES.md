@@ -151,7 +151,10 @@ owned badge was removed; owned cosmetics reuse the action label for `SELECT` and
 Skin and power-up descriptions use 16 px NERILLKID text, a warm two-pixel outline,
 and a dedicated two-line row. Both cards and the catalog panel clip their children.
 The catalog scrollbar is visually hidden while touch drag and wheel scrolling remain
-available. Category repopulation frees
+available. The grid and Shop card roots use `MOUSE_FILTER_PASS`, while decorative
+card controls use `MOUSE_FILTER_IGNORE`, so buttons still receive taps without
+swallowing vertical drag events before they reach the ScrollContainer. An explicit
+8 px touch deadzone separates a purchase tap from a scroll gesture. Category repopulation frees
 old cards immediately, preventing one-frame overlap. Header ad copy is ASCII-only
 and sized for the 720-wide portrait canvas.
 
@@ -202,13 +205,39 @@ can find it.
 ## Desktop debugging
 
 The PC debug window is resizable even though the production target is portrait
-mobile. In debug builds, focus the running game and press `F11` to toggle between
-windowed and fullscreen modes. When using Godot's embedded game view, black space
-around the 9:16 viewport is editor workspace rather than missing game content; use
-the game-view menu to run it in a floating window when testing fullscreen behavior.
+mobile. Its default 432×960 override represents a modern 9:20 phone; `expand`
+turns the authored 720×1280 canvas into a 720×1600 visible canvas. This deliberately
+reveals controls that were positioned for only 16:9. Home and Shop docks are
+bottom-anchored, central mascot art is vertically centered, the Shop catalog grows
+into the extra height, and the loading footer observes the mobile bottom safe area.
+
+In debug builds, focus the running game and press `F11` to toggle between windowed
+and fullscreen modes. When using Godot's embedded game view, black space around
+the 9:20 preview is editor workspace rather than missing game content; use the
+game-view menu to run it in a floating window when testing fullscreen behavior.
 
 After changing window, stretch, or safe-area settings, stop and restart the running
 project so Godot recreates the debug window with the updated configuration.
+
+## Android build profile
+
+`export_presets.cfg` contains the scene-independent `Android Debug` APK preset used
+for phone testing. It exports only ARM64, uses package id `com.yuna.fruitmerge`,
+requests vibration but not Internet access, and writes ignored artifacts under
+`Builds/Android/`. Android export requires the ETC2/ASTC import flag in
+`project.godot`; removing it makes Godot reject the preset before packaging.
+The project and Android launcher use the existing smiling peach asset instead of
+the engine's default icon. Both the project boot image and Android's Godot boot
+splash are disabled; Android may still show its mandatory system launch screen,
+but it uses the game icon rather than Godot branding.
+
+`application/config/version` is the single project-facing version source. The
+settings footer and About dialog read it dynamically, while the Android preset
+keeps the corresponding Play version name and monotonically increasing integer
+version code. Keep those values synchronized for every release.
+
+The complete workstation setup, export commands, validated artifact details, and
+release/AAB boundary are documented in `Docs/ANDROID_BUILD.md`.
 
 ## Validation
 

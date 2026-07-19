@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="MissionDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/mission_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level = 1
+title = "MATCHING FRIENDS"
+description = "Learn the core rule: matching fruit merge into the next fruit."
+target_tier = 1
+target_count = 2
+spawn_sequence = [0, 0, 0, 0, 1, 1]
+starting_tiers = [0]
+starting_positions = [Vector2(360, 1020)]
+opening_instruction = "Drag the cherry above the cherry in the box, then release. Matching fruit grow together!"
+reward_coins = 50

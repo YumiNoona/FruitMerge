@@ -28,6 +28,7 @@ const RETIRED_UI_FONTS := ["Spenbeb Game.otf", "Atop.ttf", "Cloudy.otf"]
 
 static func validate_all() -> PackedStringArray:
 	var issues: PackedStringArray = []
+	issues.append_array(_validate_display_profile())
 	issues.append_array(_validate_fruits())
 	issues.append_array(_validate_shop())
 	issues.append_array(_validate_scenes())
@@ -36,6 +37,30 @@ static func validate_all() -> PackedStringArray:
 		push_error("PROJECT VALIDATION: %s" % issue)
 	if issues.is_empty():
 		print("Project validation passed: fruit chain, catalog, UI contracts, and core scenes are consistent.")
+	return issues
+
+
+static func _validate_display_profile() -> PackedStringArray:
+	var issues: PackedStringArray = []
+	var logical_size := Vector2i(
+		int(ProjectSettings.get_setting("display/window/size/viewport_width", 0)),
+		int(ProjectSettings.get_setting("display/window/size/viewport_height", 0))
+	)
+	var preview_size := Vector2i(
+		int(ProjectSettings.get_setting("display/window/size/window_width_override", 0)),
+		int(ProjectSettings.get_setting("display/window/size/window_height_override", 0))
+	)
+	if logical_size != Vector2i(720, 1280):
+		issues.append("Logical UI viewport must remain 720x1280")
+	if preview_size != Vector2i(432, 960):
+		issues.append("Desktop mobile preview must remain 432x960 (9:20)")
+	if str(ProjectSettings.get_setting("display/window/stretch/aspect", "")) != "expand":
+		issues.append("Mobile layout requires canvas stretch aspect expand")
+	if bool(ProjectSettings.get_setting("application/boot_splash/show_image", true)):
+		issues.append("The branded game intro must not show Godot's default boot splash")
+	var export_source := FileAccess.get_file_as_string("res://export_presets.cfg")
+	if not export_source.contains("splash_screen/disable_godot_boot_splash=true"):
+		issues.append("Android export must disable the Godot boot splash")
 	return issues
 
 
@@ -146,6 +171,8 @@ static func _validate_ui_contracts() -> PackedStringArray:
 		var description := card.find_child("DescriptionLabel", true, false) as Label if card else null
 		if description and (description.get_theme_font_size("font_size") < 16 or description.get_theme_constant("outline_size") < 2):
 			issues.append("Shop descriptions must retain their readable size and warm outline")
+		if card and card.mouse_filter != Control.MOUSE_FILTER_PASS:
+			issues.append("Shop cards must pass drag gestures to the catalog ScrollContainer")
 		if card:
 			card.free()
 	var shop_scene := load(SceneRouter.SHOP_SCENE) as PackedScene
@@ -157,11 +184,38 @@ static func _validate_ui_contracts() -> PackedStringArray:
 		var shop_scroll := shop.find_child("ShopScroll", true, false) as ScrollContainer
 		if not shop_scroll or shop_scroll.vertical_scroll_mode != ScrollContainer.SCROLL_MODE_SHOW_NEVER:
 			issues.append("Shop must remain touch-scrollable without a visible scrollbar")
+		elif shop_scroll.scroll_deadzone != 8:
+			issues.append("Shop touch scrolling must retain its 8 px drag deadzone")
+		var shop_list := shop.find_child("ShopList", true, false) as Control
+		if not shop_list or shop_list.mouse_filter != Control.MOUSE_FILTER_PASS:
+			issues.append("Shop grid must pass card drag gestures to its ScrollContainer")
+		for node_name in ["Dock", "HomeButton", "AchievementsButton", "PlayButton", "ShopButton", "SettingsButton"]:
+			var bottom_control := shop.find_child(node_name, true, false) as Control
+			if not bottom_control or not is_equal_approx(bottom_control.anchor_top, 1.0) or not is_equal_approx(bottom_control.anchor_bottom, 1.0):
+				issues.append("Shop %s must stay bottom-anchored on tall phones" % node_name)
+		var catalog_panel := shop.find_child("CatalogPanel", true, false) as Control
+		if not catalog_panel or not is_equal_approx(catalog_panel.anchor_bottom, 1.0):
+			issues.append("Shop catalog must expand vertically on tall phones")
 		shop.free()
 	var home_scene := load(SceneRouter.HOME_SCENE) as PackedScene
 	if home_scene:
 		var home := home_scene.instantiate()
 		if not home.find_child("RewardsButton", true, false):
 			issues.append("Home is missing RewardsButton required for Daily Reward access")
+		for node_name in ["Dock", "HomeButton", "AchievementsButton", "PlayButton", "ModeButton", "ShopButton", "SettingsButton"]:
+			var bottom_control := home.find_child(node_name, true, false) as Control
+			if not bottom_control or not is_equal_approx(bottom_control.anchor_top, 1.0) or not is_equal_approx(bottom_control.anchor_bottom, 1.0):
+				issues.append("Home %s must stay bottom-anchored on tall phones" % node_name)
+		var mascot := home.find_child("Mascot", true, false) as Control
+		if not mascot or not is_equal_approx(mascot.anchor_top, 0.5) or not is_equal_approx(mascot.anchor_bottom, 0.5):
+			issues.append("Home mascot must remain vertically centered on tall phones")
 		home.free()
+	var main_menu_scene := load("res://Scenes/UI/MainMenu/main_menu.tscn") as PackedScene
+	if main_menu_scene:
+		var main_menu := main_menu_scene.instantiate()
+		for node_name in ["TipPanel", "Footer"]:
+			var bottom_control := main_menu.find_child(node_name, true, false) as Control
+			if not bottom_control or not is_equal_approx(bottom_control.anchor_top, 1.0) or not is_equal_approx(bottom_control.anchor_bottom, 1.0):
+				issues.append("Main menu %s must stay bottom-anchored on tall phones" % node_name)
+		main_menu.free()
 	return issues

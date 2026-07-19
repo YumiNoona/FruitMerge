@@ -26,6 +26,8 @@ var _load_started := false
 var _transitioning := false
 
 func _ready() -> void:
+	MobileSafeArea.apply_bottom_inset($TipPanel, $TipPanel.position.y)
+	MobileSafeArea.apply_bottom_inset($Footer, $Footer.position.y)
 	_tip_label.text = "Tip: %s" % LOADING_TIPS.pick_random()
 	_play_intro()
 	var error := ResourceLoader.load_threaded_request(HOME_SCENE)

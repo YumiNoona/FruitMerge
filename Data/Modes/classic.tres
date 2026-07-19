@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GameModeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/game_mode_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+mode = 0
+display_name = "Classic"
+description = "Merge freely, build combos, and chase your best score."

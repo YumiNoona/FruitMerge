@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="MissionDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/mission_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level = 3
+title = "SHAKE THINGS UP"
+description = "Use Shake Box to remix separated matching fruit."
+target_tier = 1
+target_count = 1
+required_powerup = &"powerup_shake_box"
+temporary_charges = 1
+spawn_sequence = [0, 0, 0, 1]
+starting_tiers = [0, 0]
+starting_positions = [Vector2(265, 1015), Vector2(455, 1015)]
+opening_instruction = "Two cherries are apart. Shake the box to stir the pile, then help them meet."
+power_instruction = "Tap SHAKE BOX. The whole container and every fruit will move."
+reward_coins = 75
+reward_tickets = 1

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="MissionDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/mission_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level = 5
+title = "GRAB A FRIEND"
+description = "Move one fruit directly onto a matching fruit."
+target_tier = 2
+target_count = 1
+required_powerup = &"powerup_grab_em"
+temporary_charges = 1
+spawn_sequence = [1, 0, 1, 1]
+starting_tiers = [1, 1]
+starting_positions = [Vector2(250, 1010), Vector2(470, 1010)]
+opening_instruction = "The berries match but cannot reach. Grab one and place it on its friend."
+power_instruction = "Tap GRAB 'EM, drag one berries fruit onto the other, then release."
+reward_coins = 110
+reward_tickets = 1

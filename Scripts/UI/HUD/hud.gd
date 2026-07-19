@@ -1,5 +1,7 @@
 extends Control
 
+const UI_FONT: FontFile = preload("res://Assets/Fonts/NERILLKID Trial.ttf")
+
 @onready var _score_label: Label = %ScoreLabel
 @onready var _high_score_label: Label = %HighScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
@@ -38,6 +40,17 @@ var _combo_tween: Tween
 var _combo_base_position: Vector2
 var _tier_reward_tween: Tween
 var _requested_targeting_powerup: StringName = &""
+var _power_buttons: Dictionary = {}
+var _power_counts: Dictionary = {}
+var _power_slots: Dictionary = {}
+var _mission_panel: PanelContainer
+var _mission_objective: Label
+var _mission_progress: ProgressBar
+var _tutorial_card: PanelContainer
+var _tutorial_title: Label
+var _tutorial_text: Label
+var _tutorial_icon: TextureRect
+var _last_urgent_second := -1
 
 const TICKET_REWARD_TIERS: PackedInt32Array = [
 	Enums.FruitTier.PINEAPPLE,
@@ -64,15 +77,37 @@ func _ready() -> void:
 	_bomb_button.pressed.connect(func(): _request_powerup(&"powerup_bomb"))
 	EventBus.powerup_count_changed.connect(_on_powerup_count_changed)
 	EventBus.powerup_targeting_changed.connect(_on_powerup_targeting_changed)
+	EventBus.power_loadout_changed.connect(func(_loadout): _update_powerup_buttons())
+	EventBus.run_timer_changed.connect(_on_run_timer_changed)
+	_power_buttons = {
+		&"powerup_level_up": _level_up_button,
+		&"powerup_shake_box": _shake_button,
+		&"powerup_remove_smallest": _remove_button,
+		&"powerup_grab_em": _grab_button,
+		&"powerup_hammer": _hammer_button,
+		&"powerup_bomb": _bomb_button,
+	}
+	_power_counts = {
+		&"powerup_level_up": _level_up_count,
+		&"powerup_shake_box": _shake_count,
+		&"powerup_remove_smallest": _remove_count,
+		&"powerup_grab_em": _grab_count,
+		&"powerup_hammer": _hammer_count,
+		&"powerup_bomb": _bomb_count,
+	}
+	for item_id in _power_buttons:
+		_power_slots[item_id] = (_power_buttons[item_id] as Control).get_parent()
 	_danger_overlay.modulate.a = 0.0
 	_combo_base_position = _combo_banner.position
 	_update_score(GameManager.score)
-	_update_high_score(GameManager.high_score)
+	_update_high_score(GameManager.get_current_high_score())
 	_update_coins(EconomyManager.coins)
 	_update_tickets(EconomyManager.tickets)
 	_update_next_fruit()
 	_update_powerup_buttons()
 	_update_mode_label()
+	if GameManager.current_mode == Enums.GameMode.MISSIONS:
+		_build_mission_ui()
 	MobileSafeArea.apply_top_inset(_top_panel, _top_panel.position.y)
 	MobileSafeArea.apply_top_inset(_powerup_tray, _powerup_tray.position.y)
 	MobileSafeArea.apply_top_inset(_next_panel, _next_panel.position.y)
@@ -170,7 +205,7 @@ func _on_pause_pressed() -> void:
 
 
 func _request_powerup(item_id: StringName) -> void:
-	if EconomyManager.get_powerup_count(item_id) <= 0:
+	if PowerLoadoutManager.get_available_count(item_id) <= 0:
 		return
 	_requested_targeting_powerup = item_id
 	EventBus.powerup_requested.emit(item_id)
@@ -181,16 +216,16 @@ func _on_powerup_count_changed(_item_id: StringName, _count: int) -> void:
 
 
 func _update_powerup_buttons() -> void:
-	_update_powerup_button(_level_up_button, _level_up_count, &"powerup_level_up")
-	_update_powerup_button(_shake_button, _shake_count, &"powerup_shake_box")
-	_update_powerup_button(_remove_button, _remove_count, &"powerup_remove_smallest")
-	_update_powerup_button(_grab_button, _grab_count, &"powerup_grab_em")
-	_update_powerup_button(_hammer_button, _hammer_count, &"powerup_hammer")
-	_update_powerup_button(_bomb_button, _bomb_count, &"powerup_bomb")
+	var loadout := PowerLoadoutManager.active_loadout
+	_powerup_tray.visible = not loadout.is_empty()
+	for item_id in _power_buttons:
+		var slot := _power_slots[item_id] as Control
+		slot.visible = item_id in loadout
+		_update_powerup_button(_power_buttons[item_id], _power_counts[item_id], item_id)
 
 
 func _update_powerup_button(button: TextureButton, count_label: Label, item_id: StringName) -> void:
-	var count := EconomyManager.get_powerup_count(item_id)
+	var count := PowerLoadoutManager.get_available_count(item_id)
 	count_label.text = "x%d" % count
 	button.disabled = count <= 0
 	button.modulate = Color.WHITE if count > 0 else Color(0.62, 0.62, 0.62, 0.52)
@@ -201,15 +236,136 @@ func _on_powerup_targeting_changed(active: bool, message: String) -> void:
 		_requested_targeting_powerup = &""
 	_powerup_hint.visible = active
 	_powerup_hint.text = message
-	_level_up_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_level_up" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_level_up") > 0 else Color(0.62, 0.62, 0.62, 0.52))
-	if _grab_button:
-		_grab_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_grab_em" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_grab_em") > 0 else Color(0.62, 0.62, 0.62, 0.52))
-	_hammer_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_hammer" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_hammer") > 0 else Color(0.62, 0.62, 0.62, 0.52))
-	_bomb_button.modulate = Color(1.12, 1.12, 0.78, 1.0) if active and _requested_targeting_powerup == &"powerup_bomb" else (Color.WHITE if EconomyManager.get_powerup_count(&"powerup_bomb") > 0 else Color(0.62, 0.62, 0.62, 0.52))
+	for item_id in _power_buttons:
+		var button := _power_buttons[item_id] as TextureButton
+		var selected: bool = active and _requested_targeting_powerup == item_id
+		button.modulate = Color(1.12, 1.12, 0.78, 1.0) if selected else (Color.WHITE if PowerLoadoutManager.get_available_count(item_id) > 0 else Color(0.62, 0.62, 0.62, 0.52))
 
 
 func _update_mode_label() -> void:
 	_mode_label.text = GameManager.get_mode_name().to_upper()
+
+
+func _on_run_timer_changed(seconds: int) -> void:
+	if GameManager.current_mode != Enums.GameMode.TIME_ATTACK:
+		return
+	var minutes := floori(float(seconds) / 60.0)
+	_mode_label.text = "TIME ATTACK  %02d:%02d" % [minutes, seconds % 60]
+	if seconds <= 10 and seconds > 0 and seconds != _last_urgent_second:
+		_last_urgent_second = seconds
+		_mode_label.pivot_offset = _mode_label.size * 0.5
+		_mode_label.modulate = Color(1.0, 0.28, 0.18)
+		var urgency := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		urgency.tween_property(_mode_label, "scale", Vector2(1.18, 1.18), 0.08)
+		urgency.tween_property(_mode_label, "scale", Vector2.ONE, 0.18)
+		if seconds in [10, 5, 3, 2, 1]:
+			HapticManager.pulse(HapticManager.Feedback.DANGER)
+	elif seconds > 10:
+		_mode_label.modulate = Color.WHITE
+
+
+func _build_mission_ui() -> void:
+	EventBus.mission_progress_changed.connect(_on_mission_progress_changed)
+	EventBus.mission_instruction_changed.connect(_on_mission_instruction_changed)
+
+	_mission_panel = PanelContainer.new()
+	_mission_panel.position = Vector2(95, 250)
+	_mission_panel.size = Vector2(530, 112)
+	_mission_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mission_panel.add_theme_stylebox_override("panel", _mission_style(Color(1.0, 0.88, 0.57, 0.96)))
+	add_child(_mission_panel)
+	var mission_box := VBoxContainer.new()
+	mission_box.add_theme_constant_override("separation", 4)
+	_mission_panel.add_child(mission_box)
+	_mission_objective = _mission_label("MISSION OBJECTIVE", 20)
+	mission_box.add_child(_mission_objective)
+	_mission_progress = ProgressBar.new()
+	_mission_progress.custom_minimum_size.y = 22
+	_mission_progress.show_percentage = false
+	_mission_progress.add_theme_stylebox_override("background", _mission_style(Color(1.0, 0.96, 0.80, 1.0), 10))
+	_mission_progress.add_theme_stylebox_override("fill", _mission_style(Color(0.45, 0.78, 0.25, 1.0), 10))
+	mission_box.add_child(_mission_progress)
+
+	_tutorial_card = PanelContainer.new()
+	_tutorial_card.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	_tutorial_card.position = Vector2(-290, -380)
+	_tutorial_card.size = Vector2(580, 190)
+	_tutorial_card.add_theme_stylebox_override("panel", _mission_style(Color(1.0, 0.78, 0.39, 0.98)))
+	add_child(_tutorial_card)
+	var guide_row := HBoxContainer.new()
+	guide_row.add_theme_constant_override("separation", 12)
+	_tutorial_card.add_child(guide_row)
+	_tutorial_icon = TextureRect.new()
+	_tutorial_icon.custom_minimum_size = Vector2(94, 94)
+	_tutorial_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_tutorial_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	guide_row.add_child(_tutorial_icon)
+	var guide_copy := VBoxContainer.new()
+	guide_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	guide_row.add_child(guide_copy)
+	_tutorial_title = _mission_label("HOW TO MERGE", 23)
+	guide_copy.add_child(_tutorial_title)
+	_tutorial_text = _mission_label("", 18)
+	_tutorial_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tutorial_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	guide_copy.add_child(_tutorial_text)
+	var hide_button := Button.new()
+	hide_button.text = "HIDE HINT"
+	hide_button.custom_minimum_size = Vector2(130, 52)
+	hide_button.add_theme_font_override("font", UI_FONT)
+	hide_button.add_theme_font_size_override("font_size", 16)
+	hide_button.pressed.connect(MissionManager.hide_tutorial_hint)
+	guide_copy.add_child(hide_button)
+
+	var definition := MissionManager.active_definition
+	if definition:
+		_on_mission_progress_changed(MissionManager.get_progress_text(), MissionManager.objective_progress, definition.target_count)
+
+
+func _on_mission_progress_changed(label: String, current: int, target: int) -> void:
+	if not _mission_objective:
+		return
+	_mission_objective.text = "LEVEL %d  -  %s\n%s  (%d/%d)" % [MissionManager.active_definition.level, MissionManager.active_definition.title, label, current, target]
+	_mission_progress.max_value = target
+	_mission_progress.value = current
+
+
+func _on_mission_instruction_changed(title: String, message: String, target_tier: int) -> void:
+	if not _tutorial_card:
+		return
+	_tutorial_card.visible = not message.is_empty()
+	if message.is_empty():
+		return
+	_tutorial_title.text = title
+	_tutorial_text.text = message
+	_tutorial_icon.texture = FruitDatabase.get_visual_texture(target_tier) if target_tier >= 0 else null
+	_tutorial_card.pivot_offset = _tutorial_card.size * 0.5
+	_tutorial_card.scale = Vector2(0.92, 0.92)
+	create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT).tween_property(_tutorial_card, "scale", Vector2.ONE, 0.22)
+
+
+func _mission_label(value: String, font_size: int) -> Label:
+	var label := Label.new()
+	label.text = value
+	label.add_theme_font_override("font", UI_FONT)
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", Color(0.39, 0.19, 0.07))
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	return label
+
+
+func _mission_style(color: Color, radius := 22) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = color
+	style.border_color = Color(1.0, 0.52, 0.22, 0.92)
+	style.set_border_width_all(3)
+	style.set_corner_radius_all(radius)
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	return style
 
 
 func _update_score(value: int) -> void:

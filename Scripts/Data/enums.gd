@@ -2,7 +2,7 @@ class_name Enums
 
 enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, SHOP }
 
-enum GameMode { CLASSIC, RELAXED, TIME_ATTACK, DAILY_CHALLENGE }
+enum GameMode { CLASSIC, MISSIONS, TIME_ATTACK }
 
 enum FruitTier {
 	CHERRY = 0,

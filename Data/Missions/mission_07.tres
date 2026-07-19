@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="MissionDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/mission_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level = 7
+title = "JUICE BOMB FINALE"
+description = "Clear a crowded cluster, then create a kiwi to finish training."
+target_tier = 4
+target_count = 1
+required_powerup = &"powerup_bomb"
+temporary_charges = 1
+spawn_sequence = [3, 3, 2, 3]
+starting_tiers = [0, 1, 2, 0, 1]
+starting_positions = [Vector2(250, 1010), Vector2(310, 990), Vector2(365, 1020), Vector2(420, 990), Vector2(475, 1010)]
+opening_instruction = "This cluster needs space. Clear it with Juice Bomb, then merge two grapes into a kiwi."
+power_instruction = "Tap JUICE BOMB, then tap the center of the cluster."
+reward_coins = 200
+reward_tickets = 2

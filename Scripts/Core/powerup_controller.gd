@@ -98,7 +98,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_requested(item_id: StringName) -> void:
-	if GameManager.current_state != Enums.GameState.PLAYING or EconomyManager.get_powerup_count(item_id) <= 0:
+	if not GameManager.can_accept_gameplay_input() or PowerLoadoutManager.get_available_count(item_id) <= 0:
 		return
 	if item_id == SHAKE_BOX:
 		cancel_targeting()
@@ -137,7 +137,7 @@ func _level_up_at(world_position: Vector2) -> void:
 	if not next_data:
 		_show_hint("That fruit is already fully grown!")
 		return
-	if not EconomyManager.consume_powerup(LEVEL_UP):
+	if not PowerLoadoutManager.consume_powerup(LEVEL_UP):
 		return
 	cancel_targeting()
 	var position_before := fruit.global_position
@@ -153,6 +153,8 @@ func _level_up_at(world_position: Vector2) -> void:
 		upgraded.linear_velocity = velocity
 		upgraded.angular_velocity = spin
 		GameManager.register_fruit_discovered(next_data.tier)
+		EventBus.fruit_created.emit(next_data.tier, position_before)
+		GameManager.register_fruit_discovered(next_data.tier)
 
 
 func _hammer_at(world_position: Vector2) -> void:
@@ -160,7 +162,7 @@ func _hammer_at(world_position: Vector2) -> void:
 	if not fruit:
 		_show_hint("Tap the fruit you want to smash")
 		return
-	if EconomyManager.consume_powerup(HAMMER):
+	if PowerLoadoutManager.consume_powerup(HAMMER):
 		cancel_targeting()
 		_remove_fruit(fruit, 0.55)
 
@@ -170,7 +172,7 @@ func _bomb_at(world_position: Vector2) -> void:
 	if not target:
 		_show_hint("Tap a fruit at the center of the blast")
 		return
-	if not EconomyManager.consume_powerup(BOMB):
+	if not PowerLoadoutManager.consume_powerup(BOMB):
 		return
 	cancel_targeting()
 	var radius := _data_value(BOMB, "blast_radius", 150.0)
@@ -196,7 +198,7 @@ func _delayed_remove(fruit: Fruit, delay: float) -> void:
 
 func _shake_box() -> void:
 	var fruits := get_active_fruits()
-	if fruits.is_empty() or not EconomyManager.consume_powerup(SHAKE_BOX):
+	if fruits.is_empty() or not PowerLoadoutManager.consume_powerup(SHAKE_BOX):
 		return
 	var impulse := _data_value(SHAKE_BOX, "fruit_impulse_strength", 235.0)
 	var spin := _data_value(SHAKE_BOX, "fruit_spin_strength", 6.0)
@@ -307,7 +309,7 @@ func _remove_smallest() -> void:
 	for fruit in fruits:
 		if fruit.data.tier as int == smallest_tier:
 			candidates.append(fruit)
-	if candidates.is_empty() or not EconomyManager.consume_powerup(REMOVE_SMALLEST):
+	if candidates.is_empty() or not PowerLoadoutManager.consume_powerup(REMOVE_SMALLEST):
 		return
 	_sequence_active = true
 	var target: Fruit = candidates.pick_random() as Fruit
@@ -363,7 +365,7 @@ func _begin_grab(world_position: Vector2) -> void:
 	if not fruit:
 		_show_hint("Touch directly on a fruit to grab it")
 		return
-	if not EconomyManager.consume_powerup(GRAB): return
+	if not PowerLoadoutManager.consume_powerup(GRAB): return
 	grabbed_fruit = fruit
 	_grabbed_collision_layer = fruit.collision_layer
 	_grabbed_collision_mask = fruit.collision_mask

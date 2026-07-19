@@ -33,10 +33,6 @@ func _draw() -> void:
 func _physics_process(delta: float) -> void:
 	if _game_over_triggered:
 		return
-	if GameManager.is_relaxed_mode():
-		_reset_danger_state()
-		return
-
 	var danger_world_y := global_position.y + danger_line_y
 	var live_ids: Dictionary = {}
 	var highest_dwell := 0.0

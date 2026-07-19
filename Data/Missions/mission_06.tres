@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="MissionDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/mission_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level = 6
+title = "HAMMER TIME"
+description = "Smash one troublesome fruit and open a merge lane."
+target_tier = 3
+target_count = 1
+required_powerup = &"powerup_hammer"
+temporary_charges = 1
+spawn_sequence = [2, 2, 1, 2]
+starting_tiers = [6, 2]
+starting_positions = [Vector2(360, 1000), Vector2(245, 1020)]
+opening_instruction = "The orange blocks the matching strawberries. Smash it, then finish the merge."
+power_instruction = "Tap HAMMER, then tap the orange blocker."
+reward_coins = 140
+reward_tickets = 1

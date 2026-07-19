@@ -10,6 +10,7 @@ signal closed
 @onready var _sfx_value_label: Label = %SfxValueLabel
 @onready var _vibration_toggle: Button = %VibrationToggle
 @onready var _status_label: Label = %StatusLabel
+@onready var _version_label: Label = %Version
 
 
 func _ready() -> void:
@@ -20,7 +21,8 @@ func _ready() -> void:
 	_vibration_toggle.toggled.connect(_on_vibration_toggled)
 	%PrivacyButton.pressed.connect(func(): _show_status("Privacy policy will open here when the store page is connected."))
 	%RestoreButton.pressed.connect(func(): _show_status("Purchases checked — everything is already cozy and accounted for!"))
-	%AboutButton.pressed.connect(func(): _show_status("Fruit Merge • cozy kitchen build 1.0.0"))
+	%AboutButton.pressed.connect(func(): _show_status("Fruit Merge • cozy kitchen build %s" % str(ProjectSettings.get_setting("application/config/version", "0.1.0"))))
+	_version_label.text = "Version %s" % str(ProjectSettings.get_setting("application/config/version", "0.1.0"))
 	visible = false
 
 

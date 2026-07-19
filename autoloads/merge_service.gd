@@ -57,6 +57,7 @@ static func try_merge(fruit_a: Fruit, fruit_b: Fruit) -> bool:
 
 	GameManager.record_merge(next_data.tier)
 	EventBus.fruit_merged.emit(tier, midpoint, score_gained)
+	EventBus.fruit_created.emit(next_data.tier, midpoint)
 	AudioManager.play_merge_sfx(tier, next_data.merge_sfx, midpoint)
 
 	fruit_a.start_merge_exit()

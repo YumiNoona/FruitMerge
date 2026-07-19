@@ -4,6 +4,9 @@ extends Node
 signal fruit_merged(tier: int, world_pos: Vector2, score_gained: int)
 
 @warning_ignore("unused_signal")
+signal fruit_created(tier: int, world_pos: Vector2)
+
+@warning_ignore("unused_signal")
 signal fruit_dropped(tier: int)
 
 @warning_ignore("unused_signal")
@@ -41,6 +44,24 @@ signal powerup_requested(item_id: StringName)
 
 @warning_ignore("unused_signal")
 signal powerup_targeting_changed(active: bool, message: String)
+
+@warning_ignore("unused_signal")
+signal powerup_used(item_id: StringName)
+
+@warning_ignore("unused_signal")
+signal power_loadout_changed(loadout: Array[StringName])
+
+@warning_ignore("unused_signal")
+signal mission_progress_changed(label: String, current: int, target: int)
+
+@warning_ignore("unused_signal")
+signal mission_instruction_changed(title: String, message: String, target_tier: int)
+
+@warning_ignore("unused_signal")
+signal mission_completed(level: int, coins: int, tickets: int)
+
+@warning_ignore("unused_signal")
+signal run_timer_changed(seconds_remaining: int)
 
 @warning_ignore("unused_signal")
 signal state_changed(new_state: Enums.GameState)

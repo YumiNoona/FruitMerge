@@ -23,6 +23,7 @@ func _ready() -> void:
 	_setup_world()
 	_juice.configure(merge_burst_scene, _hud)
 	_powerups.configure(_box, _box_container, _container_art, _fruit_container, _juice)
+	MissionManager.attach_gameplay(_fruit_container)
 	EventBus.state_changed.connect(_on_state_changed)
 	EventBus.fruit_merged.connect(_juice.on_fruit_merged)
 	_game_over_panel.visible = false

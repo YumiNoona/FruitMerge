@@ -26,6 +26,7 @@ const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
 @onready var _settings_menu = $SettingsMenu
 @onready var _no_ads_purchase: NoAdsPurchase = $NoAdsPurchase
 @onready var _mode_button: Button = %ModeButton
+@onready var _run_setup: RunSetupPanel = $RunSetup
 
 var _pending_wallet_rewards: Array[Dictionary] = []
 
@@ -58,6 +59,7 @@ func _ready() -> void:
 	_no_ads_button.pressed.connect(_show_no_ads_purchase)
 	_rewards_button.pressed.connect(_open_daily_reward)
 	_mode_button.pressed.connect(_cycle_mode)
+	_run_setup.closed.connect(func(): _play_button.disabled = false)
 	_close_info_button.pressed.connect(_hide_info)
 
 	FloatingButtonAnimatorScript.start(
@@ -178,7 +180,7 @@ func _update_tickets(amount: int) -> void:
 
 func _start_game() -> void:
 	_play_button.disabled = true
-	GameManager.start_new_run(GameManager.current_mode)
+	_run_setup.open()
 
 
 func _open_shop() -> void:
@@ -244,8 +246,7 @@ func _show_info() -> void:
 
 func _cycle_mode() -> void:
 	HapticManager.pulse(HapticManager.Feedback.TAP)
-	GameManager.current_mode = wrapi(int(GameManager.current_mode) + 1, 0, Enums.GameMode.size()) as Enums.GameMode
-	_mode_button.text = "MODE: %s" % GameManager.get_mode_name().to_upper()
+	_run_setup.open()
 
 
 func _apply_equipped_background() -> void:
@@ -260,12 +261,8 @@ func _apply_safe_area() -> void:
 
 
 func _show_first_run_tutorial() -> void:
-	if bool(SaveManager.get_setting("tutorial_seen", false)):
-		return
-	SaveManager.set_setting("tutorial_seen", true)
-	_info_title.text = "HOW TO PLAY"
-	_info_body.text = "Drag left or right, then release to drop.\n\nMatch two identical fruits to grow a bigger one.\n\nKeep settled fruit below the danger line.\n\nPower-ups can rescue a crowded box. Have fun!"
-	_show_info()
+	# Interactive onboarding begins from Mission 1 on the first Play press.
+	pass
 
 
 func _hide_info() -> void:

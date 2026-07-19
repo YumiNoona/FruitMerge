@@ -201,11 +201,13 @@ script = ExtResource("15")
 
 [node name="CatalogPanel" type="PanelContainer" parent="." unique_id=1845654484]
 clip_contents = true
-layout_mode = 0
+layout_mode = 1
+anchor_bottom = 1.0
 offset_left = 7.0
 offset_top = 360.0
 offset_right = 711.0
-offset_bottom = 1093.0
+offset_bottom = -187.0
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_caefh")
 
 [node name="CatalogMargin" type="MarginContainer" parent="CatalogPanel" unique_id=1163881241]
@@ -220,12 +222,14 @@ theme_override_constants/margin_bottom = 12
 layout_mode = 2
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
+scroll_deadzone = 8
 
 [node name="ShopList" type="GridContainer" parent="CatalogPanel/CatalogMargin/ShopScroll" unique_id=842318434]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(648, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 1
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 14
 columns = 3
@@ -248,22 +252,28 @@ vertical_alignment = 1
 layout_mode = 1
 
 [node name="Dock" type="TextureRect" parent="." unique_id=1003515983]
-layout_mode = 0
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 16.0
-offset_top = 1103.0
+offset_top = -177.0
 offset_right = 704.0
-offset_bottom = 1275.0
+offset_bottom = -5.0
+grow_vertical = 0
 mouse_filter = 2
 texture = ExtResource("7")
 expand_mode = 1
 
 [node name="HomeButton" type="TextureButton" parent="." unique_id=1318223438]
 unique_name_in_owner = true
-layout_mode = 0
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 44.0
-offset_top = 1127.0
+offset_top = -153.0
 offset_right = 169.0
-offset_bottom = 1252.0
+offset_bottom = -28.0
+grow_vertical = 0
 texture_normal = ExtResource("8")
 ignore_texture_size = true
 stretch_mode = 5
@@ -271,22 +281,28 @@ stretch_mode = 5
 [node name="AchievementsButton" type="TextureButton" parent="." unique_id=1087538525]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
-layout_mode = 0
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 174.0
-offset_top = 1126.0
+offset_top = -154.0
 offset_right = 299.0
-offset_bottom = 1251.0
+offset_bottom = -29.0
+grow_vertical = 0
 texture_normal = ExtResource("9")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="PlayButton" type="TextureButton" parent="." unique_id=1170118024]
 unique_name_in_owner = true
-layout_mode = 0
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 288.0
-offset_top = 1085.0
+offset_top = -195.0
 offset_right = 438.0
-offset_bottom = 1235.0
+offset_bottom = -45.0
+grow_vertical = 0
 texture_normal = ExtResource("10")
 ignore_texture_size = true
 stretch_mode = 5
@@ -294,11 +310,14 @@ stretch_mode = 5
 [node name="ShopButton" type="TextureButton" parent="." unique_id=942429026]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
-layout_mode = 0
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 421.0
-offset_top = 1129.0
+offset_top = -151.0
 offset_right = 546.0
-offset_bottom = 1254.0
+offset_bottom = -26.0
+grow_vertical = 0
 texture_normal = ExtResource("11")
 ignore_texture_size = true
 stretch_mode = 5
@@ -306,11 +325,14 @@ stretch_mode = 5
 [node name="SettingsButton" type="TextureButton" parent="." unique_id=1599511317]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
-layout_mode = 0
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 551.0
-offset_top = 1127.0
+offset_top = -153.0
 offset_right = 676.0
-offset_bottom = 1252.0
+offset_bottom = -28.0
+grow_vertical = 0
 texture_normal = ExtResource("12")
 ignore_texture_size = true
 stretch_mode = 5

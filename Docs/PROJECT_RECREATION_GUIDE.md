@@ -84,7 +84,7 @@ The key rule is simple: **matching fruits grow into the next fruit, but gravity 
 | Engine | Godot 4.7.1 | All scene/script syntax is Godot 4.x GDScript. |
 | Game mode | 2D physics | Fruits are `RigidBody2D`; the container is a `StaticBody2D`. |
 | Logical viewport | 720 × 1280 | All UI offsets are authored against this portrait canvas. |
-| Desktop preview | 495 × 880 override | Lets the editor show a phone-shaped preview. |
+| Desktop preview | 432 × 960 override | Emulates a modern 9:20 phone and exposes tall-screen anchor mistakes. |
 | Stretch mode | `canvas_items`, aspect `expand` | Preserves the authored UI coordinate system. |
 | Physics | 2D default gravity = 820 | Drives the fall weight and pile behavior. |
 | Audio | Music and SFX buses | Music/sound settings alter buses rather than individual players. |
@@ -184,13 +184,13 @@ The important settings in `project.godot` are:
 ```ini
 [application]
 run/main_scene="res://Scenes/UI/MainMenu/main_menu.tscn"
+boot_splash/show_image=false
 
 [display]
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/size/resizable=false
-window/size/window_width_override=495
-window/size/window_height_override=880
+window/size/window_width_override=432
+window/size/window_height_override=960
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=1
@@ -198,6 +198,13 @@ window/handheld/orientation=1
 [physics]
 2d/default_gravity=820.0
 ```
+
+The 432 × 960 value changes only the desktop debug window. With `expand`, that
+9:20 window exposes a 720 × 1600 logical canvas, matching how the 720-wide game
+expands on a tall phone. Top HUD controls stay top-anchored, dock controls stay
+bottom-anchored, central art uses vertical-center anchors, and scrollable panels
+stretch between their top and bottom margins. Do not replace the 720 × 1280
+authored viewport with a device's physical pixel resolution.
 
 The autoload order is also important. Register these in **Project → Project Settings → Autoload**:
 
@@ -733,6 +740,10 @@ Those descriptions reserve a two-line 50 px row and use 16 px NERILLKID text wit
 a light warm outline, while non-pet artwork uses a 150 px row. The catalog remains
 wheel-, drag-, and touch-scrollable, but `ShopScroll.vertical_scroll_mode` is
 `SCROLL_MODE_SHOW_NEVER` so no scrollbar covers the card edge.
+`ShopScroll.scroll_deadzone` is 8 px. The grid and each card keep
+`MOUSE_FILTER_PASS`, while decorative card labels and textures use
+`MOUSE_FILTER_IGNORE`; this preserves card taps but lets a mobile drag continue up
+to the parent ScrollContainer.
 The action panel uses four explicit states: leaf green for a purchasable item,
 coral when currency is insufficient, gold for an owned selectable cosmetic, and
 teal for the active cosmetic. Free filtered cards immediately before repopulating so old/new categories

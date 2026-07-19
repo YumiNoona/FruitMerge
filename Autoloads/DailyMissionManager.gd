@@ -15,8 +15,8 @@ func _ready() -> void:
 
 func _initialize_day() -> void:
 	var today := Time.get_date_string_from_system()
-	if str(GameManager.mission_data.get("date", "")) != today:
-		GameManager.mission_data = {"date": today, "claimed": []}
+	if str(GameManager.daily_mission_data.get("date", "")) != today:
+		GameManager.daily_mission_data = {"date": today, "claimed": []}
 		GameManager.statistics["daily_fruits_dropped"] = 0
 		GameManager.statistics["daily_merges"] = 0
 		GameManager.statistics["daily_powerups_used"] = 0
@@ -25,7 +25,7 @@ func _initialize_day() -> void:
 
 
 func _check_missions() -> void:
-	var claimed: Array = GameManager.mission_data.get("claimed", [])
+	var claimed: Array = GameManager.daily_mission_data.get("claimed", [])
 	var changed := false
 	for index in MISSIONS.size():
 		if index in claimed:
@@ -39,7 +39,7 @@ func _check_missions() -> void:
 				EconomyManager.add_coins(int(mission.reward))
 			HapticManager.pulse(HapticManager.Feedback.REWARD)
 			changed = true
-	GameManager.mission_data["claimed"] = claimed
+	GameManager.daily_mission_data["claimed"] = claimed
 	if changed:
 		EventBus.daily_missions_changed.emit()
 		SaveManager.request_save()
@@ -47,7 +47,7 @@ func _check_missions() -> void:
 
 func get_summary() -> String:
 	var lines: PackedStringArray = []
-	var claimed: Array = GameManager.mission_data.get("claimed", [])
+	var claimed: Array = GameManager.daily_mission_data.get("claimed", [])
 	for index in MISSIONS.size():
 		var mission: Dictionary = MISSIONS[index]
 		var progress := mini(int(GameManager.statistics.get(mission.key, 0)), int(mission.target))

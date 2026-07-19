@@ -57,7 +57,7 @@ func _process(delta: float) -> void:
 		_preview.visible = false
 		queue_redraw()
 		return
-	if not _can_drop or GameManager.current_state != Enums.GameState.PLAYING:
+	if not _can_drop or not GameManager.can_accept_gameplay_input():
 		queue_redraw()
 		return
 	_preview.visible = true
@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	if GameManager.is_powerup_targeting or not _can_drop or GameManager.current_state != Enums.GameState.PLAYING or not _preview.visible:
+	if GameManager.is_powerup_targeting or not _can_drop or not GameManager.can_accept_gameplay_input() or not _preview.visible:
 		return
 	var bottom_extent := FruitDatabase.get_collision_bottom_extent(_current_tier)
 	var start := Vector2(_preview.position.x, _preview.position.y + bottom_extent + 9.0)
@@ -125,11 +125,12 @@ func _refresh_preview() -> void:
 
 
 func _get_random_spawn_tier() -> Enums.FruitTier:
-	return SPAWN_TIERS[GameManager.get_random_spawn_index(SPAWN_TIERS.size())]
+	var fallback := SPAWN_TIERS[GameManager.get_random_spawn_index(SPAWN_TIERS.size())]
+	return MissionManager.take_spawn_tier(fallback) as Enums.FruitTier
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if GameManager.is_powerup_targeting or not _can_drop or GameManager.current_state != Enums.GameState.PLAYING:
+	if GameManager.is_powerup_targeting or not _can_drop or not GameManager.can_accept_gameplay_input():
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -223,6 +224,6 @@ func _drop_at(x: float) -> void:
 
 
 func _on_cooldown_ready() -> void:
-	_can_drop = GameManager.current_state == Enums.GameState.PLAYING
+	_can_drop = GameManager.can_accept_gameplay_input()
 	_preview.visible = _can_drop
 	queue_redraw()

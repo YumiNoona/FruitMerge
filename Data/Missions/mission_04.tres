@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="MissionDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/mission_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level = 4
+title = "CLEAR THE LITTLE ONE"
+description = "Remove the smallest tier to make room for a useful merge."
+target_tier = 2
+target_count = 1
+required_powerup = &"powerup_remove_smallest"
+temporary_charges = 1
+spawn_sequence = [1, 1, 0, 1]
+starting_tiers = [0, 1]
+starting_positions = [Vector2(260, 1015), Vector2(430, 1015)]
+opening_instruction = "The smallest fruit is blocking the berries. Clear it, then merge matching berries."
+power_instruction = "Tap REMOVE SMALLEST. It automatically finds the lowest tier."
+reward_coins = 90
+reward_tickets = 1

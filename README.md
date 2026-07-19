@@ -18,5 +18,16 @@ See `Docs/ARCHITECTURE_AND_FEATURES.md` for the save/profile design, game modes,
 power-up flow, mobile haptics and safe-area behavior, cosmetics, localization,
 and the headless validation command.
 
+## Android debug build
+
+The project includes an ARM64 `Android Debug` export preset. See
+`Docs/ANDROID_BUILD.md` for the installed toolchain, build command, package and
+version policy, artifact validation, device-install command, and Play-release
+requirements. The Android preset uses the peach launcher icon and suppresses the
+default Godot boot splash. Generated files under `Builds/` are local artifacts and
+are not committed.
+
 For PC debugging, the window is resizable and `F11` toggles fullscreen in debug
-builds. Mobile safe-area offsets intentionally do not run on desktop platforms.
+builds. The default 432×960 debug window previews a modern 9:20 phone while the
+authored UI remains 720×1280. Mobile safe-area offsets intentionally do not run on
+desktop platforms.

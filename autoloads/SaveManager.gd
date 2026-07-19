@@ -3,7 +3,7 @@ extends Node
 const SAVE_PATH := "user://savegame.json"
 const TEMP_PATH := "user://savegame.tmp"
 const BACKUP_PATH := "user://savegame.backup.json"
-const SAVE_VERSION := 7
+const SAVE_VERSION := 8
 
 var _settings: Dictionary = {}
 var _loaded := false
@@ -95,10 +95,12 @@ func _build_save_data() -> Dictionary:
 		"owned_items": owned,
 		"powerup_counts": powerups,
 		"high_score": maxi(0, GameManager.high_score),
+		"time_attack_high_score": maxi(0, GameManager.time_attack_high_score),
 		"lifetime_highest_tier": maxi(0, GameManager.lifetime_highest_tier),
 		"discovered_tiers": GameManager.discovered_tiers.duplicate(),
 		"statistics": GameManager.statistics.duplicate(true),
 		"mission_data": GameManager.mission_data.duplicate(true),
+		"daily_mission_data": GameManager.daily_mission_data.duplicate(true),
 		"achievement_data": GameManager.achievement_data.duplicate(true),
 		"settings": _settings.duplicate(true),
 	}
@@ -130,6 +132,18 @@ func _migrate_data(data: Dictionary) -> Dictionary:
 		cleaned_settings["screen_shake_strength"] = 1.0
 		cleaned_settings["reduced_motion"] = false
 		migrated["settings"] = cleaned_settings
+	if version < 8:
+		migrated["daily_mission_data"] = migrated.get("mission_data", {}).duplicate(true)
+		migrated["mission_data"] = {
+			"highest_unlocked": 7,
+			"completed_levels": [1, 2, 3, 4, 5, 6, 7],
+			"onboarding_started": true,
+			"onboarding_completed": true,
+		}
+		migrated["time_attack_high_score"] = 0
+		var loadout_settings: Dictionary = migrated.get("settings", {}).duplicate(true)
+		loadout_settings["power_loadout"] = ["powerup_level_up", "powerup_shake_box", "powerup_remove_smallest"]
+		migrated["settings"] = loadout_settings
 	migrated["version"] = SAVE_VERSION
 	return migrated
 
@@ -150,6 +164,7 @@ func _load_data(data: Dictionary) -> void:
 		for key in powerup_value:
 			EconomyManager.powerup_counts[StringName(str(key))] = maxi(0, int(powerup_value[key]))
 	GameManager.high_score = maxi(0, int(data.get("high_score", 0)))
+	GameManager.time_attack_high_score = maxi(0, int(data.get("time_attack_high_score", 0)))
 	GameManager.lifetime_highest_tier = clampi(int(data.get("lifetime_highest_tier", 0)), 0, Enums.FruitTier.WATERMELON)
 	GameManager.discovered_tiers.clear()
 	var discoveries = data.get("discovered_tiers", [0])
@@ -163,9 +178,12 @@ func _load_data(data: Dictionary) -> void:
 	GameManager.discovered_tiers.sort()
 	GameManager.statistics = GameManager.sanitize_statistics(data.get("statistics", {}))
 	GameManager.mission_data = data.get("mission_data", {}) if data.get("mission_data", {}) is Dictionary else {}
+	GameManager.daily_mission_data = data.get("daily_mission_data", {}) if data.get("daily_mission_data", {}) is Dictionary else {}
 	GameManager.achievement_data = data.get("achievement_data", {}) if data.get("achievement_data", {}) is Dictionary else {}
 	_settings = data.get("settings", {}).duplicate(true)
 	_ensure_default_ownership()
+	PowerLoadoutManager.load_from_save(_settings)
+	MissionManager.load_progress(GameManager.mission_data, false)
 
 
 func _apply_new_profile_defaults() -> void:
@@ -177,12 +195,18 @@ func _apply_new_profile_defaults() -> void:
 		"screen_shake_strength": 1.0,
 		"reduced_motion": false,
 		"locale": "en",
+		"power_loadout": ["powerup_level_up", "powerup_shake_box", "powerup_remove_smallest"],
 	}
+	GameManager.high_score = 0
+	GameManager.time_attack_high_score = 0
 	GameManager.discovered_tiers = [Enums.FruitTier.CHERRY]
 	GameManager.statistics = GameManager.default_statistics()
 	GameManager.mission_data = {}
+	GameManager.daily_mission_data = {}
 	GameManager.achievement_data = {}
 	_ensure_default_ownership()
+	PowerLoadoutManager.load_from_save(_settings)
+	MissionManager.load_progress({}, true)
 
 
 func _ensure_default_ownership() -> void:
@@ -197,11 +221,6 @@ func save_run_result(run_score: int) -> void:
 		return
 	GameManager.run_reward_claimed = true
 	EconomyManager.add_coins(maxi(0, int(run_score * 0.1)))
-	if GameManager.current_mode == Enums.GameMode.DAILY_CHALLENGE:
-		var today := Time.get_date_string_from_system()
-		if str(_settings.get("daily_challenge_last_reward", "")) != today:
-			_settings["daily_challenge_last_reward"] = today
-			EconomyManager.add_tickets(1)
 	GameManager.statistics["runs_completed"] = int(GameManager.statistics.get("runs_completed", 0)) + 1
 	save_game()
 

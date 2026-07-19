@@ -2,12 +2,14 @@ extends Node
 
 const COMBO_WINDOW := 0.9
 const MAX_COMBO_MULTIPLIER := 4.0
-const TIME_ATTACK_DURATION := 120.0
+const TIME_ATTACK_CONFIG: GameModeDefinition = preload("res://Data/Modes/time_attack.tres")
+const TIME_ATTACK_RESOLVE_DELAY := 0.35
 
 var current_state: Enums.GameState = Enums.GameState.MENU
 var current_mode: Enums.GameMode = Enums.GameMode.CLASSIC
 var score := 0
 var high_score := 0
+var time_attack_high_score := 0
 var run_highest_tier := 0
 var lifetime_highest_tier := 0
 var discovered_tiers: Array[int] = [Enums.FruitTier.CHERRY]
@@ -16,12 +18,17 @@ var next_fruit_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var active_combo := 0
 var combo_timer := 0.0
 var run_time_remaining := 0.0
+var run_end_reason := ""
+var run_input_locked := false
 var is_powerup_targeting := false
 var run_reward_claimed := false
 var statistics: Dictionary = {}
 var mission_data: Dictionary = {}
+var daily_mission_data: Dictionary = {}
 var achievement_data: Dictionary = {}
 var _run_rng := RandomNumberGenerator.new()
+var _time_attack_finishing := false
+var _last_timer_second := -1
 
 
 func _ready() -> void:
@@ -36,10 +43,14 @@ func _process(delta: float) -> void:
 		combo_timer -= delta
 		if combo_timer <= 0.0:
 			active_combo = 0
-	if current_mode == Enums.GameMode.TIME_ATTACK:
+	if current_mode == Enums.GameMode.TIME_ATTACK and not _time_attack_finishing:
 		run_time_remaining = maxf(0.0, run_time_remaining - delta)
+		var whole_seconds := ceili(run_time_remaining)
+		if whole_seconds != _last_timer_second:
+			_last_timer_second = whole_seconds
+			EventBus.run_timer_changed.emit(whole_seconds)
 		if run_time_remaining <= 0.0:
-			change_state(Enums.GameState.GAME_OVER)
+			_finish_time_attack.call_deferred()
 
 
 func change_state(new_state: Enums.GameState) -> void:
@@ -53,6 +64,7 @@ func change_state(new_state: Enums.GameState) -> void:
 			get_tree().paused = true
 		Enums.GameState.GAME_OVER:
 			get_tree().paused = false
+			run_input_locked = true
 			SaveManager.save_run_result(score)
 			EventBus.game_over.emit(score)
 		Enums.GameState.MENU, Enums.GameState.SHOP:
@@ -70,19 +82,46 @@ func start_new_run(mode := -1) -> void:
 	combo_timer = 0.0
 	is_powerup_targeting = false
 	run_reward_claimed = false
+	run_end_reason = ""
+	run_input_locked = false
+	_time_attack_finishing = false
 	next_fruit_tier = Enums.FruitTier.CHERRY
-	run_time_remaining = TIME_ATTACK_DURATION if mode == Enums.GameMode.TIME_ATTACK else 0.0
+	run_time_remaining = TIME_ATTACK_CONFIG.duration_seconds if current_mode == Enums.GameMode.TIME_ATTACK else 0.0
+	_last_timer_second = ceili(run_time_remaining)
 	_seed_run_rng()
 	EventBus.score_changed.emit(score)
+	EventBus.high_score_changed.emit(get_current_high_score())
+	if current_mode == Enums.GameMode.TIME_ATTACK:
+		EventBus.run_timer_changed.emit(_last_timer_second)
 	change_state(Enums.GameState.PLAYING)
 	SceneRouter.go_game()
 
 
+func end_run(reason: String) -> void:
+	if current_state != Enums.GameState.PLAYING:
+		return
+	run_end_reason = reason
+	run_input_locked = true
+	change_state(Enums.GameState.GAME_OVER)
+
+
+func can_accept_gameplay_input() -> bool:
+	return current_state == Enums.GameState.PLAYING and not run_input_locked
+
+
+func _finish_time_attack() -> void:
+	if _time_attack_finishing or current_state != Enums.GameState.PLAYING:
+		return
+	_time_attack_finishing = true
+	run_input_locked = true
+	run_end_reason = "time_up"
+	await get_tree().create_timer(TIME_ATTACK_RESOLVE_DELAY).timeout
+	if current_state == Enums.GameState.PLAYING:
+		change_state(Enums.GameState.GAME_OVER)
+
+
 func _seed_run_rng() -> void:
-	if current_mode == Enums.GameMode.DAILY_CHALLENGE:
-		_run_rng.seed = hash(Time.get_date_string_from_system())
-	else:
-		_run_rng.randomize()
+	_run_rng.randomize()
 
 
 func get_random_spawn_index(count: int) -> int:
@@ -99,12 +138,20 @@ func add_score(points: int) -> int:
 	var awarded_points := maxi(0, int(points * multiplier))
 	score += awarded_points
 	statistics["largest_combo"] = maxi(int(statistics.get("largest_combo", 0)), active_combo)
-	if score > high_score:
+	if current_mode == Enums.GameMode.CLASSIC and score > high_score:
 		high_score = score
 		is_new_high_score = true
 		EventBus.high_score_changed.emit(high_score)
+	elif current_mode == Enums.GameMode.TIME_ATTACK and score > time_attack_high_score:
+		time_attack_high_score = score
+		is_new_high_score = true
+		EventBus.high_score_changed.emit(time_attack_high_score)
 	EventBus.score_changed.emit(score)
 	return awarded_points
+
+
+func get_current_high_score() -> int:
+	return time_attack_high_score if current_mode == Enums.GameMode.TIME_ATTACK else high_score
 
 
 func record_drop(tier: int) -> void:
@@ -140,12 +187,12 @@ func register_fruit_discovered(tier: int) -> void:
 		SaveManager.request_save()
 
 
-func is_relaxed_mode() -> bool:
-	return current_mode == Enums.GameMode.RELAXED
-
-
 func get_mode_name(mode: Enums.GameMode = current_mode) -> String:
-	return Enums.GameMode.keys()[mode].capitalize()
+	match mode:
+		Enums.GameMode.CLASSIC: return "Classic"
+		Enums.GameMode.MISSIONS: return "Missions"
+		Enums.GameMode.TIME_ATTACK: return "Time Attack"
+	return "Classic"
 
 
 func default_statistics() -> Dictionary:
