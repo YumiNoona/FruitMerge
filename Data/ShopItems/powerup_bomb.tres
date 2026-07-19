@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://bph2laklauqma"]
 
-[ext_resource type="Script" path="res://Scripts/Data/shop_item_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/Bomb.png" id="2"]
+[ext_resource type="Script" uid="uid://3ptbmu8qpv2h" path="res://Scripts/Data/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://mxy37l8rbxq4" path="res://Assets/PowerUps/Bomb.png" id="2"]
 
 [resource]
 script = ExtResource("1")
@@ -12,6 +12,6 @@ cost = 75
 category = "powerup"
 description = "Clear a tricky cluster"
 refill_ticket_cost = 3
-blast_radius = 155.0
 camera_shake_strength = 0.9
 camera_shake_duration = 1.0
+blast_radius = 155.0

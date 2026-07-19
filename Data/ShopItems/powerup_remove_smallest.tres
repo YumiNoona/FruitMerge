@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ShopItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://cvj4put2niw1y"]
 
-[ext_resource type="Script" path="res://Scripts/Data/shop_item_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://Assets/PowerUps/SuckUP.png" id="2"]
+[ext_resource type="Script" uid="uid://3ptbmu8qpv2h" path="res://Scripts/Data/shop_item_data.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://v65d1o5qctqf" path="res://Assets/PowerUps/SuckUP.png" id="2"]
 
 [resource]
 script = ExtResource("1")
@@ -12,13 +12,9 @@ cost = 1
 currency = &"tickets"
 category = "powerup"
 description = "Remove the lowest-tier fruit"
-refill_ticket_cost = 1
 effect_duration = 0.22
 camera_shake_strength = 0.32
 camera_shake_duration = 0.72
 container_motion_strength = 0.0
 fruit_impulse_strength = 0.0
 fruit_spin_strength = 0.0
-target_marker_scale = 2.55
-target_marker_hold_time = 0.52
-target_lock_time = 0.17
