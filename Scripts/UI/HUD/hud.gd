@@ -4,7 +4,7 @@ const UI_FONT: FontFile = preload("res://Assets/Fonts/NERILLKID Trial.ttf")
 const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_formatter.gd")
 
 @onready var _score_label: Label = %ScoreLabel
-@onready var _score_caption: Label = $TopPanel/TopRow/ScoreBlock/ScoreCaption
+@onready var _score_caption: Label = $TopRow/ScoreBlock/ScoreCaption
 @onready var _high_score_label: Label = %HighScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
 @onready var _tickets_label: Label = %TicketsLabel
@@ -18,6 +18,7 @@ const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_fo
 @onready var _score_pop_container: Control = %ScorePopContainer
 @onready var _pause_button: TextureButton = %PauseButton
 @onready var _pause_menu = $PauseMenu
+@onready var _powerup_refill_panel: Control = %PowerupRefillPanel
 @onready var _level_up_button: TextureButton = %LevelUpButton
 @onready var _shake_button: TextureButton = %ShakeButton
 @onready var _remove_button: TextureButton = %RemoveButton
@@ -33,7 +34,7 @@ const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_fo
 @onready var _powerup_hint: Label = %PowerupHint
 @onready var _tier_reward_banner: Control = %TierRewardBanner
 @onready var _tier_reward_label: Label = %TierRewardLabel
-@onready var _top_panel: Control = $TopPanel
+@onready var _top_panel: Control = $TopRow
 @onready var _powerup_column: Control = $PowerupColumn
 @onready var _next_panel: Control = $NextPanel
 
@@ -82,6 +83,7 @@ func _ready() -> void:
 	EventBus.powerup_targeting_changed.connect(_on_powerup_targeting_changed)
 	EventBus.power_loadout_changed.connect(func(_loadout): _update_powerup_buttons())
 	EventBus.run_timer_changed.connect(_on_run_timer_changed)
+	_powerup_refill_panel.refilled.connect(_on_powerup_refilled)
 	_power_buttons = {
 		&"powerup_level_up": _level_up_button,
 		&"powerup_shake_box": _shake_button,
@@ -206,6 +208,7 @@ func _on_pause_pressed() -> void:
 
 func _request_powerup(item_id: StringName) -> void:
 	if PowerLoadoutManager.get_available_count(item_id) <= 0:
+		_powerup_refill_panel.open(item_id)
 		return
 	_requested_targeting_powerup = item_id
 	EventBus.powerup_requested.emit(item_id)
@@ -226,9 +229,23 @@ func _update_powerup_buttons() -> void:
 
 func _update_powerup_button(button: TextureButton, count_label: Label, item_id: StringName) -> void:
 	var count := PowerLoadoutManager.get_available_count(item_id)
-	count_label.text = "x%d" % count
-	button.disabled = count <= 0
+	count_label.text = "x%d" % count if count > 0 else "+"
+	button.disabled = false
 	button.modulate = Color.WHITE if count > 0 else Color(0.62, 0.62, 0.62, 0.52)
+	button.tooltip_text = PowerLoadoutManager.get_display_name(item_id) if count > 0 else "Get another %s" % PowerLoadoutManager.get_display_name(item_id)
+
+
+func _on_powerup_refilled(item_id: StringName, _source: StringName) -> void:
+	_update_powerup_buttons()
+	var button := _power_buttons.get(item_id) as TextureButton
+	if not button:
+		return
+	button.pivot_offset = button.size * 0.5
+	button.scale = Vector2(0.84, 0.84)
+	button.rotation = deg_to_rad(-5.0)
+	var pop := create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pop.tween_property(button, "scale", Vector2.ONE, 0.30)
+	pop.tween_property(button, "rotation", 0.0, 0.25)
 
 
 func _on_powerup_targeting_changed(active: bool, message: String) -> void:

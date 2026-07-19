@@ -93,7 +93,12 @@ func get_display_name(item_id: StringName) -> String:
 	return str(names.get(item_id, String(item_id).capitalize()))
 
 
+func get_item_data(item_id: StringName) -> ShopItemData:
+	if item_id not in ALL_POWERUPS:
+		return null
+	return load("res://Data/ShopItems/%s.tres" % String(item_id)) as ShopItemData
+
+
 func get_icon(item_id: StringName) -> Texture2D:
-	var path := "res://Data/ShopItems/%s.tres" % String(item_id)
-	var data := load(path) as ShopItemData
+	var data := get_item_data(item_id)
 	return data.icon if data else null

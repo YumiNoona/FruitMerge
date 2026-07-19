@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://nopddh48kk0t"
-path="res://.godot/imported/LevelUP.png-b8b8ccd167488f6214b46345c512ecc1.ctex"
+uid="uid://b8pj41erjbrdc"
+path="res://.godot/imported/LevelUp.png-7ded95477c530e711c0e8288feaed0a2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/PowerUps/LevelUP.png"
-dest_files=["res://.godot/imported/LevelUP.png-b8b8ccd167488f6214b46345c512ecc1.ctex"]
+source_file="res://Assets/PowerUps/LevelUp.png"
+dest_files=["res://.godot/imported/LevelUp.png-7ded95477c530e711c0e8288feaed0a2.ctex"]
 
 [params]
 

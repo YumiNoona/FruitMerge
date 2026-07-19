@@ -249,7 +249,8 @@ This prevents the daily reward from appearing repeatedly after it has been claim
 | Daily Reward | Claim/continue/close | Home | `daily_reward.gd` |
 | Home | Play | Main gameplay | `GameManager.start_new_run()` |
 | Home | Shop | Shop | `home.gd` |
-| Shop | Play | Main gameplay | `shop.gd` |
+| Shop | Missions | Run Setup | `shop.gd` |
+| Shop | Daily | Daily Reward | `shop.gd` |
 | Shop | Back/Home | Home | `shop.gd` |
 | Gameplay | Pause → Home | Home | `pause_menu.gd` |
 | Gameplay | Game over → Menu | Home | `game_over.gd` |
@@ -664,7 +665,7 @@ Do not use raw screen coordinates for `intersect_point()`. Doing so produces a v
 
 ### Mouse-filter rule
 
-HUD overlays that are visual only must use `MOUSE_FILTER_IGNORE`. Interactive buttons consume clicks normally. A decorative panel with `STOP`/`PASS` can silently block the Spawner, making the player unable to drop fruit under it.
+HUD overlays that are visual only must use `MOUSE_FILTER_IGNORE`. Interactive buttons consume clicks normally. A decorative panel with `STOP`/`PASS` can silently block the Spawner, making the player unable to drop fruit under it. In the shipped HUD, this rule applies to both the `HUD` root and `HUD/TopRow`: `TopRow` only draws top controls, but its anchors make its actual input rectangle full-screen. Keep both nodes on Ignore and leave input capture to `PauseButton`, power buttons, and other real controls.
 
 ---
 
@@ -723,16 +724,27 @@ Files:
 - Scene: `Scenes/UI/Home/home.tscn`
 - Script: `Scripts/UI/Home/home.gd`
 
-Home shows the mascot, best score, currencies, Play, Shop, Achievements, Settings, No Ads, and the scene-authored `RewardsButton`. Pressing `RewardsButton` uses `SceneRouter.go_daily_reward()` so the seven-day panel can be reviewed even after the automatic startup gate has been completed. The bottom dock uses MenuDock art and is the only primary navigation system. Avoid duplicate floating Play/Settings controls elsewhere on the screen.
+Home shows the mascot, best score, currencies, Play, Shop, Achievements, Settings,
+No Ads, and the scene-authored `RewardsButton`, `MissionButton`, and
+`ThemesButton`. Rewards opens the seven-day panel, Missions opens Run Setup, and
+Themes calls `SceneRouter.go_shop(&"background")` so the Store enters on the
+background catalog. The bottom dock uses MenuDock art and remains Home's primary
+navigation system.
 
-Play on Home or Shop opens `Scenes/UI/RunSetup/run_setup.tscn`. New profiles see Mission 1 first.
+Play on Home, or Missions in the Store, opens `Scenes/UI/RunSetup/run_setup.tscn`.
+New profiles see Mission 1 first.
 Returning players see three mode cards; locked cards explain progression. Missions
 open the seven-level map and lesson briefing. Classic/Time Attack open a two-column,
 touch-scrollable six-power picker and enable Play only at exactly three selections.
 Normal retry preserves the active three types; mission retry rebuilds the scenario
 and its temporary charge through `MissionManager`.
 
-The dock's central peach `PlayButton` uses the reusable `floating_button_animator.gd` on both Home and Shop. Its looping sine tween rises 8 pixels with a slight counter-clockwise tilt and scale-up, dips softly with the opposite tilt, then restores the exact authored position, rotation, and scale before repeating. Start it only after mobile safe-area offsets are applied. The animator accepts height and duration parameters and remains still when reduced motion is active.
+The dock's central peach `PlayButton` uses the reusable
+`floating_button_animator.gd` on Home. Its looping sine tween rises 8 pixels with
+a slight counter-clockwise tilt and scale-up, dips softly with the opposite tilt,
+then restores the exact authored position, rotation, and scale before repeating.
+Start it only after mobile safe-area offsets are applied. The animator accepts
+height and duration parameters and remains still when reduced motion is active.
 
 Achievements is currently an informative overlay, not a full achievement-tracking system.
 
@@ -771,11 +783,27 @@ Files:
 - Script: `Scripts/UI/Shop/shop.gd`
 - Item card: `Scenes/UI/Components/shop_item_button.tscn`
 
-Shop loads the `ShopCatalog` resource, filters entries into skins/pets/power-ups, and creates one reusable card per item. To add a shop item, create its `.tres`, register it in the catalog, and ensure the icon/resource path is valid.
+Shop loads the `ShopCatalog` resource, filters entries into pets, power-ups, fruit
+skins, and background themes, and creates one reusable card per item. To add a
+shop item, create its `.tres`, register it in the catalog, and ensure the
+icon/resource path is valid.
 
-The Shop dock keeps the authored scene names `HomeButton`, `AchievementsButton`, `PlayButton`, `ShopButton`, and `SettingsButton`; `shop.gd` and the project validator use those exact contracts. Do not introduce alternate `*NavButton` names in only the script. The peach `PlayButton` uses the same shared float animator as Home.
+The full-screen store uses `Assets/UI/LongFrame.png` and the remaining Pets,
+Power-Ups, and Skins category art. Store, Themes, Home, Daily, Missions, Settings,
+No Ads, and Close resolve to the surviving `Assets/Menu` copies, so the deleted
+duplicate UI files are not restored. The left rail owns the four category buttons. Its selected icon grows and
+brightens; inactive icons are slightly smaller and cooler. Currency and No Ads
+stay in the header; the deleted rewarded-ticket action and category text labels
+are not queried by `shop.gd`. The bottom-anchored `UtilityRow` contains the
+exact `HomeButton`, `DailyButton`, `MissionsButton`, and `SettingsButton`
+contracts; Close also returns Home. Missions opens `RunSetup`, not a direct run.
 
-The portrait catalog is a clipped three-column grid. Each card has a 210 x 320 minimum with a
+`SceneRouter.go_shop(category)` stores an optional entry category for one scene
+transition, and `take_shop_entry_category()` resets it to pets after consumption.
+This is how Home's Themes shortcut opens the correct tab without coupling Home to
+the Shop node tree.
+
+The portrait catalog is a clipped two-column grid. Each card has a 220 x 330 minimum with a
 compact local price style; do not reuse the normal `GreenPanel` padding inside the
 card because its large content margins make rows overlap. The name row is reserved
 above the icon, the optional stacked power-up count stays over the icon, and both
@@ -797,8 +825,8 @@ teal for the active cosmetic. Free filtered cards immediately before repopulatin
 cannot share a layout frame.
 
 Shop card and button shadows are intentionally shallow: 2–4 px with low opacity,
-not the old 7–9 px floating blocks. Tabs use `ShopTabButton`: warm peach is idle,
-sunny orange is hover/focus, and vibrant leaf green is selected. Tooltips use the
+not the old 7–9 px floating blocks. Illustrated tabs communicate state with
+scale, brightness, and label color. Tooltips use the
 theme's cream `TooltipPanel` with coral border and dark-brown `TooltipLabel`; do
 not rely on Godot's unstyled default tooltip. Card tooltip copy is action-oriented
 (`Unlock`, `Need`, `Tap to select`, or `active`). Pet tooltips append the concise
@@ -810,7 +838,11 @@ ability summary and never restore the old flavor paragraph.
 
 ### Pause Menu
 
-`pause_menu.tscn` appears inside HUD. It can continue, restart, return Home, or open nested settings. `open()` changes the state to Paused. `close()` returns to Playing. It must stay process-always.
+`pause_menu.tscn` appears inside HUD. It can continue, restart, or return Home,
+and its three surviving illustrated quick controls toggle Music, SFX, and
+Vibration directly. `open()` changes the state to Paused. `close()` returns to
+Playing. It must stay process-always. The script uses the current authored
+`ActionRow` paths because Continue/Restart are no longer unique-name contracts.
 
 ### Settings
 
@@ -828,6 +860,10 @@ re-add placeholder options without implementing and validating the complete
 feature first. Existing locale data remains an internal translation default and
 is not exposed by Settings.
 
+Privacy, Restore Purchases, and About buttons were also removed from the authored
+scene. `settings_menu.gd` does not query or connect deleted nodes; reintroducing
+one requires restoring both its scene control and a real platform-backed action.
+
 Save migration version 7 erases the retired theme/feedback/audio-restore keys and
 normalizes haptic strength, screen shake, and reduced motion to the standard
 baseline. This prevents an old Minimal/Off preset from remaining invisible and
@@ -842,7 +878,27 @@ remain un-onboarded at Level 1.
 
 ### Game Over
 
-Game Over is instantiated in Main’s CanvasLayer. `GameManager` emits `game_over`; the panel displays the score, high score, and the coin amount calculated as `int(score * 0.1)`. The actual award happens once in `SaveManager.save_run_result()` when GameManager enters GAME_OVER.
+Game Over is instantiated in Main's CanvasLayer. `GameManager` emits `game_over`;
+the framed results hub displays score, high score, and the coin amount calculated
+as `int(score * 0.1)`. The actual award happens once in
+`SaveManager.save_run_result()` when GameManager enters GAME_OVER.
+
+The current authored layout intentionally keeps only the supplied `LongFrame`,
+`Home`, `Restart`, and `Settings` actions. Deleted quick-setting and decorative
+nodes are not runtime contracts. Score/new-best copy shares `NewHighLabel`, while
+mission and Time Attack result copy reuse the same compact card.
+
+The center `SnapshotFrame` is filled dynamically from the real last gameplay
+render. Game Over stays hidden for one frame-post-draw, captures the viewport,
+crops around the center-lower container using the target TextureRect aspect, and
+downscales large captures before assigning an `ImageTexture` to `FinalSnapshot`.
+Only then does the card enter. The snapshot fades/scales through a warm flash and
+finishes with a slight settle zoom; the frame clips all motion. `main.gd` must hide
+the panel outside GAME_OVER but must not reveal it on entry, otherwise the capture
+would contain the overlay. Tune the exported width fraction, vertical focus, and
+maximum width on `game_over.gd` rather than hard-coding device pixels. The
+headless path skips capture and shows the fallback label so automated tests never
+wait for a rendering signal.
 
 ### No Ads Purchase
 
@@ -938,6 +994,20 @@ Fruit restores temporary physics modifiers, and GameManager owns the combo bonus
 All six powers are functional, purchasable, selectable, and taught exactly once
 across Mission Levels 2-7.
 
+When a selected power reaches zero, its HUD badge becomes `+` and the texture
+button remains enabled. Tapping it opens `Scenes/UI/PowerupRefill/powerup_refill.tscn`
+instead of sending an invalid activation request. The modal pauses the run in all
+three modes, including the Time Attack clock, and offers two ways to add exactly
+one saved inventory charge:
+
+- Watch Ad: `AdManager.request_rewarded_powerup(id, 1)`; grant only after the
+  platform reward-earned callback.
+- Use Tickets: `EconomyManager.try_purchase_powerup_refill(item)`; spend the
+  resource's `refill_ticket_cost`, grant one, save, and resume.
+
+Closing resumes without purchasing. Do not auto-open the modal as soon as a power
+is consumed; the player explicitly taps the empty slot when they want a refill.
+
 ### Request flow
 
 ```text
@@ -958,7 +1028,9 @@ the active run loadout.
 
 ### Power-up data resources
 
-Every active power uses a resource in `Data/ShopItems/`. `ShopItemData` now has a **Power-up Juice** section visible in the Godot Inspector:
+Every active power uses a resource in `Data/ShopItems/`. `ShopItemData` has an
+**In-game refill** section with `refill_ticket_cost`, separate from the Store's
+`cost`/`currency`, followed by the **Power-up Juice** section:
 
 | Inspector property | Used by | Meaning |
 | --- | --- | --- |
@@ -1126,7 +1198,8 @@ The current `AdManager` is intentionally safe: it **does not grant rewards in re
 
 ### Current behavior
 
-- Debug build: “watch ad” simulates a short delay then grants one ticket.
+- Debug build: “watch ad” simulates a short delay, then grants the requested
+  ticket or the exact requested power-up.
 - Release without bridge: advertises that ads/billing are unavailable and grants nothing.
 - Release with bridge: calls methods on `/root/MobileMonetization` if available.
 
@@ -1135,7 +1208,7 @@ The current `AdManager` is intentionally safe: it **does not grant rewards in re
 Your Android plugin/bridge should expose:
 
 ```text
-show_rewarded_ad(currency: StringName, amount: int)
+show_rewarded_ad(reward_key: StringName, amount: int)
 purchase_no_ads(product_id: String)
 restore_no_ads_purchase(product_id: String)
 ```
@@ -1144,6 +1217,7 @@ The plugin must call these only from verified platform results:
 
 ```gdscript
 AdManager.complete_rewarded_ticket(amount)  # reward-earned callback only
+AdManager.complete_rewarded_powerup(item_id, amount) # reward-earned callback only
 AdManager.cancel_rewarded_ad(message)       # skipped/failed/cancelled
 AdManager.complete_no_ads_purchase()        # verified + acknowledged billing purchase
 ```
@@ -1267,7 +1341,8 @@ Also run `git diff --check` if using Git to catch whitespace errors.
 | Watermelon resource not found | Filename spelling/case mismatch or scene missing | Use `Watermelon.png`, fix `.tres` and GameOver references, retain `watermelon.tscn`. |
 | Fruit leaks through a wall | collision shape/wall mismatch or fast body | inspect variant collision, wall collision, continuous collision detection. |
 | Fruits land on tips / feel stiff | shape does not match silhouette, mass/damping/material needs tuning | adjust the per-fruit collision scene first; then material values. |
-| Cannot drop fruit | HUD/overlay intercepts pointer | set decorative `Control.mouse_filter = IGNORE`; reserve capture for real buttons. |
+| Cannot drop fruit in every mode | Full-screen HUD/overlay intercepts pointer; `HUD/TopRow` is the common culprit | set the `HUD` and `HUD/TopRow` mouse filters to Ignore; reserve capture for real buttons, then run the routed click regression test. |
+| `game_over.gd` reports integer-division warnings | Integer image-crop midpoint uses `/ 2` | convert the numerator to `float`, divide by `2.0`, and use `floori()` before building the integer crop rectangle. |
 | Bottom UI cut off | authored outside 720×1280 or CanvasLayer missing | use anchors/offsets inside logical viewport and test real run. |
 | Daily panel appears every launch after claim | claim date was not saved or clock differs | inspect `daily_reward_last_claim`; claim via button, not close. |
 | Claim UI leaks outside panel | generated cards before layout or no clipping | wait one frame, calculate from Grid size, set `clip_contents`. |
@@ -1356,6 +1431,8 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 - [ ] All canvas-screen layouts fit the logical 720 × 1280 viewport.
 - [ ] Run Setup requires exactly three distinct powers for Classic/Time Attack;
 	  gameplay displays only those three slots.
+- [ ] Empty selected powers show `+`; their refill modal pauses/resumes all modes,
+	  charges the configured ticket price, and only grants ad rewards after verification.
 
 ### Meta game
 

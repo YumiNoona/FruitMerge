@@ -9,6 +9,9 @@ extends Resource
 @export var category: StringName
 @export var description: String
 
+@export_category("In-game refill")
+@export_range(1, 99, 1, "suffix: tickets") var refill_ticket_cost := 1
+
 @export_category("Power-up Juice")
 @export_range(0.05, 3.0, 0.01, "suffix:s") var effect_duration := 0.3
 @export_range(0.0, 2.0, 0.01) var camera_shake_strength := 0.35
@@ -32,4 +35,5 @@ func is_valid_definition() -> bool:
 		and not display_name.is_empty() \
 		and cost >= 0 \
 		and currency in [&"coins", &"tickets"] \
-		and category in [&"skin", &"pet", &"powerup", &"background"]
+		and category in [&"skin", &"pet", &"powerup", &"background"] \
+		and (category != &"powerup" or refill_ticket_cost > 0)

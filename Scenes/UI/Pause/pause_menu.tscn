@@ -1,11 +1,29 @@
 [gd_scene format=3 uid="uid://vsmfrhpljxp2"]
 
 [ext_resource type="Script" uid="uid://ckusajukg0qd2" path="res://Scripts/UI/Pause/pause_menu.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://dofjhgwgbnm11" path="res://Assets/UI/PausePanel.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/UI/Close.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/Menu/Close.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://doovf1d7vbtgl" path="res://Assets/UI/Frame.png" id="3_pwsai"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="4"]
 [ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5"]
 [ext_resource type="PackedScene" uid="uid://curl0kqpuh6dx" path="res://Scenes/UI/Settings/settings_menu.tscn" id="6"]
+[ext_resource type="Texture2D" uid="uid://b763to0h571qf" path="res://Assets/Menu/Music.png" id="7_72x3g"]
+[ext_resource type="Texture2D" uid="uid://bil1o1wrrf6h6" path="res://Assets/Menu/SFX.png" id="8_03q4b"]
+[ext_resource type="Texture2D" uid="uid://cqfb3iot8rcbw" path="res://Assets/Menu/Vibrate.png" id="9_bvk1f"]
+[ext_resource type="Texture2D" uid="uid://cotwbkcmjj76w" path="res://Assets/Menu/Home.png" id="10_pwsai"]
+[ext_resource type="Texture2D" uid="uid://ol2gx3h4rnrw" path="res://Assets/UI/Restart.png" id="11_evcr1"]
+[ext_resource type="Texture2D" uid="uid://bnd3evuxyxqh7" path="res://Assets/Menu/Continue.png" id="12_pwsai"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evcr1"]
+bg_color = Color(1, 0.91, 0.69, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.91, 0.59, 0.22, 0.72)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
 
 [node name="PauseMenu" type="Control" unique_id=1441074638]
 unique_name_in_owner = true
@@ -44,6 +62,15 @@ offset_bottom = 348.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="InnerSurface" type="Panel" parent="PanelRoot" unique_id=959182926]
+layout_mode = 0
+offset_left = 109.0
+offset_top = 142.0
+offset_right = 532.0
+offset_bottom = 567.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_evcr1")
+
 [node name="PanelArt" type="TextureRect" parent="PanelRoot" unique_id=1714751581]
 layout_mode = 1
 anchors_preset = 15
@@ -52,16 +79,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2")
+texture = ExtResource("3_pwsai")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Title" type="Label" parent="PanelRoot" unique_id=1776276267]
 layout_mode = 0
-offset_left = 118.0
-offset_top = 33.0
-offset_right = 522.0
-offset_bottom = 128.0
+offset_left = 125.0
+offset_top = 55.0
+offset_right = 529.0
+offset_bottom = 150.0
 theme_override_colors/font_color = Color(1, 0.98, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.36, 0.16, 0.05, 1)
 theme_override_constants/outline_size = 8
@@ -74,56 +101,96 @@ vertical_alignment = 1
 [node name="CloseButton" type="TextureButton" parent="PanelRoot" unique_id=2114871268]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 554.0
-offset_top = 31.0
-offset_right = 660.0
-offset_bottom = 150.0
+offset_left = 506.0
+offset_top = 48.0
+offset_right = 612.0
+offset_bottom = 167.0
 texture_normal = ExtResource("3")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Buttons" type="VBoxContainer" parent="PanelRoot" unique_id=473120147]
-layout_mode = 0
-offset_left = 106.0
-offset_top = 190.0
-offset_right = 534.0
-offset_bottom = 598.0
+[node name="ActionRow" type="HBoxContainer" parent="." unique_id=1725134168]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -168.0
+offset_top = -105.5
+offset_right = 168.0
+offset_bottom = -4.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 18
+alignment = 1
 
-[node name="ContinueButton" type="Button" parent="PanelRoot/Buttons" unique_id=1923123084]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 82)
+[node name="ContinueButton" type="TextureButton" parent="ActionRow" unique_id=1603466606]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 29
-text = "CONTINUE"
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Continue"
+texture_normal = ExtResource("12_pwsai")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="RestartButton" type="Button" parent="PanelRoot/Buttons" unique_id=1120709456]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 82)
+[node name="RestartButton" type="TextureButton" parent="ActionRow" unique_id=1399240701]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_type_variation = &"OrangeButton"
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 29
-text = "RESTART"
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Play again"
+texture_normal = ExtResource("11_evcr1")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="HomeButton" type="Button" parent="PanelRoot/Buttons" unique_id=698826575]
+[node name="MenuButton" type="TextureButton" parent="ActionRow" unique_id=59135889]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 82)
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_type_variation = &"CoralButton"
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 29
-text = "HOME"
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Return home"
+texture_normal = ExtResource("10_pwsai")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="SettingsButton" type="Button" parent="PanelRoot/Buttons" unique_id=980007612]
+[node name="QuickRow" type="HBoxContainer" parent="." unique_id=410997264]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 661.0
+offset_right = 524.0
+offset_bottom = 761.0
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="MusicButton" type="TextureButton" parent="QuickRow" unique_id=579866007]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 82)
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 27
-text = "SETTINGS"
+tooltip_text = "Toggle music"
+texture_normal = ExtResource("7_72x3g")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SfxButton" type="TextureButton" parent="QuickRow" unique_id=183192925]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+tooltip_text = "Toggle sound effects"
+texture_normal = ExtResource("8_03q4b")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="VibrateButton" type="TextureButton" parent="QuickRow" unique_id=245206298]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+tooltip_text = "Toggle vibration"
+texture_normal = ExtResource("9_bvk1f")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="SettingsMenu" parent="." unique_id=1771454438 instance=ExtResource("6")]
 layout_mode = 1

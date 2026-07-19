@@ -91,7 +91,7 @@ temporary safe-lane arrows, keeping each effect with its authoritative system.
 - Missions: a seven-level guided campaign with authored objectives and setups.
 - Time Attack: a resource-configured two-minute scoring run with a separate best.
 
-Home's Play/Choose Mode buttons and Shop's center Play button open the same
+Home's Play/Choose Mode button and the Store's Missions utility icon open the same
 `RunSetupPanel`. A new profile is routed
 to Mission 1 instead of free play. Completing Mission 1 unlocks Classic;
 completing Mission 7 unlocks Time Attack. Existing version-7 profiles migrate as
@@ -208,18 +208,28 @@ resize individual collision children. The standalone HUD scene intentionally con
 no world visuals or physics. World-space clamps must use the Box's global center
 and must not assume that gameplay is centered around global X zero.
 
-The central peach Play button on the Home and Shop docks shares
+The central peach Play button on Home uses
 `Scripts/UI/Components/floating_button_animator.gd`. It runs a subtle looping
 rise/dip/settle sine tween with small scale and rotation accents, starts after
-safe-area placement, and stays static when reduced motion is requested. Shop's
-dock script uses the scene-authored `HomeButton`, `AchievementsButton`,
-`PlayButton`, `ShopButton`, and `SettingsButton` node contracts; validation checks
-that all five remain present.
+safe-area placement, and stays static when reduced motion is requested. The Store
+uses a separate bottom-anchored utility row with `HomeButton`, `DailyButton`,
+`MissionsButton`, and `SettingsButton`; its top-right `CloseButton` also returns
+Home.
 
 Home's scene-authored `RewardsButton` opens Daily Reward through
-`SceneRouter.go_daily_reward()`. Keep that exact node name because `home.gd` and
-the project validator treat it as a UI contract; the button remains available
-after today's reward is claimed so the player can review the seven-day sequence.
+`SceneRouter.go_daily_reward()`. `MissionButton` opens Run Setup and
+`ThemesButton` enters the Store with the Themes category already selected. Keep
+those exact node names because `home.gd` and the project validator treat them as
+UI contracts; Daily remains available after today's reward is claimed so the
+player can review the seven-day sequence.
+
+Gameplay drops are received by `Spawner._unhandled_input()`. Both the full-screen
+HUD root and its full-screen `TopRow` layout wrapper therefore use
+`MOUSE_FILTER_IGNORE`; only their actual button children consume pointer events.
+The wrapper is visually concentrated at the top but its layout rectangle covers
+the entire viewport, so leaving its default `STOP` filter would disable mouse and
+touch drops in Classic, Missions, and Time Attack. Runtime validation now routes a
+real press/release through the viewport and requires it to create a fruit.
 
 The dashed line measures a sustained pile overflow, not a fruit passing through it.
 `Box` records that each fruit has entered the container, reads the top and bottom
@@ -232,6 +242,23 @@ All three modes show the warning tint after `danger_warning_delay` (0.5 seconds 
 the box scene) and ends the run only at `danger_settle_time` (2.4 seconds). Brief
 bounces recover faster than danger accumulates, preventing warning flashes during
 normal drops while still keeping pressure on a genuinely full container.
+
+## Dynamic final-pile snapshot
+
+Game Over owns its reveal instead of being made visible immediately by `main.gd`.
+When `EventBus.game_over` fires, the overlay remains hidden through one
+`RenderingServer.frame_post_draw`, then reads the viewport once and crops around
+the center-lower playfield. This guarantees the card shows the real losing pile
+from that run without photographing the Game Over overlay itself. The captured
+image is downscaled to at most 720 pixels wide before becoming an `ImageTexture`,
+keeping the one-time mobile memory cost modest.
+
+`snapshot_width_fraction`, `snapshot_vertical_focus`, and `snapshot_max_width`
+are exported on `game_over.gd` for future framing/performance tuning. The authored
+`SnapshotFrame` clips the image while a short scale/fade and warm flash reveal it;
+the image then settles with a subtle one-time zoom. Headless validation skips the
+GPU readback and retains the `FINAL PILE` fallback instead of waiting on a render
+signal that does not exist.
 
 ## Responsive merge timing
 
@@ -270,9 +297,18 @@ visual strength, and timing are exported under the Fruit scene's `Impact feel`
 Inspector category; change these shared script defaults before adding per-tier
 overrides.
 
-## Portrait shop containment
+## Portrait Store hub and containment
 
-The three-column shop grid uses compact 210 x 320 minimum cards with a card-local price
+The Store is framed by `Assets/UI/LongFrame.png`, keeps the remaining category art
+under `Assets/UI`, and reuses the surviving navigation artwork under `Assets/Menu`
+for Store, Themes, Home, Daily, Missions, Settings, No Ads, and Close. The deleted
+duplicate UI copies are not runtime dependencies. A left illustrated rail switches four exact catalog
+categories: pets, power-ups, fruit skins, and background themes. The header keeps
+coin/ticket balances and the no-ads action visible; the deleted rewarded-ad button
+and category text labels are not script contracts. A bottom utility row opens
+Home, Daily Reward, Run Setup, and Settings without duplicating Home's Play dock.
+
+The two-column shop grid uses 220 x 330 minimum cards with a card-local price
 panel style. Card contents now fit their declared minimum height, titles have a
 dedicated row, and the optional stacked power-up count sits over the icon. The
 owned badge was removed; owned cosmetics reuse the action label for `SELECT` and
@@ -293,10 +329,11 @@ The default Cherry and Lemon skin resources are stored as `skin_cherry.tres` and
 `skin_pastel`. `ShopCatalog.tres` references those current filenames and no longer
 references the retired generic `pet_cat.tres` entry.
 
-Shop presentation comes from `cozy_theme.tres`: cards and buttons use shallow
-2–4 px low-opacity shadows, shop tabs have peach/orange/leaf-green idle/hover/active
-states, and item action panels use green/coral/gold/teal ready/locked/select/active
-states. TooltipPanel and TooltipLabel provide a cream, coral-bordered tooltip instead
+Shop presentation combines the illustrated category/utility assets with
+`cozy_theme.tres`: cards and buttons use shallow 2–4 px low-opacity shadows,
+the active illustrated tab grows and brightens while inactive tabs recede, and
+item action panels use green/coral/gold/teal ready/locked/select/active states.
+TooltipPanel and TooltipLabel provide a cream, coral-bordered tooltip instead
 of the engine default. All UI scenes and the shared theme use only
 `Assets/Fonts/NERILLKID Trial.ttf`; validation rejects the retired UI font paths.
 
@@ -304,6 +341,8 @@ of the engine default. All UI scenes and the shared theme use only
 
 The HUD and shop support Level Up, Shake Box, Remove Smallest, Grab 'Em, Hammer,
 and Juice Bomb. Tunable feedback values live in each `ShopItemData` resource.
+The Level Up icon path is case-exact as `Assets/PowerUps/LevelUp.png`, which keeps
+Android and other case-sensitive exports consistent with Windows development.
 New power-ups need a shop resource, catalog entry, HUD entry, and controller
 implementation. The debug validator ensures every required power-up is catalogued.
 Shake Box uses one synchronized directional tween for its physical walls and
@@ -319,6 +358,15 @@ types from being activated by an event or stale UI reference. The retired
 `PowerupTray` panel and `ModeLabel` must not be referenced by either the scene or
 script; mobile safe-area placement and visibility are applied directly to
 `PowerupColumn`.
+
+An empty selected slot stays tappable and replaces `x0` with a `+`. Tapping it
+opens the modular `PowerupRefillPanel`, pauses physics and the Time Attack clock,
+and offers either one verified rewarded-ad power or a direct ticket refill. Each
+`ShopItemData` has an independent `refill_ticket_cost`, so Store coin prices do
+not leak into the in-run ticket economy. A successful refill saves immediately,
+resumes the prior run, refreshes the count, and pops the restored HUD icon. The
+panel never opens automatically after consumption, avoiding an unwanted modal in
+the middle of a power animation.
 
 ## Cosmetics
 
@@ -361,9 +409,10 @@ can find it.
 The PC debug window is resizable even though the production target is portrait
 mobile. Its default 432×960 override represents a modern 9:20 phone; `expand`
 turns the authored 720×1280 canvas into a 720×1600 visible canvas. This deliberately
-reveals controls that were positioned for only 16:9. Home and Shop docks are
-bottom-anchored, central mascot art is vertically centered, the Shop catalog grows
-into the extra height, and the loading footer observes the mobile bottom safe area.
+reveals controls that were positioned for only 16:9. Home's dock and the Store's
+utility row are bottom-anchored, central mascot art is vertically centered, the
+Store catalog grows into the extra height, and the loading footer observes the
+mobile bottom safe area.
 
 In debug builds, focus the running game and press `F11` to toggle between windowed
 and fullscreen modes. When using Godot's embedded game view, black space around
@@ -405,7 +454,8 @@ The content validator also runs automatically in debug builds. It checks the fru
 chain, scene-owned fruit nodes, shop IDs and definitions, the exact three-mode
 catalog, all seven sequential mission definitions, one-time coverage of all six
 tutorial powers, required power-ups, core scene paths, settings-slider contract,
-removed settings options, and shop-card containment.
+removed settings options, shop-card containment, full-screen HUD pointer filters,
+and an end-to-end empty-space click-to-drop path.
 
 GDScript warnings are treated as validation defects. Avoid local names that shadow
 base `Node2D`/`CanvasItem` properties, cast enum-to-integer calculations explicitly,
@@ -417,8 +467,12 @@ and make intentional division types explicit so the editor Debugger remains clea
 require a platform node named `/root/MobileMonetization` supplied by Google Mobile
 Ads and Google Play Billing plugins. It must implement the methods documented in
 `Autoloads/AdManager.gd` and call completion methods only after verified SDK callbacks.
+For a direct power reward, the bridge receives the selected power ID as the reward
+key and must call `complete_rewarded_powerup(id, amount)` only from the SDK's
+reward-earned callback; close, skip, and failure callbacks use `cancel_rewarded_ad`.
 
-The Privacy Policy button also needs the final public policy URL before store release.
+The removed Privacy Policy button must only be restored after the final public
+policy URL is available for store release.
 
 ## Documentation rule
 

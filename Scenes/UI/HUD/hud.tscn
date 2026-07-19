@@ -2,17 +2,18 @@
 
 [ext_resource type="Script" uid="uid://d0jgs76v321fr" path="res://Scripts/UI/HUD/hud.gd" id="1"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://c8x8umy8iis7p" path="res://Assets/Menu/Pause.png" id="3_8cq8w"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="4"]
 [ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="6"]
-[ext_resource type="Texture2D" uid="uid://nopddh48kk0t" path="res://Assets/PowerUps/LevelUP.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://b8pj41erjbrdc" path="res://Assets/PowerUps/LevelUp.png" id="7"]
 [ext_resource type="Texture2D" uid="uid://cf2ma74f64wdy" path="res://Assets/PowerUps/ShakeIT.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://v65d1o5qctqf" path="res://Assets/PowerUps/SuckUP.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://ce31a7d465k37" path="res://Assets/PowerUps/GrabEM.png" id="9_2ep5d"]
 [ext_resource type="PackedScene" uid="uid://vsmfrhpljxp2" path="res://Scenes/UI/Pause/pause_menu.tscn" id="10"]
 [ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/UI/Ticket.png" id="11"]
-[ext_resource type="Texture2D" uid="uid://bmf0as558h4ei" path="res://Assets/UI/PauseButton.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://ryja3rw6pplx" path="res://Assets/PowerUps/Blast.png" id="11_8cq8w"]
 [ext_resource type="Texture2D" uid="uid://dxp8v48shmhwe" path="res://Assets/PowerUps/Hammer.png" id="14"]
-[ext_resource type="Texture2D" uid="uid://mxy37l8rbxq4" path="res://Assets/PowerUps/Bomb.png" id="15"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PowerupRefill/powerup_refill.tscn" id="16"]
 
 [node name="HUD" type="Control" unique_id=761868550]
 process_mode = 3
@@ -37,37 +38,27 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.24, 0.2, 0.22)
 
-[node name="TopPanel" type="Panel" parent="." unique_id=1282061740]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 18.0
-offset_top = 8.0
-offset_right = -18.0
-offset_bottom = 108.0
-grow_horizontal = 2
-mouse_filter = 1
-
-[node name="TopRow" type="Control" parent="TopPanel" unique_id=1909119419]
+[node name="TopRow" type="Control" parent="." unique_id=1909119419]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="PauseButton" type="TextureButton" parent="TopPanel/TopRow" unique_id=2097920535]
+[node name="PauseButton" type="TextureButton" parent="TopRow" unique_id=2097920535]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 14.0
 offset_top = 13.0
 offset_right = 82.0
 offset_bottom = 83.0
-texture_normal = ExtResource("12")
+texture_normal = ExtResource("3_8cq8w")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ScoreBlock" type="VBoxContainer" parent="TopPanel/TopRow" unique_id=1927060834]
+[node name="ScoreBlock" type="VBoxContainer" parent="TopRow" unique_id=1927060834]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -80,27 +71,30 @@ grow_horizontal = 2
 theme_override_constants/separation = -5
 alignment = 1
 
-[node name="ScoreCaption" type="Label" parent="TopPanel/TopRow/ScoreBlock" unique_id=1351932339]
+[node name="ScoreCaption" type="Label" parent="TopRow/ScoreBlock" unique_id=1351932339]
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "SCORE"
 horizontal_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="TopPanel/TopRow/ScoreBlock" unique_id=52368361]
+[node name="ScoreLabel" type="Label" parent="TopRow/ScoreBlock" unique_id=52368361]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ScoreLabel"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "0"
 horizontal_alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="TopPanel/TopRow/ScoreBlock" unique_id=722846137]
+[node name="HighScoreLabel" type="Label" parent="TopRow/ScoreBlock" unique_id=722846137]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"CaptionLabel"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Best  0"
 horizontal_alignment = 1
 
-[node name="CoinBlock" type="PanelContainer" parent="TopPanel/TopRow" unique_id=792183887]
+[node name="CoinBlock" type="PanelContainer" parent="TopRow" unique_id=792183887]
 layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
@@ -111,26 +105,26 @@ offset_bottom = 90.5
 grow_horizontal = 0
 theme_type_variation = &"GreenPanel"
 
-[node name="CoinRow" type="HBoxContainer" parent="TopPanel/TopRow/CoinBlock" unique_id=1279906710]
+[node name="CoinRow" type="HBoxContainer" parent="TopRow/CoinBlock" unique_id=1279906710]
 layout_mode = 2
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="CoinGlyph" type="TextureRect" parent="TopPanel/TopRow/CoinBlock/CoinRow" unique_id=1684234722]
+[node name="CoinGlyph" type="TextureRect" parent="TopRow/CoinBlock/CoinRow" unique_id=1684234722]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CoinsLabel" type="Label" parent="TopPanel/TopRow/CoinBlock/CoinRow" unique_id=1028157389]
+[node name="CoinsLabel" type="Label" parent="TopRow/CoinBlock/CoinRow" unique_id=1028157389]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"WhiteLabel"
 theme_override_font_sizes/font_size = 20
 text = "0"
 
-[node name="TicketBlock" type="PanelContainer" parent="TopPanel/TopRow" unique_id=300752607]
+[node name="TicketBlock" type="PanelContainer" parent="TopRow" unique_id=300752607]
 layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
@@ -141,19 +135,19 @@ offset_bottom = 90.5
 grow_horizontal = 0
 theme_type_variation = &"GreenPanel"
 
-[node name="TicketRow" type="HBoxContainer" parent="TopPanel/TopRow/TicketBlock" unique_id=409664330]
+[node name="TicketRow" type="HBoxContainer" parent="TopRow/TicketBlock" unique_id=409664330]
 layout_mode = 2
 theme_override_constants/separation = 3
 alignment = 1
 
-[node name="TicketGlyph" type="TextureRect" parent="TopPanel/TopRow/TicketBlock/TicketRow" unique_id=1543718278]
+[node name="TicketGlyph" type="TextureRect" parent="TopRow/TicketBlock/TicketRow" unique_id=1543718278]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture = ExtResource("11")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TicketsLabel" type="Label" parent="TopPanel/TopRow/TicketBlock/TicketRow" unique_id=1867386064]
+[node name="TicketsLabel" type="Label" parent="TopRow/TicketBlock/TicketRow" unique_id=1867386064]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"WhiteLabel"
@@ -162,10 +156,10 @@ text = "0"
 
 [node name="PowerupColumn" type="HBoxContainer" parent="." unique_id=223288358]
 layout_mode = 0
-offset_left = 29.0
-offset_top = 117.0
-offset_right = 346.0
-offset_bottom = 217.0
+offset_left = 10.0
+offset_top = 110.0
+offset_right = 350.0
+offset_bottom = 220.00006
 theme_override_constants/separation = 5
 
 [node name="LevelUpSlot" type="Control" parent="PowerupColumn" unique_id=2023733540]
@@ -284,12 +278,12 @@ vertical_alignment = 1
 
 [node name="GrabSlot" type="Control" parent="PowerupColumn" unique_id=1900851860]
 visible = false
-custom_minimum_size = Vector2(118, 118)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 
 [node name="GrabButton" type="TextureButton" parent="PowerupColumn/GrabSlot" unique_id=542860419]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(118, 118)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -323,12 +317,12 @@ vertical_alignment = 1
 
 [node name="HammerSlot" type="Control" parent="PowerupColumn" unique_id=2081980764]
 visible = false
-custom_minimum_size = Vector2(118, 118)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 
 [node name="HammerButton" type="TextureButton" parent="PowerupColumn/HammerSlot" unique_id=1249503864]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(118, 118)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -336,9 +330,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -55.0
-offset_top = -60.0
-offset_right = 63.0
-offset_bottom = 58.0
+offset_top = -55.0
+offset_right = 55.0
+offset_bottom = 55.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("14")
@@ -362,12 +356,12 @@ vertical_alignment = 1
 
 [node name="BombSlot" type="Control" parent="PowerupColumn" unique_id=528797845]
 visible = false
-custom_minimum_size = Vector2(118, 118)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 
 [node name="BombButton" type="TextureButton" parent="PowerupColumn/BombSlot" unique_id=1434903665]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(118, 118)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -380,7 +374,7 @@ offset_right = 55.0
 offset_bottom = 55.0
 grow_horizontal = 2
 grow_vertical = 2
-texture_normal = ExtResource("15")
+texture_normal = ExtResource("11_8cq8w")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -592,4 +586,8 @@ mouse_filter = 2
 
 [node name="PauseMenu" parent="." unique_id=636403790 instance=ExtResource("10")]
 visible = false
+layout_mode = 1
+
+[node name="PowerupRefillPanel" parent="." instance=ExtResource("16")]
+unique_name_in_owner = true
 layout_mode = 1

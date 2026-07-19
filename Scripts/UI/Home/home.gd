@@ -20,6 +20,8 @@ const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_fo
 @onready var _settings_button: TextureButton = %SettingsButton
 @onready var _no_ads_button: TextureButton = %NoAdsButton
 @onready var _rewards_button: TextureButton = %RewardsButton
+@onready var _themes_button: TextureButton = %ThemesButton
+@onready var _mission_button: TextureButton = %MissionButton
 @onready var _info_overlay: Control = %InfoOverlay
 @onready var _info_title: Label = %InfoTitle
 @onready var _info_body: Label = %InfoBody
@@ -59,6 +61,8 @@ func _ready() -> void:
 	_settings_button.pressed.connect(_show_settings)
 	_no_ads_button.pressed.connect(_show_no_ads_purchase)
 	_rewards_button.pressed.connect(_open_daily_reward)
+	_themes_button.pressed.connect(_open_themes_store)
+	_mission_button.pressed.connect(_open_missions)
 	_mode_button.pressed.connect(_cycle_mode)
 	_run_setup.closed.connect(func(): _play_button.disabled = false)
 	_close_info_button.pressed.connect(_hide_info)
@@ -232,6 +236,18 @@ func _open_daily_reward() -> void:
 	SceneRouter.go_daily_reward()
 
 
+func _open_themes_store() -> void:
+	HapticManager.pulse(HapticManager.Feedback.TAP)
+	_themes_button.disabled = true
+	GameManager.change_state(Enums.GameState.SHOP)
+	SceneRouter.go_shop(&"background")
+
+
+func _open_missions() -> void:
+	HapticManager.pulse(HapticManager.Feedback.TAP)
+	_run_setup.open()
+
+
 func _on_no_ads_changed(owned: bool) -> void:
 	_no_ads_button.visible = not owned
 
@@ -257,7 +273,7 @@ func _apply_equipped_background() -> void:
 
 
 func _apply_safe_area() -> void:
-	for control in [$BestPanel, $CoinPanel, $TicketPanel]:
+	for control in [$BestPanel, $CoinPanel, $TicketPanel, _no_ads_button, _themes_button, _rewards_button, _mission_button]:
 		MobileSafeArea.apply_top_inset(control, control.position.y)
 	for control in [$Dock, _home_button, _achievements_button, _play_button, _shop_button, _settings_button, _mode_button]:
 		MobileSafeArea.apply_bottom_inset(control, control.position.y)

@@ -12,6 +12,7 @@ cost = 2
 currency = &"tickets"
 category = "powerup"
 description = "Pick up one fruit and place it anywhere"
+refill_ticket_cost = 2
 effect_duration = 0.16
 camera_shake_strength = 0.2
 camera_shake_duration = 0.5

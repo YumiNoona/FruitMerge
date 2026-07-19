@@ -55,7 +55,10 @@ func _apply_equipped_cosmetics() -> void:
 
 
 func _on_state_changed(state: Enums.GameState) -> void:
-	_game_over_panel.visible = state == Enums.GameState.GAME_OVER
+	# GameOver captures one unobstructed final gameplay frame before revealing itself.
+	# It owns the GAME_OVER reveal; Main only hides it when leaving that state.
+	if state != Enums.GameState.GAME_OVER:
+		_game_over_panel.visible = false
 
 
 func _notification(what: int) -> void:

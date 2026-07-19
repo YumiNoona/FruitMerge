@@ -11,3 +11,4 @@ icon = ExtResource("1_ceewp")
 cost = 50
 category = "powerup"
 description = "Destroy one fruit"
+refill_ticket_cost = 2

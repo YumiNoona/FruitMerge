@@ -28,6 +28,12 @@ See `Docs/ARCHITECTURE_AND_FEATURES.md` for the save/profile design, game modes,
 power-up flow, nine equipped-pet companion abilities, mobile haptics and safe-area behavior, cosmetics, localization,
 and the headless validation command.
 
+The Store is a portrait, two-column catalog with illustrated Pets, Power-Ups,
+Skins, and Themes tabs, hidden-scrollbar touch scrolling, compact wallets, and
+Daily/Missions/Settings utilities. Game Over uses the matching framed Home,
+Restart, and Settings hub and smoothly reveals a live capture of the final pile
+from the run that just ended.
+
 Play now opens a mobile-first run setup flow. New profiles begin with the first
 of seven guided Missions; completing Level 1 unlocks Classic, and completing
 Level 7 unlocks Time Attack. Classic and Time Attack require a three-type power
@@ -37,6 +43,9 @@ consume the player's saved shop inventory.
 Purchased pets are functional companions: only the equipped pet contributes one
 passive, automatic, or merge-charged ability. The pet itself is the mobile touch
 target, so the gameplay HUD still shows only the selected three power-up types.
+When one of those powers runs out, its `+` badge opens an in-game refill card:
+the player can spend that power's configured ticket price or watch a verified
+rewarded ad for one charge without leaving the run.
 
 ## Android debug build
 

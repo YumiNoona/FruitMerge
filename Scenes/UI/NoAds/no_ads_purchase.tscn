@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://d37jcac4bcwu7" path="res://Scripts/UI/NoAds/no_ads_purchase.gd" id="1"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
-[ext_resource type="Texture2D" uid="uid://duhssdh6bvku3" path="res://Assets/UI/NoAds.png" id="3"]
-[ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/UI/Close.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://duhssdh6bvku3" path="res://Assets/Menu/NoAds.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/Menu/Close.png" id="4"]
 [ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="5"]
 
 [node name="NoAdsPurchase" type="Control" unique_id=1072765378]

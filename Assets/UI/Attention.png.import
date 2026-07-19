@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://duhssdh6bvku3"
-path="res://.godot/imported/NoAds.png-718b5ff1a9b3a170496fd6f549e00926.ctex"
+uid="uid://cyhk5uhfpb1x3"
+path="res://.godot/imported/Attention.png-9863162e83701358e52a7a5ab612014c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UI/NoAds.png"
-dest_files=["res://.godot/imported/NoAds.png-718b5ff1a9b3a170496fd6f549e00926.ctex"]
+source_file="res://Assets/UI/Attention.png"
+dest_files=["res://.godot/imported/Attention.png-9863162e83701358e52a7a5ab612014c.ctex"]
 
 [params]
 

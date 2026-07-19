@@ -19,9 +19,6 @@ func _ready() -> void:
 	_music_slider.value_changed.connect(_on_music_volume_changed)
 	_sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 	_vibration_toggle.toggled.connect(_on_vibration_toggled)
-	%PrivacyButton.pressed.connect(func(): _show_status("Privacy policy will open here when the store page is connected."))
-	%RestoreButton.pressed.connect(func(): _show_status("Purchases checked — everything is already cozy and accounted for!"))
-	%AboutButton.pressed.connect(func(): _show_status("Fruit Merge • cozy kitchen build %s" % str(ProjectSettings.get_setting("application/config/version", "0.1.0"))))
 	_version_label.text = "Version %s" % str(ProjectSettings.get_setting("application/config/version", "0.1.0"))
 	visible = false
 
@@ -84,7 +81,3 @@ func _update_toggle_copy(toggle: Button) -> void:
 
 func _update_volume_copy(label: Label, value: float) -> void:
 	label.text = "%d%%" % roundi(clampf(value, 0.0, 1.0) * 100.0)
-
-
-func _show_status(message: String) -> void:
-	_status_label.text = message

@@ -12,6 +12,7 @@ cost = 2
 currency = &"tickets"
 category = "powerup"
 description = "Shake and mix the whole pile"
+refill_ticket_cost = 2
 effect_duration = 1.15
 camera_shake_strength = 0.78
 camera_shake_duration = 1.45

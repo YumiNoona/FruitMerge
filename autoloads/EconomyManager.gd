@@ -99,6 +99,32 @@ func try_purchase_consumable(item: ShopItemData) -> bool:
 	SaveManager.save_game()
 	return true
 
+
+func try_purchase_powerup_refill(item: ShopItemData) -> bool:
+	if not item or item.category != &"powerup" or item.refill_ticket_cost <= 0:
+		return false
+	if not spend_tickets(item.refill_ticket_cost):
+		return false
+	if not grant_powerup(item.id, 1, false):
+		add_tickets(item.refill_ticket_cost)
+		return false
+	EventBus.shop_item_purchased.emit(item.id)
+	SaveManager.save_game()
+	return true
+
+
+func grant_powerup(item_id: StringName, amount: int = 1, save_immediately := true) -> bool:
+	var item := PowerLoadoutManager.get_item_data(item_id)
+	if not item or amount <= 0:
+		return false
+	var current := get_powerup_count(item_id)
+	powerup_counts[item_id] = current + amount
+	EventBus.powerup_count_changed.emit(item_id, current + amount)
+	if save_immediately:
+		SaveManager.save_game()
+	return true
+
+
 func consume_powerup(item_id: StringName) -> bool:
 	var count: int = powerup_counts.get(item_id, 0)
 	if count <= 0:

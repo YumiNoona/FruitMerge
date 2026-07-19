@@ -5,8 +5,10 @@ const HOME_SCENE := "res://Scenes/UI/Home/home.tscn"
 const GAME_SCENE := "res://Scenes/Core/main.tscn"
 const SHOP_SCENE := "res://Scenes/UI/Shop/shop.tscn"
 const DAILY_REWARD_SCENE := "res://Scenes/UI/DailyReward/daily_reward.tscn"
+const SHOP_CATEGORIES: Array[StringName] = [&"pet", &"powerup", &"skin", &"background"]
 
 var _transitioning := false
+var _shop_entry_category: StringName = &"pet"
 
 
 func go_home() -> void:
@@ -17,8 +19,15 @@ func go_game() -> void:
 	_change_to(GAME_SCENE)
 
 
-func go_shop() -> void:
+func go_shop(category: StringName = &"pet") -> void:
+	_shop_entry_category = category if category in SHOP_CATEGORIES else &"pet"
 	_change_to(SHOP_SCENE)
+
+
+func take_shop_entry_category() -> StringName:
+	var category := _shop_entry_category
+	_shop_entry_category = &"pet"
+	return category
 
 
 func go_daily_reward() -> void:

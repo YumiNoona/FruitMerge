@@ -1,15 +1,29 @@
 [gd_scene format=3 uid="uid://curl0kqpuh6dx"]
 
 [ext_resource type="Script" uid="uid://b1kquknjgp48a" path="res://Scripts/UI/Settings/settings_menu.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://d3tj7kibfap70" path="res://Assets/UI/SettingPanel.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/UI/Close.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/Menu/Close.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://doovf1d7vbtgl" path="res://Assets/UI/Frame.png" id="3_ab0jt"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="4"]
 [ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5"]
+[ext_resource type="Texture2D" uid="uid://b763to0h571qf" path="res://Assets/Menu/Music.png" id="6_ab0jt"]
+[ext_resource type="Texture2D" uid="uid://bil1o1wrrf6h6" path="res://Assets/Menu/SFX.png" id="7_ntlnd"]
+[ext_resource type="Texture2D" uid="uid://cqfb3iot8rcbw" path="res://Assets/Menu/Vibrate.png" id="8_pgkcb"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mfi5t"]
+bg_color = Color(1, 0.91, 0.69, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.91, 0.59, 0.22, 0.72)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
 
 [node name="SettingsMenu" type="Control" unique_id=1895896605]
 unique_name_in_owner = true
 process_mode = 3
-visible = false
 z_index = 100
 layout_mode = 3
 anchors_preset = 15
@@ -31,7 +45,8 @@ color = Color(0.18, 0.11, 0.06, 0.68)
 
 [node name="PanelRoot" type="Control" parent="." unique_id=708192418]
 unique_name_in_owner = true
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -40,27 +55,36 @@ offset_left = -330.0
 offset_top = -455.0
 offset_right = 330.0
 offset_bottom = 455.0
-grow_horizontal = 2
-grow_vertical = 2
+
+[node name="InnerSurface" type="Panel" parent="PanelRoot" unique_id=773393671]
+layout_mode = 0
+offset_left = 88.0
+offset_top = 219.0
+offset_right = 569.0
+offset_bottom = 701.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mfi5t")
 
 [node name="PanelArt" type="TextureRect" parent="PanelRoot" unique_id=1803259388]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -30.0
+offset_right = 28.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2")
+texture = ExtResource("3_ab0jt")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Title" type="Label" parent="PanelRoot" unique_id=1403948528]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 34.0
-offset_right = 540.0
-offset_bottom = 126.0
+offset_left = 124.0
+offset_top = 131.0
+offset_right = 544.0
+offset_bottom = 223.0
 theme_override_colors/font_color = Color(1, 0.98, 0.88, 1)
 theme_override_colors/font_outline_color = Color(0.36, 0.16, 0.05, 1)
 theme_override_constants/outline_size = 8
@@ -73,42 +97,37 @@ vertical_alignment = 1
 [node name="CloseButton" type="TextureButton" parent="PanelRoot" unique_id=1245703870]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 574.0
-offset_top = 45.0
-offset_right = 650.0
-offset_bottom = 121.0
+offset_left = 561.0
+offset_top = 138.0
+offset_right = 637.0
+offset_bottom = 214.0
 texture_normal = ExtResource("3")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="Content" type="VBoxContainer" parent="PanelRoot" unique_id=1816158075]
 layout_mode = 0
-offset_left = 72.0
-offset_top = 176.0
-offset_right = 588.0
-offset_bottom = 808.0
+offset_left = 91.0
+offset_top = 273.0
+offset_right = 564.0
+offset_bottom = 525.0
 theme_override_constants/separation = 12
 
 [node name="MusicRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=639020471]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme_override_constants/separation = 10
 
-[node name="Icon" type="Label" parent="PanelRoot/Content/MusicRow" unique_id=187829061]
-custom_minimum_size = Vector2(48, 0)
+[node name="Icon" type="TextureRect" parent="PanelRoot/Content/MusicRow" unique_id=1119353505]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "M"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label" type="Label" parent="PanelRoot/Content/MusicRow" unique_id=101499047]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 24
-text = "Music"
-vertical_alignment = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("6_ab0jt")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="MusicSlider" type="HSlider" parent="PanelRoot/Content/MusicRow" unique_id=29266475]
 unique_name_in_owner = true
@@ -118,7 +137,7 @@ max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="MusicValueLabel" type="Label" parent="PanelRoot/Content/MusicRow"]
+[node name="MusicValueLabel" type="Label" parent="PanelRoot/Content/MusicRow" unique_id=939896088]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
@@ -131,28 +150,23 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.73, 0.48, 0.24, 0.28)
+color = Color(0.7294118, 0.47843137, 0.23921569, 0.5176471)
 
 [node name="SfxRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=1353736461]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme_override_constants/separation = 10
 
-[node name="Icon" type="Label" parent="PanelRoot/Content/SfxRow" unique_id=1008834184]
-custom_minimum_size = Vector2(48, 0)
+[node name="Icon" type="TextureRect" parent="PanelRoot/Content/SfxRow" unique_id=1111929681]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "SFX"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label" type="Label" parent="PanelRoot/Content/SfxRow" unique_id=1946181610]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 24
-text = "Sound Effects"
-vertical_alignment = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("7_ntlnd")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="SfxSlider" type="HSlider" parent="PanelRoot/Content/SfxRow" unique_id=1580055465]
 unique_name_in_owner = true
@@ -162,7 +176,7 @@ max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="SfxValueLabel" type="Label" parent="PanelRoot/Content/SfxRow"]
+[node name="SfxValueLabel" type="Label" parent="PanelRoot/Content/SfxRow" unique_id=87636999]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(66, 0)
 layout_mode = 2
@@ -175,28 +189,23 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.73, 0.48, 0.24, 0.28)
+color = Color(0.7294118, 0.47843137, 0.23921569, 0.5176471)
 
 [node name="VibrationRow" type="HBoxContainer" parent="PanelRoot/Content" unique_id=353220532]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
-theme_override_constants/separation = 10
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 170
 
-[node name="Icon" type="Label" parent="PanelRoot/Content/VibrationRow" unique_id=229866222]
-custom_minimum_size = Vector2(48, 0)
+[node name="Icon" type="TextureRect" parent="PanelRoot/Content/VibrationRow" unique_id=793180826]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "VIB"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label" type="Label" parent="PanelRoot/Content/VibrationRow" unique_id=849439722]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("5")
-theme_override_font_sizes/font_size = 24
-text = "Vibration"
-vertical_alignment = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("8_pgkcb")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="VibrationToggle" type="Button" parent="PanelRoot/Content/VibrationRow" unique_id=1969325616]
 unique_name_in_owner = true
@@ -211,39 +220,16 @@ text = "ON"
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.73, 0.48, 0.24, 0.28)
-
-[node name="PrivacyButton" type="Button" parent="PanelRoot/Content" unique_id=162908837]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_font_sizes/font_size = 20
-text = "PRIVACY POLICY"
-
-[node name="RestoreButton" type="Button" parent="PanelRoot/Content" unique_id=1611499306]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_font_sizes/font_size = 20
-text = "RESTORE PURCHASES"
-
-[node name="AboutButton" type="Button" parent="PanelRoot/Content" unique_id=541487683]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_font_sizes/font_size = 20
-text = "ABOUT"
+color = Color(0.7294118, 0.47843137, 0.23921569, 0.5176471)
 
 [node name="StatusLabel" type="Label" parent="PanelRoot" unique_id=700412006]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
-offset_left = 78.0
-offset_top = 806.0
-offset_right = 582.0
-offset_bottom = 852.0
+offset_left = 142.0
+offset_top = 558.0
+offset_right = 519.0
+offset_bottom = 604.0
 theme_override_colors/font_color = Color(0.53, 0.34, 0.18, 1)
 theme_override_font_sizes/font_size = 15
 horizontal_alignment = 1
@@ -252,20 +238,23 @@ autowrap_mode = 2
 
 [node name="PlayerId" type="Label" parent="PanelRoot" unique_id=711406252]
 layout_mode = 0
-offset_left = 80.0
-offset_top = 856.0
-offset_right = 360.0
-offset_bottom = 882.0
+offset_left = 132.0
+offset_top = 630.0
+offset_right = 270.0
+offset_bottom = 656.0
 theme_override_font_sizes/font_size = 14
-text = "Player ID: FMG-2026-00001"
+text = "Player ID  • 20260001"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Version" type="Label" parent="PanelRoot" unique_id=44664299]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 440.0
-offset_top = 856.0
-offset_right = 580.0
-offset_bottom = 882.0
+offset_left = 178.0
+offset_top = 647.0
+offset_right = 274.0
+offset_bottom = 673.0
 theme_override_font_sizes/font_size = 14
-text = "Version 0.1.0"
-horizontal_alignment = 2
+text = "Version 0•1•0"
+horizontal_alignment = 1
+vertical_alignment = 1

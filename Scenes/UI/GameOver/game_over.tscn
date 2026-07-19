@@ -2,31 +2,41 @@
 
 [ext_resource type="Script" uid="uid://dwit82np30oi3" path="res://Scripts/UI/GameOver/game_over.gd" id="1"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="2"]
-[ext_resource type="Texture2D" uid="uid://5yb55rdk1qho" path="res://Assets/UI/FruitBasket.png" id="3_ksv1s"]
-[ext_resource type="Script" uid="uid://llmcyi4adlls" path="res://Scripts/UI/Components/cozy_button.gd" id="4"]
-[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="5_7rrlc"]
+[ext_resource type="Texture2D" uid="uid://thre0eu80noj" path="res://Assets/UI/LongFrame.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cotwbkcmjj76w" path="res://Assets/Menu/Home.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://ol2gx3h4rnrw" path="res://Assets/UI/Restart.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://btx07feoqwnp5" path="res://Assets/Menu/Settings.png" id="8"]
+[ext_resource type="PackedScene" uid="uid://curl0kqpuh6dx" path="res://Scenes/UI/Settings/settings_menu.tscn" id="12"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="13"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rrlc"]
-content_margin_left = 22.0
-content_margin_top = 18.0
-content_margin_right = 22.0
-content_margin_bottom = 18.0
-bg_color = Color(0.25049934, 0.78951913, 0.7431826, 0.9411765)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(1, 0.94, 0.82, 0.9)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
+[sub_resource type="StyleBoxFlat" id="InnerSurface"]
+bg_color = Color(1, 0.91, 0.69, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.91, 0.59, 0.22, 0.72)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
 
-[sub_resource type="LabelSettings" id="LabelSettings_sa15m"]
-font = ExtResource("5_7rrlc")
-font_size = 39
+[sub_resource type="StyleBoxFlat" id="SnapshotSurface"]
+bg_color = Color(0.10588235, 0.18039216, 0.2509804, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.96862745, 0.5686275, 0.22352941, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0.3019608, 0.15294118, 0.05490196, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
 
-[node name="GameOver" type="Control" unique_id=79099277]
+[node name="GameOver" type="Control" unique_id=749334089]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -37,16 +47,16 @@ grow_vertical = 2
 theme = ExtResource("2")
 script = ExtResource("1")
 
-[node name="Dim" type="ColorRect" parent="." unique_id=480137520]
+[node name="Dim" type="ColorRect" parent="." unique_id=138646711]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.28, 0.14, 0.06, 0.58)
+color = Color(0.078431375, 0.14117648, 0.2, 0.86)
 
-[node name="Center" type="CenterContainer" parent="." unique_id=2060268255]
+[node name="Center" type="CenterContainer" parent="." unique_id=1278790363]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,107 +64,212 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ResultCard" type="PanelContainer" parent="Center" unique_id=1699551389]
+[node name="ResultCard" type="Control" parent="Center" unique_id=1028303952]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(540, 650)
+custom_minimum_size = Vector2(640, 1020)
 layout_mode = 2
-theme_type_variation = &"PeachPanel"
-theme_override_styles/panel = SubResource("StyleBoxFlat_7rrlc")
 
-[node name="Content" type="VBoxContainer" parent="Center/ResultCard" unique_id=1848023079]
-layout_mode = 2
-theme_override_constants/separation = 12
-alignment = 1
-
-[node name="FruitIcon" type="TextureRect" parent="Center/ResultCard/Content" unique_id=14189788]
-custom_minimum_size = Vector2(500, 330.21)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 6
+[node name="InnerSurface" type="Panel" parent="Center/ResultCard" unique_id=313929266]
+layout_mode = 0
+offset_left = 109.0
+offset_top = 94.0
+offset_right = 533.0
+offset_bottom = 937.0
 mouse_filter = 2
-texture = ExtResource("3_ksv1s")
+theme_override_styles/panel = SubResource("InnerSurface")
+
+[node name="FrameArt" type="TextureRect" parent="Center/ResultCard" unique_id=454336543]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.058000002
+anchor_right = 1.062
+anchor_bottom = 1.0
+offset_left = -3.8799973
+offset_right = 1.3199463
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="Center/ResultCard/Content" unique_id=1697401222]
-layout_mode = 2
-theme_type_variation = &"HeadingLabel"
-theme_override_font_sizes/font_size = 41
+[node name="Title" type="Label" parent="Center/ResultCard" unique_id=341097761]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 118.0
+offset_right = 534.0
+offset_bottom = 177.0
+theme_override_colors/font_color = Color(0.26, 0.45, 0.68, 1)
+theme_override_colors/font_outline_color = Color(1, 0.98, 0.82, 1)
+theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("13")
+theme_override_font_sizes/font_size = 38
 text = "FRUIT BASKET FULL"
-label_settings = SubResource("LabelSettings_sa15m")
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="NewHighLabel" type="Label" parent="Center/ResultCard/Content" unique_id=45744338]
+[node name="NewHighLabel" type="Label" parent="Center/ResultCard" unique_id=1829464809]
 unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_colors/font_color = Color(0.49, 0.65, 0.18, 1)
-theme_override_colors/font_outline_color = Color(1, 0.96, 0.81, 1)
+layout_mode = 0
+offset_left = 135.0
+offset_top = 174.0
+offset_right = 505.0
+offset_bottom = 211.0
+theme_override_colors/font_color = Color(0.34, 0.64, 0.16, 1)
+theme_override_colors/font_outline_color = Color(1, 0.98, 0.82, 1)
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 22
+theme_override_fonts/font = ExtResource("13")
+theme_override_font_sizes/font_size = 23
 text = "NEW BEST SCORE!"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="ScoreCaption" type="Label" parent="Center/ResultCard/Content" unique_id=1834759168]
-layout_mode = 2
-theme_type_variation = &"CaptionLabel"
-theme_override_fonts/font = ExtResource("5_7rrlc")
-text = "YOUR SCORE"
-horizontal_alignment = 1
-
-[node name="FinalScoreLabel" type="Label" parent="Center/ResultCard/Content" unique_id=1305634699]
+[node name="SnapshotFrame" type="PanelContainer" parent="Center/ResultCard"]
 unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.98, 0.47, 0.22, 1)
-theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 1)
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("5_7rrlc")
-theme_override_font_sizes/font_size = 56
-text = "0"
-horizontal_alignment = 1
+clip_contents = true
+layout_mode = 0
+offset_left = 120.0
+offset_top = 214.0
+offset_right = 526.0
+offset_bottom = 612.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SnapshotSurface")
 
-[node name="RewardRow" type="HBoxContainer" parent="Center/ResultCard/Content" unique_id=484271174]
+[node name="SnapshotMargin" type="MarginContainer" parent="Center/ResultCard/SnapshotFrame"]
 layout_mode = 2
-theme_override_constants/separation = 28
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="SnapshotClip" type="Control" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin"]
+clip_contents = true
+custom_minimum_size = Vector2(394, 386)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="SnapshotPlaceholder" type="Label" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.94509804, 0.7647059, 0.74)
+theme_override_fonts/font = ExtResource("13")
+theme_override_font_sizes/font_size = 22
+text = "FINAL PILE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FinalSnapshot" type="TextureRect" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SnapshotFlash" type="ColorRect" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0.9529412, 0.7137255, 0.32)
+
+[node name="RewardRow" type="HBoxContainer" parent="Center/ResultCard" unique_id=1520817190]
+custom_minimum_size = Vector2(420, 70)
+layout_mode = 0
+offset_left = 113.0
+offset_top = 620.0
+offset_right = 533.0
+offset_bottom = 690.0
+theme_override_constants/separation = 32
 alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="Center/ResultCard/Content/RewardRow" unique_id=2082222930]
+[node name="HighScoreLabel" type="Label" parent="Center/ResultCard/RewardRow" unique_id=1973066796]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_fonts/font = ExtResource("5_7rrlc")
-text = "Best  0"
+theme_override_fonts/font = ExtResource("13")
+theme_override_font_sizes/font_size = 22
+text = "BEST  0"
 
-[node name="CoinsEarnedLabel" type="Label" parent="Center/ResultCard/Content/RewardRow" unique_id=2110257755]
+[node name="CoinsEarnedLabel" type="Label" parent="Center/ResultCard/RewardRow" unique_id=253732403]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.66, 0.22, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_7rrlc")
-text = "+0 coins"
+theme_override_colors/font_color = Color(0.28, 0.5, 0.11, 1)
+theme_override_colors/font_outline_color = Color(1, 0.98, 0.8, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("13")
+theme_override_font_sizes/font_size = 22
+text = "+0 COINS"
 
-[node name="Encouragement" type="Label" parent="Center/ResultCard/Content" unique_id=1418125610]
-layout_mode = 2
-theme_type_variation = &"CaptionLabel"
-theme_override_fonts/font = ExtResource("5_7rrlc")
-theme_override_font_sizes/font_size = 18
+[node name="Encouragement" type="Label" parent="Center/ResultCard" unique_id=1406281675]
+custom_minimum_size = Vector2(410, 40)
+layout_mode = 0
+offset_left = 120.0
+offset_top = 700.0
+offset_right = 530.0
+offset_bottom = 740.0
+theme_override_colors/font_color = Color(0.42, 0.27, 0.13, 1)
+theme_override_fonts/font = ExtResource("13")
+theme_override_font_sizes/font_size = 20
 text = "Every drop grows your garden"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="RestartButton" type="Button" parent="Center/ResultCard/Content" unique_id=1317943307]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("5_7rrlc")
-theme_override_font_sizes/font_size = 40
-text = "PLAY AGAIN"
-script = ExtResource("4")
+[node name="ActionRow" type="HBoxContainer" parent="Center/ResultCard" unique_id=1601626490]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 744.28
+offset_right = 536.0
+offset_bottom = 884.28
+theme_override_constants/separation = 18
+alignment = 1
 
-[node name="MenuButton" type="Button" parent="Center/ResultCard/Content" unique_id=1712340312]
+[node name="MenuButton" type="TextureButton" parent="Center/ResultCard/ActionRow" unique_id=2073500474]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 68)
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_type_variation = &"CreamButton"
-theme_override_fonts/font = ExtResource("5_7rrlc")
-theme_override_font_sizes/font_size = 40
-text = "MAIN MENU"
-script = ExtResource("4")
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Return home"
+texture_normal = ExtResource("6")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RestartButton" type="TextureButton" parent="Center/ResultCard/ActionRow" unique_id=726203450]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Play again"
+texture_normal = ExtResource("7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SettingsButton" type="TextureButton" parent="Center/ResultCard/ActionRow" unique_id=2145667972]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Open settings"
+texture_normal = ExtResource("8")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SettingsMenu" parent="." unique_id=721951932 instance=ExtResource("12")]
+visible = false
+layout_mode = 1

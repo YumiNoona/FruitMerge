@@ -66,6 +66,61 @@ static func run(tree: SceneTree) -> PackedStringArray:
 			or not is_equal_approx(container_art.scale.x, 0.67536) \
 			or not is_equal_approx(container_art.scale.y, 0.603):
 		failures.append("Container width must resize art, collisions, and drop bounds together")
+	var fruit_container := gameplay.find_child("FruitContainer", true, false)
+	if gameplay_spawner and fruit_container:
+		var fruit_count_before := fruit_container.get_child_count()
+		var press := InputEventMouseButton.new()
+		press.button_index = MOUSE_BUTTON_LEFT
+		press.position = Vector2(360, 300)
+		press.pressed = true
+		tree.root.push_input(press)
+		var release := InputEventMouseButton.new()
+		release.button_index = MOUSE_BUTTON_LEFT
+		release.position = press.position
+		release.pressed = false
+		tree.root.push_input(release)
+		await tree.physics_frame
+		await tree.process_frame
+		if fruit_container.get_child_count() <= fruit_count_before:
+			failures.append("An empty-space left click must pass through the HUD and drop a fruit")
+	var gameplay_hud := gameplay.find_child("HUD", true, false) as Control
+	var refill_panel := gameplay.find_child("PowerupRefillPanel", true, false) as Control
+	if not gameplay_hud or not refill_panel or PowerLoadoutManager.active_loadout.is_empty():
+		failures.append("Gameplay HUD must include the in-game power-up refill panel")
+	else:
+		var refill_id := PowerLoadoutManager.active_loadout[0]
+		var refill_item := PowerLoadoutManager.get_item_data(refill_id)
+		var previous_power_count := EconomyManager.get_powerup_count(refill_id)
+		var previous_tickets := EconomyManager.tickets
+		EconomyManager.powerup_counts[refill_id] = 0
+		EconomyManager.tickets = refill_item.refill_ticket_cost
+		EventBus.powerup_count_changed.emit(refill_id, 0)
+		EventBus.tickets_changed.emit(EconomyManager.tickets)
+		gameplay_hud.call("_request_powerup", refill_id)
+		if not refill_panel.visible or GameManager.current_state != Enums.GameState.PAUSED:
+			failures.append("Tapping an empty selected power must pause and open its refill choices")
+		else:
+			refill_panel.call("_on_ticket_pressed")
+			await tree.process_frame
+			if refill_panel.visible or GameManager.current_state != Enums.GameState.PLAYING \
+					or EconomyManager.get_powerup_count(refill_id) != 1 \
+					or EconomyManager.tickets != 0:
+				failures.append("Ticket refill must grant one power, charge its configured price, and resume play")
+		EconomyManager.powerup_counts[refill_id] = previous_power_count
+		EconomyManager.tickets = previous_tickets
+		EventBus.powerup_count_changed.emit(refill_id, previous_power_count)
+		EventBus.tickets_changed.emit(previous_tickets)
+		SaveManager.save_game()
+	var game_over_panel := gameplay.find_child("GameOverPanel", true, false) as Control
+	var final_snapshot := gameplay.find_child("FinalSnapshot", true, false) as TextureRect
+	if not game_over_panel or not final_snapshot:
+		failures.append("Game Over must retain its dynamic final-pile snapshot target")
+	else:
+		game_over_panel.call("_on_game_over", 321)
+		await tree.process_frame
+		var result_score := game_over_panel.find_child("NewHighLabel", true, false) as Label
+		if not game_over_panel.visible or not result_score or not result_score.text.contains("321"):
+			failures.append("Headless Game Over must reveal its fallback result without waiting for a render frame")
 	gameplay.free()
 	await tree.process_frame
 	SaveManager.set_setting("equipped_pet", previous_pet, false)

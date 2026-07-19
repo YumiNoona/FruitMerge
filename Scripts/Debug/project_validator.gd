@@ -34,6 +34,7 @@ const UI_SCENE_PATHS := [
 	"res://Scenes/UI/Components/currency_pill.tscn",
 	"res://Scenes/UI/GameOver/game_over.tscn",
 	"res://Scenes/UI/RunSetup/run_setup.tscn",
+	"res://Scenes/UI/PowerupRefill/powerup_refill.tscn",
 ]
 const RETIRED_UI_FONTS := ["Spenbeb Game.otf", "Atop.ttf", "Cloudy.otf"]
 
@@ -168,7 +169,10 @@ static func _validate_shop() -> PackedStringArray:
 	var issues: PackedStringArray = catalog.call("validate")
 	var ids: Dictionary = {}
 	for item in catalog.get("items"):
-		if item: ids[item.id] = true
+		if item:
+			ids[item.id] = true
+			if item.category == &"powerup" and item.refill_ticket_cost <= 0:
+				issues.append("Power-up needs a positive in-game ticket refill price: %s" % item.id)
 	for required in REQUIRED_POWERUPS:
 		if not ids.has(required):
 			issues.append("Missing required power-up item: %s" % required)
@@ -242,12 +246,35 @@ static func _validate_ui_contracts() -> PackedStringArray:
 		issues.append("Cozy theme must use NERILLKID and the styled tooltip panel")
 	var hud_scene_source := FileAccess.get_file_as_string("res://Scenes/UI/HUD/hud.tscn")
 	var hud_script_source := FileAccess.get_file_as_string("res://Scripts/UI/HUD/hud.gd")
+	var hud_scene := load("res://Scenes/UI/HUD/hud.tscn") as PackedScene
+	if hud_scene:
+		var hud := hud_scene.instantiate() as Control
+		var top_row := hud.get_node_or_null("TopRow") as Control if hud else null
+		if not hud or hud.mouse_filter != Control.MOUSE_FILTER_IGNORE \
+				or not top_row or top_row.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+			issues.append("HUD and its full-screen TopRow must ignore empty-space pointer input")
+		if hud:
+			hud.free()
 	if hud_scene_source.contains("ModeLabel") or hud_script_source.contains("ModeLabel"):
 		issues.append("Removed HUD ModeLabel returned; Time Attack belongs in ScoreCaption")
 	if hud_scene_source.contains("PowerupTray") or hud_script_source.contains("PowerupTray"):
 		issues.append("Removed PowerupTray returned; PowerupColumn is the runtime loadout root")
 	if not hud_scene_source.contains("SecondNextFruitIcon"):
 		issues.append("HUD is missing Banana Fox's optional second-fruit preview")
+	var refill_scene := load("res://Scenes/UI/PowerupRefill/powerup_refill.tscn") as PackedScene
+	if refill_scene:
+		var refill := refill_scene.instantiate() as Control
+		for node_name in ["PowerIcon", "WatchAdButton", "TicketButton", "TicketBalance", "Status", "CloseButton"]:
+			if not refill.find_child(node_name, true, false):
+				issues.append("In-game power refill is missing %s" % node_name)
+		if refill.process_mode != Node.PROCESS_MODE_ALWAYS:
+			issues.append("In-game power refill must process while gameplay is paused")
+		refill.free()
+	var ad_source := FileAccess.get_file_as_string("res://Autoloads/AdManager.gd")
+	if not ad_source.contains("request_rewarded_powerup") \
+			or not ad_source.contains("complete_rewarded_powerup") \
+			or not ad_source.contains("rewarded_powerup_completed"):
+		issues.append("AdManager must expose verified direct power-up rewards")
 	var daily_reward_source := FileAccess.get_file_as_string("res://Scripts/UI/DailyReward/daily_reward.gd")
 	if daily_reward_source.contains("check.text") or daily_reward_source.contains("COLLECTED"):
 		issues.append("Daily Reward claimed cards must use their subdued style instead of checkmark labels")
@@ -277,7 +304,7 @@ static func _validate_ui_contracts() -> PackedStringArray:
 	var card_scene := load("res://Scenes/UI/Components/shop_item_button.tscn") as PackedScene
 	if card_scene:
 		var card := card_scene.instantiate() as Control
-		if card and (card.custom_minimum_size.y < 320.0 or not card.clip_contents):
+		if card and (card.custom_minimum_size.x < 220.0 or card.custom_minimum_size.y < 330.0 or not card.clip_contents):
 			issues.append("Shop cards must contain and clip their portrait layout")
 		if card and card.find_child("OwnedBadge", true, false):
 			issues.append("Removed Shop OwnedBadge returned; owned state belongs in the action label")
@@ -293,30 +320,67 @@ static func _validate_ui_contracts() -> PackedStringArray:
 	var shop_scene := load(SceneRouter.SHOP_SCENE) as PackedScene
 	if shop_scene:
 		var shop := shop_scene.instantiate()
-		for node_name in ["HomeButton", "AchievementsButton", "PlayButton", "ShopButton", "SettingsButton"]:
+		for node_name in [
+			"FrameArt", "StoreIcon", "TabPets", "TabPowerups",
+			"TabSkins", "TabThemes", "HomeButton", "DailyButton", "MissionsButton",
+			"SettingsButton", "CloseButton", "NoAdsButton",
+		]:
 			if not shop.find_child(node_name, true, false):
-				issues.append("Shop dock is missing %s required by shop.gd" % node_name)
+				issues.append("Store hub is missing %s required by shop.gd" % node_name)
 		var shop_scroll := shop.find_child("ShopScroll", true, false) as ScrollContainer
 		if not shop_scroll or shop_scroll.vertical_scroll_mode != ScrollContainer.SCROLL_MODE_SHOW_NEVER:
 			issues.append("Shop must remain touch-scrollable without a visible scrollbar")
 		elif shop_scroll.scroll_deadzone != 8:
 			issues.append("Shop touch scrolling must retain its 8 px drag deadzone")
-		var shop_list := shop.find_child("ShopList", true, false) as Control
+		var shop_list := shop.find_child("ShopList", true, false) as GridContainer
 		if not shop_list or shop_list.mouse_filter != Control.MOUSE_FILTER_PASS:
 			issues.append("Shop grid must pass card drag gestures to its ScrollContainer")
-		for node_name in ["Dock", "HomeButton", "AchievementsButton", "PlayButton", "ShopButton", "SettingsButton"]:
-			var bottom_control := shop.find_child(node_name, true, false) as Control
-			if not bottom_control or not is_equal_approx(bottom_control.anchor_top, 1.0) or not is_equal_approx(bottom_control.anchor_bottom, 1.0):
-				issues.append("Shop %s must stay bottom-anchored on tall phones" % node_name)
+		elif shop_list.columns != 2:
+			issues.append("Store catalog must use the mobile-friendly two-column grid")
+		var utility_row := shop.find_child("UtilityRow", true, false) as Control
+		if not utility_row or not is_equal_approx(utility_row.anchor_top, 1.0) or not is_equal_approx(utility_row.anchor_bottom, 1.0):
+			issues.append("Store utility row must stay bottom-anchored on tall phones")
 		var catalog_panel := shop.find_child("CatalogPanel", true, false) as Control
 		if not catalog_panel or not is_equal_approx(catalog_panel.anchor_bottom, 1.0):
 			issues.append("Shop catalog must expand vertically on tall phones")
 		shop.free()
+	var shop_source := FileAccess.get_file_as_string(SceneRouter.SHOP_SCENE)
+	for asset_path in [
+		"res://Assets/UI/LongFrame.png", "res://Assets/UI/Pets.png",
+		"res://Assets/UI/Power-Ups.png", "res://Assets/UI/Skins.png",
+		"res://Assets/Menu/Themes.png", "res://Assets/Menu/Home.png",
+		"res://Assets/Menu/Daily.png", "res://Assets/Menu/Missions.png",
+		"res://Assets/Menu/Settings.png",
+	]:
+		if not shop_source.contains(asset_path):
+			issues.append("Store presentation is missing surviving UI art: %s" % asset_path)
+	var game_over_scene := load("res://Scenes/UI/GameOver/game_over.tscn") as PackedScene
+	if game_over_scene:
+		var game_over := game_over_scene.instantiate()
+		for node_name in [
+			"SnapshotFrame", "FinalSnapshot", "SnapshotFlash", "MenuButton",
+			"RestartButton", "SettingsButton", "SettingsMenu",
+		]:
+			if not game_over.find_child(node_name, true, false):
+				issues.append("Game Over final-frame layout is missing %s" % node_name)
+		for button_name in ["MenuButton", "RestartButton", "SettingsButton"]:
+			var icon_button := game_over.find_child(button_name, true, false) as TextureButton
+			if icon_button and not icon_button.texture_normal:
+				issues.append("Game Over %s must use the new icon artwork" % button_name)
+		game_over.free()
+	var game_over_source := FileAccess.get_file_as_string("res://Scripts/UI/GameOver/game_over.gd")
+	if not game_over_source.contains("RenderingServer.frame_post_draw") \
+			or not game_over_source.contains("get_viewport().get_texture()") \
+			or not game_over_source.contains("ImageTexture.create_from_image"):
+		issues.append("Game Over must capture the unobstructed final gameplay frame dynamically")
+	if FileAccess.get_file_as_string("res://Scripts/Core/main.gd").contains("visible = state == Enums.GameState.GAME_OVER"):
+		issues.append("Main must not reveal Game Over before its final-frame capture completes")
 	var home_scene := load(SceneRouter.HOME_SCENE) as PackedScene
 	if home_scene:
 		var home := home_scene.instantiate()
-		if not home.find_child("RewardsButton", true, false):
-			issues.append("Home is missing RewardsButton required for Daily Reward access")
+		for node_name in ["RewardsButton", "ThemesButton", "MissionButton"]:
+			if not home.find_child(node_name, true, false):
+				issues.append("Home is missing %s required by its shortcut hub" % node_name)
 		for node_name in ["Dock", "HomeButton", "AchievementsButton", "PlayButton", "ModeButton", "ShopButton", "SettingsButton"]:
 			var bottom_control := home.find_child(node_name, true, false) as Control
 			if not bottom_control or not is_equal_approx(bottom_control.anchor_top, 1.0) or not is_equal_approx(bottom_control.anchor_bottom, 1.0):
