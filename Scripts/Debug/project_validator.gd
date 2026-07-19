@@ -9,6 +9,17 @@ const REQUIRED_POWERUPS := [
 	&"powerup_hammer",
 	&"powerup_bomb",
 ]
+const REQUIRED_PETS := [
+	&"pet_strawberry_cat",
+	&"pet_watermelon_pup",
+	&"pet_peach_bunny",
+	&"pet_pineapple_meow",
+	&"pet_melon_bear",
+	&"pet_banana_fox",
+	&"pet_berry_hamster",
+	&"pet_cherry_bird",
+	&"pet_lemon_frog",
+]
 const UI_SCENE_PATHS := [
 	"res://Scenes/UI/Shop/shop.tscn",
 	"res://Scenes/UI/Settings/settings_menu.tscn",
@@ -38,7 +49,7 @@ static func validate_all() -> PackedStringArray:
 	for issue in issues:
 		push_error("PROJECT VALIDATION: %s" % issue)
 	if issues.is_empty():
-		print("Project validation passed: fruit chain, catalog, UI contracts, and core scenes are consistent.")
+		print("Project validation passed: fruit chain, pet abilities, catalog, UI contracts, and core scenes are consistent.")
 	return issues
 
 
@@ -115,6 +126,10 @@ static func _validate_fruits() -> PackedStringArray:
 		issues.append("Fruit physics material friction must allow gentle rolling without sliding")
 	if FruitDatabase.get_tier_count() != Enums.FruitTier.size():
 		issues.append("Fruit database count does not match FruitTier enum")
+	if Enums.FruitTier.size() != 13:
+		issues.append("The Mango-free fruit chain must contain exactly 13 tiers")
+	if FruitDatabase.get_next_fruit(Enums.FruitTier.PEACH) != FruitDatabase.get_fruit(Enums.FruitTier.COCONUT):
+		issues.append("Peach must merge directly into Coconut")
 	for tier in Enums.FruitTier.size():
 		var data := FruitDatabase.get_fruit(tier)
 		var scene := FruitDatabase.get_fruit_scene(tier)
@@ -157,6 +172,21 @@ static func _validate_shop() -> PackedStringArray:
 	for required in REQUIRED_POWERUPS:
 		if not ids.has(required):
 			issues.append("Missing required power-up item: %s" % required)
+	for required in REQUIRED_PETS:
+		if not ids.has(required):
+			issues.append("Missing required pet item: %s" % required)
+	var abilities := PetAbilityCatalog.get_all()
+	if abilities.size() != REQUIRED_PETS.size():
+		issues.append("Every shop pet must have one PetAbilityData resource")
+	var seen_effects: Dictionary = {}
+	for ability in abilities:
+		if not ability.is_valid_definition():
+			issues.append("Invalid pet ability definition for %s" % ability.pet_id)
+		elif ability.pet_id not in REQUIRED_PETS:
+			issues.append("Pet ability references an unknown shop pet: %s" % ability.pet_id)
+		if seen_effects.has(ability.effect):
+			issues.append("Pet abilities must keep distinct effects: %s" % ability.ability_name)
+		seen_effects[ability.effect] = true
 	return issues
 
 
@@ -178,7 +208,25 @@ static func _validate_scenes() -> PackedStringArray:
 			issues.append("Gameplay scene is missing its movable ContainerRig")
 		elif not rig.get_node_or_null("ContainerArt") or not rig.get_node_or_null("BoxContainer/Box"):
 			issues.append("ContainerRig must own both the visible container and physical Box instance")
+		elif not rig is ContainerRig:
+			issues.append("ContainerRig must use the synchronized container sizing script")
+		elif not is_equal_approx((rig as ContainerRig).scale.x, 1.0) \
+				or not is_equal_approx((rig as ContainerRig).scale.y, 1.0):
+			issues.append("ContainerRig Node2D scale must remain (1, 1); use its size multiplier")
+		elif (rig as ContainerRig).container_width_multiplier < 0.85 \
+				or (rig as ContainerRig).container_width_multiplier > 1.20 \
+				or (rig as ContainerRig).container_height_multiplier < 0.85 \
+				or (rig as ContainerRig).container_height_multiplier > 1.15:
+			issues.append("ContainerRig width/height multipliers are outside their supported mobile range")
+		if not gameplay.get_node_or_null("PetAbilityController"):
+			issues.append("Gameplay scene is missing its modular PetAbilityController")
 		gameplay.free()
+	var pet_scene := load("res://Scenes/Entities/Pet/pet.tscn") as PackedScene
+	if pet_scene:
+		var pet := pet_scene.instantiate()
+		if not pet.get_node_or_null("TouchArea/CollisionShape2D") or not pet.get_node_or_null("AbilityLabel"):
+			issues.append("Pet scene must retain its mobile touch target and ability callout")
+		pet.free()
 	return issues
 
 
@@ -192,12 +240,28 @@ static func _validate_ui_contracts() -> PackedStringArray:
 	var theme_source := FileAccess.get_file_as_string("res://Data/Themes/cozy_theme.tres")
 	if not theme_source.contains("NERILLKID Trial.ttf") or not theme_source.contains("TooltipPanel/styles/panel"):
 		issues.append("Cozy theme must use NERILLKID and the styled tooltip panel")
+	var hud_scene_source := FileAccess.get_file_as_string("res://Scenes/UI/HUD/hud.tscn")
+	var hud_script_source := FileAccess.get_file_as_string("res://Scripts/UI/HUD/hud.gd")
+	if hud_scene_source.contains("ModeLabel") or hud_script_source.contains("ModeLabel"):
+		issues.append("Removed HUD ModeLabel returned; Time Attack belongs in ScoreCaption")
+	if hud_scene_source.contains("PowerupTray") or hud_script_source.contains("PowerupTray"):
+		issues.append("Removed PowerupTray returned; PowerupColumn is the runtime loadout root")
+	if not hud_scene_source.contains("SecondNextFruitIcon"):
+		issues.append("HUD is missing Banana Fox's optional second-fruit preview")
 	var daily_reward_source := FileAccess.get_file_as_string("res://Scripts/UI/DailyReward/daily_reward.gd")
 	if daily_reward_source.contains("check.text") or daily_reward_source.contains("COLLECTED"):
 		issues.append("Daily Reward claimed cards must use their subdued style instead of checkmark labels")
 	var home_source := FileAccess.get_file_as_string("res://Scripts/UI/Home/home.gd")
 	if home_source.contains("amount_label"):
 		issues.append("Home wallet flyover must animate only the currency texture")
+	for wallet_script in [
+		"res://Scripts/UI/Home/home.gd",
+		"res://Scripts/UI/HUD/hud.gd",
+		"res://Scripts/UI/Shop/shop.gd",
+		"res://Scripts/UI/Components/currency_pill.gd",
+	]:
+		if not FileAccess.get_file_as_string(wallet_script).contains("CurrencyFormatterScript.format_amount"):
+			issues.append("Wallet display must use compact K/M formatting: %s" % wallet_script)
 	var settings_scene := load("res://Scenes/UI/Settings/settings_menu.tscn") as PackedScene
 	if settings_scene:
 		var settings := settings_scene.instantiate()

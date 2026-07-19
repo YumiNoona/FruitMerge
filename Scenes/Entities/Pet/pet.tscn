@@ -1,7 +1,11 @@
-[gd_scene format=3 uid="uid://d2oytgx1ahhm3"]
+[gd_scene load_steps=4 format=3 uid="uid://d2oytgx1ahhm3"]
 
 [ext_resource type="Script" uid="uid://6f6n0cq1h6a5" path="res://Scripts/Entities/Pet/pet.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://b57tbmjunwyej" path="res://Assets/UI/Mascot.png" id="2"]
+[ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pet_touch"]
+radius = 64.0
 
 [node name="Pet" type="Node2D"]
 script = ExtResource("1")
@@ -17,3 +21,30 @@ centered = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true
+
+[node name="TouchArea" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TouchArea"]
+shape = SubResource("CircleShape2D_pet_touch")
+
+[node name="AbilityLabel" type="Label" parent="."]
+unique_name_in_owner = true
+z_index = 20
+offset_left = -160.0
+offset_top = 56.0
+offset_right = 60.0
+offset_bottom = 86.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.98, 0.74, 1)
+theme_override_colors/font_outline_color = Color(0.31, 0.16, 0.06, 0.96)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 17
+text = "READY"
+horizontal_alignment = 1
+vertical_alignment = 1

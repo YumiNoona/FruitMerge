@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PetAbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/pet_ability_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+pet_id = &"pet_pineapple_meow"
+ability_name = "HIGH PERCH"
+shop_summary = "HIGH PERCH\nSHOWS THE SAFEST LANE"
+activation = 2
+effect = 3
+max_uses_per_run = 3
+effect_duration = 4.0
+accent_color = Color(1, 0.78, 0.18, 1)

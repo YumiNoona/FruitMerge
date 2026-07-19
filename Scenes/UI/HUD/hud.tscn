@@ -164,22 +164,27 @@ text = "0"
 layout_mode = 0
 offset_left = 29.0
 offset_top = 117.0
-offset_right = 749.0
+offset_right = 346.0
 offset_bottom = 217.0
-theme_override_constants/separation = 48
+theme_override_constants/separation = 5
 
 [node name="LevelUpSlot" type="Control" parent="PowerupColumn" unique_id=2023733540]
-custom_minimum_size = Vector2(80, 100)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 
 [node name="LevelUpButton" type="TextureButton" parent="PowerupColumn/LevelUpSlot" unique_id=880568202]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 15.0
-offset_bottom = -1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -55.0
+offset_right = 55.0
+offset_bottom = 55.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("7")
@@ -202,16 +207,22 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ShakeSlot" type="Control" parent="PowerupColumn" unique_id=696279286]
-custom_minimum_size = Vector2(80, 100)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 
 [node name="ShakeButton" type="TextureButton" parent="PowerupColumn/ShakeSlot" unique_id=1881890609]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(95, 95)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -55.0
+offset_right = 55.0
+offset_bottom = 55.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("8")
@@ -234,16 +245,22 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="RemoveSlot" type="Control" parent="PowerupColumn" unique_id=1146480691]
-custom_minimum_size = Vector2(80, 100)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 
 [node name="RemoveButton" type="TextureButton" parent="PowerupColumn/RemoveSlot" unique_id=1402959976]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(95, 95)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -55.0
+offset_right = 55.0
+offset_bottom = 55.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("9")
@@ -267,22 +284,22 @@ vertical_alignment = 1
 
 [node name="GrabSlot" type="Control" parent="PowerupColumn" unique_id=1900851860]
 visible = false
-custom_minimum_size = Vector2(80, 100)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 2
 
 [node name="GrabButton" type="TextureButton" parent="PowerupColumn/GrabSlot" unique_id=542860419]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(105, 110)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.298
-anchor_top = -0.052
-anchor_right = 1.3950001
-anchor_bottom = 1.0940001
-offset_left = -0.024000168
-offset_top = -0.007999897
-offset_right = 0.009994507
-offset_bottom = -0.024009705
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("9_2ep5d")
@@ -306,20 +323,22 @@ vertical_alignment = 1
 
 [node name="HammerSlot" type="Control" parent="PowerupColumn" unique_id=2081980764]
 visible = false
-custom_minimum_size = Vector2(80, 100)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 2
 
 [node name="HammerButton" type="TextureButton" parent="PowerupColumn/HammerSlot" unique_id=1249503864]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(105, 110)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.20600002
-anchor_top = -0.030000001
-anchor_right = 1.3310001
-anchor_bottom = 1.11
-offset_left = -0.01999855
-offset_right = 0.019989014
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -60.0
+offset_right = 63.0
+offset_bottom = 58.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("14")
@@ -343,19 +362,22 @@ vertical_alignment = 1
 
 [node name="BombSlot" type="Control" parent="PowerupColumn" unique_id=528797845]
 visible = false
-custom_minimum_size = Vector2(80, 100)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 2
 
 [node name="BombButton" type="TextureButton" parent="PowerupColumn/BombSlot" unique_id=1434903665]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(110, 110)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.187
-anchor_right = 1.187
-anchor_bottom = 1.1
-offset_left = -0.03999901
-offset_right = 0.039993286
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -55.0
+offset_right = 55.0
+offset_bottom = 55.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("15")
@@ -378,6 +400,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NextPanel" type="PanelContainer" parent="." unique_id=354472279]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -408,34 +431,26 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ModeLabel" type="Label" parent="." unique_id=2000044227]
+[node name="SecondNextFruitIcon" type="TextureRect" parent="NextPanel/NextRow" unique_id=866325278]
 unique_name_in_owner = true
-layout_mode = 0
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -160.0
-offset_top = 221.14
-offset_right = 160.0
-offset_bottom = 256.14014
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.45, 0.24, 0.1, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.76, 1)
-theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("6")
-theme_override_font_sizes/font_size = 19
-text = "CLASSIC"
-horizontal_alignment = 1
-vertical_alignment = 1
+visible = false
+modulate = Color(1, 1, 1, 0.72)
+custom_minimum_size = Vector2(58, 70)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="DangerWarning" type="Label" parent="." unique_id=1049890252]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -150.0
-offset_top = 252.0
+offset_top = 390.0
 offset_right = 150.0
-offset_bottom = 294.0
+offset_bottom = 431.99994
 grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 0.38, 0.27, 1)
 theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
@@ -450,9 +465,9 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 0
 offset_left = 130.0
-offset_top = 270.0
+offset_top = 340.0
 offset_right = 590.0
-offset_bottom = 328.0
+offset_bottom = 398.0
 theme_override_colors/font_color = Color(1, 0.97, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0.48, 0.22, 0.08, 0.96)
 theme_override_constants/outline_size = 7
@@ -567,9 +582,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -13.0
+offset_top = 2.0
+offset_right = -13.0
+offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="PauseMenu" parent="." unique_id=636403790 instance=ExtResource("10")]
+visible = false
 layout_mode = 1

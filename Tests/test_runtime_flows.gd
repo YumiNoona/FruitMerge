@@ -31,6 +31,49 @@ static func run(tree: SceneTree) -> PackedStringArray:
 	setup.queue_free()
 	await tree.process_frame
 
+	var previous_pet := EconomyManager.get_equipped_item(&"pet")
+	var previous_mode := GameManager.current_mode
+	var previous_state := GameManager.current_state
+	SaveManager.set_setting("equipped_pet", &"pet_banana_fox", false)
+	GameManager.current_mode = Enums.GameMode.CLASSIC
+	GameManager.current_state = Enums.GameState.PLAYING
+	var gameplay_scene := load("res://Scenes/Core/main.tscn") as PackedScene
+	var gameplay := gameplay_scene.instantiate()
+	tree.root.add_child(gameplay)
+	await tree.process_frame
+	await tree.process_frame
+	var pet := gameplay.find_child("Pet", true, false) as Pet
+	var pet_controller := gameplay.find_child("PetAbilityController", true, false) as PetAbilityController
+	var second_preview := gameplay.find_child("SecondNextFruitIcon", true, false) as TextureRect
+	var container_rig := gameplay.find_child("ContainerRig", true, false) as ContainerRig
+	var gameplay_box := gameplay.find_child("Box", true, false) as Box
+	var gameplay_spawner := gameplay.find_child("Spawner", true, false) as Spawner
+	var container_art := gameplay.find_child("ContainerArt", true, false) as Sprite2D
+	if not pet or not pet_controller or not pet_controller.ability:
+		failures.append("An equipped shop pet must spawn with its modular ability controller")
+	elif pet_controller.ability.pet_id != &"pet_banana_fox":
+		failures.append("PetAbilityController must load the equipped pet's matching resource")
+	if not GameManager.show_second_next_preview or not second_preview or not second_preview.visible:
+		failures.append("Banana Fox Future Sight must reveal the second upcoming-fruit icon")
+	var pet_touch_shape := pet.get_node_or_null("TouchArea/CollisionShape2D") as CollisionShape2D if pet else null
+	if not pet_touch_shape or not pet_touch_shape.shape is CircleShape2D \
+		or (pet_touch_shape.shape as CircleShape2D).radius < 60.0:
+		failures.append("The in-world pet must retain a generous mobile touch target")
+	if not container_rig or not gameplay_box or not gameplay_spawner or not container_art:
+		failures.append("Gameplay must instantiate the synchronized container layout")
+	elif not is_equal_approx(gameplay_box.container_half_width, 278.88) \
+			or not is_equal_approx(gameplay_spawner.max_x_spread, 267.88) \
+			or not is_equal_approx(container_art.scale.x, 0.67536) \
+			or not is_equal_approx(container_art.scale.y, 0.603):
+		failures.append("Container width must resize art, collisions, and drop bounds together")
+	gameplay.free()
+	await tree.process_frame
+	SaveManager.set_setting("equipped_pet", previous_pet, false)
+	GameManager.current_mode = previous_mode
+	GameManager.current_state = previous_state
+	GameManager.show_second_next_preview = false
+	GameManager.combo_window_bonus = 0.0
+
 	var impact_root := Node2D.new()
 	tree.root.add_child(impact_root)
 	var falling := FruitDatabase.create_fruit(Enums.FruitTier.CHERRY)

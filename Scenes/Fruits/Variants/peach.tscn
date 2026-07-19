@@ -5,8 +5,9 @@
 [ext_resource type="Resource" path="res://Data/Fruits/peach.tres" id="3"]
 [ext_resource type="Texture2D" uid="uid://bjvad3tgg5gjo" path="res://Assets/Fruits/Peach.png" id="4"]
 
-[sub_resource type="CircleShape2D" id="CollisionCircle"]
-radius = 75.00667
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afjvm"]
+radius = 67.17464
+height = 158.14832
 
 [node name="Peach" type="RigidBody2D" unique_id=1448468078 groups=["fruits"]]
 z_index = 10
@@ -36,8 +37,9 @@ position = Vector2(0, -4)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924602716]
 unique_name_in_owner = true
-position = Vector2(0, 4)
-shape = SubResource("CollisionCircle")
+position = Vector2(0.99999994, 11)
+rotation = -1.6266469
+shape = SubResource("CapsuleShape2D_afjvm")
 
 [node name="WakeTimer" type="Timer" parent="." unique_id=1212367865]
 unique_name_in_owner = true

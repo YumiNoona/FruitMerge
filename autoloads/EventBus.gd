@@ -10,6 +10,12 @@ signal fruit_created(tier: int, world_pos: Vector2)
 signal fruit_dropped(tier: int)
 
 @warning_ignore("unused_signal")
+signal fruit_spawned(fruit: Fruit)
+
+@warning_ignore("unused_signal")
+signal next_fruit_changed(primary_tier: int, secondary_tier: int, show_secondary: bool)
+
+@warning_ignore("unused_signal")
 signal score_changed(new_score: int)
 
 @warning_ignore("unused_signal")
@@ -50,6 +56,12 @@ signal powerup_used(item_id: StringName)
 
 @warning_ignore("unused_signal")
 signal power_loadout_changed(loadout: Array[StringName])
+
+@warning_ignore("unused_signal")
+signal pet_ability_charge_changed(pet_id: StringName, charge: int, required: int)
+
+@warning_ignore("unused_signal")
+signal pet_ability_activated(pet_id: StringName, ability_name: String)
 
 @warning_ignore("unused_signal")
 signal mission_progress_changed(label: String, current: int, target: int)

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PetAbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/pet_ability_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+pet_id = &"pet_banana_fox"
+ability_name = "FUTURE SIGHT"
+shop_summary = "FUTURE SIGHT\nSHOWS TWO UPCOMING FRUITS"
+activation = 1
+effect = 5
+accent_color = Color(1, 0.75, 0.16, 1)

@@ -1,12 +1,15 @@
 extends Control
 
 const UI_FONT: FontFile = preload("res://Assets/Fonts/NERILLKID Trial.ttf")
+const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_formatter.gd")
 
 @onready var _score_label: Label = %ScoreLabel
+@onready var _score_caption: Label = $TopPanel/TopRow/ScoreBlock/ScoreCaption
 @onready var _high_score_label: Label = %HighScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
 @onready var _tickets_label: Label = %TicketsLabel
 @onready var _next_fruit_icon: TextureRect = %NextFruitIcon
+@onready var _second_next_fruit_icon: TextureRect = %SecondNextFruitIcon
 @onready var _danger_overlay: ColorRect = %DangerOverlay
 @onready var _danger_warning: Label = %DangerWarning
 @onready var _combo_banner: Control = %ComboBanner
@@ -30,9 +33,8 @@ const UI_FONT: FontFile = preload("res://Assets/Fonts/NERILLKID Trial.ttf")
 @onready var _powerup_hint: Label = %PowerupHint
 @onready var _tier_reward_banner: Control = %TierRewardBanner
 @onready var _tier_reward_label: Label = %TierRewardLabel
-@onready var _mode_label: Label = %ModeLabel
 @onready var _top_panel: Control = $TopPanel
-@onready var _powerup_tray: Control = $PowerupTray
+@onready var _powerup_column: Control = $PowerupColumn
 @onready var _next_panel: Control = $NextPanel
 
 var _danger_tween: Tween
@@ -65,6 +67,7 @@ func _ready() -> void:
 	EventBus.coins_changed.connect(_on_coins_changed)
 	EventBus.tickets_changed.connect(_on_tickets_changed)
 	EventBus.fruit_dropped.connect(_on_fruit_dropped)
+	EventBus.next_fruit_changed.connect(_on_next_fruit_changed)
 	EventBus.fruit_merged.connect(_on_fruit_merged)
 	EventBus.danger_line_entered.connect(_on_danger_entered)
 	EventBus.danger_line_exited.connect(_on_danger_exited)
@@ -105,19 +108,12 @@ func _ready() -> void:
 	_update_tickets(EconomyManager.tickets)
 	_update_next_fruit()
 	_update_powerup_buttons()
-	_update_mode_label()
+	_update_mode_display()
 	if GameManager.current_mode == Enums.GameMode.MISSIONS:
 		_build_mission_ui()
 	MobileSafeArea.apply_top_inset(_top_panel, _top_panel.position.y)
-	MobileSafeArea.apply_top_inset(_powerup_tray, _powerup_tray.position.y)
+	MobileSafeArea.apply_top_inset(_powerup_column, _powerup_column.position.y)
 	MobileSafeArea.apply_top_inset(_next_panel, _next_panel.position.y)
-
-
-func _process(_delta: float) -> void:
-	if GameManager.current_mode == Enums.GameMode.TIME_ATTACK:
-		var whole_seconds := floori(GameManager.run_time_remaining)
-		var minutes := floori(float(whole_seconds) / 60.0)
-		_mode_label.text = "TIME ATTACK  %02d:%02d" % [minutes, whole_seconds % 60]
 
 
 func _on_score_changed(new_score: int) -> void:
@@ -138,6 +134,10 @@ func _on_tickets_changed(new_amount: int) -> void:
 
 func _on_fruit_dropped(_tier: int) -> void:
 	_update_next_fruit.call_deferred()
+
+
+func _on_next_fruit_changed(_primary_tier: int, _secondary_tier: int, _show_secondary: bool) -> void:
+	_update_next_fruit()
 
 
 func _on_fruit_merged(_tier: int, pos: Vector2, score_gained: int) -> void:
@@ -217,7 +217,7 @@ func _on_powerup_count_changed(_item_id: StringName, _count: int) -> void:
 
 func _update_powerup_buttons() -> void:
 	var loadout := PowerLoadoutManager.active_loadout
-	_powerup_tray.visible = not loadout.is_empty()
+	_powerup_column.visible = not loadout.is_empty()
 	for item_id in _power_buttons:
 		var slot := _power_slots[item_id] as Control
 		slot.visible = item_id in loadout
@@ -242,26 +242,30 @@ func _on_powerup_targeting_changed(active: bool, message: String) -> void:
 		button.modulate = Color(1.12, 1.12, 0.78, 1.0) if selected else (Color.WHITE if PowerLoadoutManager.get_available_count(item_id) > 0 else Color(0.62, 0.62, 0.62, 0.52))
 
 
-func _update_mode_label() -> void:
-	_mode_label.text = GameManager.get_mode_name().to_upper()
+func _update_mode_display() -> void:
+	if GameManager.current_mode == Enums.GameMode.TIME_ATTACK:
+		var seconds := ceili(GameManager.run_time_remaining)
+		_score_caption.text = "TIME  %02d:%02d" % [floori(float(seconds) / 60.0), seconds % 60]
+	else:
+		_score_caption.text = "SCORE"
 
 
 func _on_run_timer_changed(seconds: int) -> void:
 	if GameManager.current_mode != Enums.GameMode.TIME_ATTACK:
 		return
 	var minutes := floori(float(seconds) / 60.0)
-	_mode_label.text = "TIME ATTACK  %02d:%02d" % [minutes, seconds % 60]
+	_score_caption.text = "TIME  %02d:%02d" % [minutes, seconds % 60]
 	if seconds <= 10 and seconds > 0 and seconds != _last_urgent_second:
 		_last_urgent_second = seconds
-		_mode_label.pivot_offset = _mode_label.size * 0.5
-		_mode_label.modulate = Color(1.0, 0.28, 0.18)
+		_score_caption.pivot_offset = _score_caption.size * 0.5
+		_score_caption.modulate = Color(1.0, 0.28, 0.18)
 		var urgency := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		urgency.tween_property(_mode_label, "scale", Vector2(1.18, 1.18), 0.08)
-		urgency.tween_property(_mode_label, "scale", Vector2.ONE, 0.18)
+		urgency.tween_property(_score_caption, "scale", Vector2(1.18, 1.18), 0.08)
+		urgency.tween_property(_score_caption, "scale", Vector2.ONE, 0.18)
 		if seconds in [10, 5, 3, 2, 1]:
 			HapticManager.pulse(HapticManager.Feedback.DANGER)
 	elif seconds > 10:
-		_mode_label.modulate = Color.WHITE
+		_score_caption.modulate = Color.WHITE
 
 
 func _build_mission_ui() -> void:
@@ -378,17 +382,24 @@ func _update_high_score(value: int) -> void:
 
 
 func _update_coins(value: int) -> void:
-	_coins_label.text = "%d" % value
+	_coins_label.text = CurrencyFormatterScript.format_amount(value)
+	_coins_label.tooltip_text = "%d coins" % value
 
 
 func _update_tickets(value: int) -> void:
-	_tickets_label.text = "%d" % value
+	_tickets_label.text = CurrencyFormatterScript.format_amount(value)
+	_tickets_label.tooltip_text = "%d tickets" % value
 
 
 func _update_next_fruit() -> void:
 	var texture := FruitDatabase.get_visual_texture(GameManager.next_fruit_tier)
 	if texture:
 		_next_fruit_icon.texture = texture
+	_second_next_fruit_icon.visible = GameManager.show_second_next_preview
+	_next_panel.offset_left = -258.0 if GameManager.show_second_next_preview else -202.0
+	_next_fruit_icon.custom_minimum_size.x = 74.0 if GameManager.show_second_next_preview else 90.0
+	if GameManager.show_second_next_preview:
+		_second_next_fruit_icon.texture = FruitDatabase.get_visual_texture(GameManager.second_next_fruit_tier)
 
 
 func show_tier_ticket_reward(created_tier: int, ticket_amount: int) -> void:

@@ -7,11 +7,11 @@
 script = ExtResource("1")
 sprite = ExtResource("2")
 sprite_visual_width = 289.0
-tier = 11
+tier = 10
 display_name = "Pineapple"
 radius = 114.0
 score_value = 78
-next_tier = 12
+next_tier = 11
 mass = 3.45
 color = Color(1, 1, 1, 1)
 guide_color = Color(0.98, 0.66, 0.12, 1)

@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://bbvidpogi2jkk" path="res://Assets/Fruits/Kiwi.png" id="4"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0gmaq"]
-radius = 43.0
-height = 94.0
+radius = 45.0
+height = 100.0
 
 [node name="Kiwi" type="RigidBody2D" unique_id=1270016918 groups=["fruits"]]
 z_index = 10

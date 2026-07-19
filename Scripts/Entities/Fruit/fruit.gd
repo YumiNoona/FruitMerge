@@ -38,6 +38,10 @@ var _visual_base_scale: Vector2 = Vector2.ONE
 var _visual_base_rotation := 0.0
 var _visual_tween: Tween
 var _last_impact_msec := -1000
+var _base_gravity_scale := 1.0
+var _base_linear_damp := 0.0
+var _base_angular_damp := 0.0
+var _temporary_physics_token := 0
 
 @onready var _sprite: Sprite2D = %Sprite2D
 @onready var _collision: CollisionShape2D = %CollisionShape2D
@@ -51,6 +55,9 @@ func _ready() -> void:
 	body_exited.connect(_on_body_exited)
 	sleeping_state_changed.connect(_on_sleeping_state_changed)
 	_apply_data()
+	_base_gravity_scale = gravity_scale
+	_base_linear_damp = linear_damp
+	_base_angular_damp = angular_damp
 	_setup_face()
 	_play_spawn_animation()
 	set_emotion(Enums.FruitEmotion.HAPPY, 0.5)
@@ -289,6 +296,38 @@ func play_land_squash() -> void:
 	if _visual_tween and _visual_tween.is_valid():
 		_visual_tween.kill()
 	_play_impact_wobble(1.0, -1.0 if angular_velocity > 0.0 else 1.0)
+
+
+func apply_gentle_landing(duration: float, gravity_ratio: float) -> void:
+	_temporary_physics_token += 1
+	var token := _temporary_physics_token
+	gravity_scale = clampf(gravity_ratio, 0.25, 0.9)
+	linear_damp = maxf(_base_linear_damp, 1.25)
+	angular_damp = maxf(_base_angular_damp, 2.4)
+	linear_velocity.x *= 0.58
+	angular_velocity *= 0.32
+	_restore_temporary_physics(duration, token)
+
+
+func apply_temporary_calm(duration: float, velocity_retained: float) -> void:
+	_temporary_physics_token += 1
+	var token := _temporary_physics_token
+	var retained := clampf(velocity_retained, 0.15, 0.85)
+	linear_velocity *= retained
+	angular_velocity *= retained * 0.7
+	linear_damp = maxf(_base_linear_damp, 3.2)
+	angular_damp = maxf(_base_angular_damp, 5.0)
+	sleeping = false
+	_restore_temporary_physics(duration, token)
+
+
+func _restore_temporary_physics(duration: float, token: int) -> void:
+	await get_tree().create_timer(maxf(duration, 0.05)).timeout
+	if not is_instance_valid(self) or token != _temporary_physics_token:
+		return
+	gravity_scale = _base_gravity_scale
+	linear_damp = _base_linear_damp
+	angular_damp = _base_angular_damp
 
 
 func _play_impact_wobble(strength: float, direction_sign: float) -> void:

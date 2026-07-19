@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="PetAbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/pet_ability_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+pet_id = &"pet_melon_bear"
+ability_name = "COZY HUG"
+shop_summary = "COZY HUG\nCALMS THE FRUIT PILE"
+activation = 0
+effect = 4
+charge_required = 7
+max_uses_per_run = 2
+effect_duration = 2.2
+effect_value = 0.48
+accent_color = Color(0.64, 0.82, 0.34, 1)

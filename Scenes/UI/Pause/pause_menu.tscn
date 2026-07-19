@@ -10,7 +10,6 @@
 [node name="PauseMenu" type="Control" unique_id=1441074638]
 unique_name_in_owner = true
 process_mode = 3
-visible = false
 z_index = 90
 layout_mode = 3
 anchors_preset = 15
@@ -75,10 +74,10 @@ vertical_alignment = 1
 [node name="CloseButton" type="TextureButton" parent="PanelRoot" unique_id=2114871268]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 569.0
-offset_top = 46.0
-offset_right = 649.0
-offset_bottom = 126.0
+offset_left = 554.0
+offset_top = 31.0
+offset_right = 660.0
+offset_bottom = 150.0
 texture_normal = ExtResource("3")
 ignore_texture_size = true
 stretch_mode = 5
@@ -97,7 +96,7 @@ custom_minimum_size = Vector2(0, 82)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 29
-text = "▶   CONTINUE"
+text = "CONTINUE"
 
 [node name="RestartButton" type="Button" parent="PanelRoot/Buttons" unique_id=1120709456]
 unique_name_in_owner = true
@@ -106,7 +105,7 @@ layout_mode = 2
 theme_type_variation = &"OrangeButton"
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 29
-text = "↻   RESTART"
+text = "RESTART"
 
 [node name="HomeButton" type="Button" parent="PanelRoot/Buttons" unique_id=698826575]
 unique_name_in_owner = true
@@ -115,7 +114,7 @@ layout_mode = 2
 theme_type_variation = &"CoralButton"
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 29
-text = "⌂   HOME"
+text = "HOME"
 
 [node name="SettingsButton" type="Button" parent="PanelRoot/Buttons" unique_id=980007612]
 unique_name_in_owner = true
@@ -124,7 +123,7 @@ layout_mode = 2
 theme_type_variation = &"CreamButton"
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 27
-text = "⚙   SETTINGS"
+text = "SETTINGS"
 
 [node name="SettingsMenu" parent="." unique_id=1771454438 instance=ExtResource("6")]
 layout_mode = 1

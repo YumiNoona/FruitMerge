@@ -9,8 +9,11 @@
 [ext_resource type="PackedScene" uid="uid://5lrjra080tca" path="res://Scenes/UI/GameOver/game_over.tscn" id="7"]
 [ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://bf34mdo5qit6q" path="res://Assets/UI/Container.png" id="9"]
+[ext_resource type="PhysicsMaterial" path="res://Data/Resources/wall_physics.tres" id="9_1sxlb"]
 [ext_resource type="Script" uid="uid://ebvlmnxboh7x" path="res://Scripts/Core/gameplay_juice.gd" id="10"]
 [ext_resource type="Script" uid="uid://daj20d2yayq5d" path="res://Scripts/Core/powerup_controller.gd" id="11"]
+[ext_resource type="Script" uid="uid://c3aa08vxhepn6" path="res://Scripts/Core/pet_ability_controller.gd" id="12"]
+[ext_resource type="Script" uid="uid://c1ljks3a2c7xk" path="res://Scripts/Core/container_rig.gd" id="13"]
 
 [node name="Main" type="Node2D" unique_id=1137529470]
 script = ExtResource("1")
@@ -32,13 +35,15 @@ texture = ExtResource("8")
 
 [node name="ContainerRig" type="Node2D" parent="WorldOrigin" unique_id=1138380202]
 unique_name_in_owner = true
-position = Vector2(0, 50)
+position = Vector2(0, 90)
+script = ExtResource("13")
+container_width_multiplier = 1.12
 
 [node name="ContainerArt" type="Sprite2D" parent="WorldOrigin/ContainerRig" unique_id=1674211724]
 unique_name_in_owner = true
 z_index = -10
-position = Vector2(0, -640)
-scale = Vector2(0.603, 0.603)
+position = Vector2(0, -639.3135)
+scale = Vector2(0.67536, 0.603)
 texture = ExtResource("9")
 
 [node name="BoxContainer" type="Node2D" parent="WorldOrigin/ContainerRig" unique_id=687075484]
@@ -47,6 +52,8 @@ position = Vector2(0, -230)
 
 [node name="Box" parent="WorldOrigin/ContainerRig/BoxContainer" unique_id=1956642608 instance=ExtResource("2")]
 unique_name_in_owner = true
+physics_material_override = ExtResource("9_1sxlb")
+container_half_width = 278.88000000000005
 
 [node name="Camera2D" type="Camera2D" parent="WorldOrigin" unique_id=29525824]
 position = Vector2(0, -640)
@@ -58,7 +65,7 @@ position = Vector2(0, -990)
 [node name="PetContainer" type="Node2D" parent="WorldOrigin" unique_id=1142105273]
 unique_name_in_owner = true
 z_index = 30
-position = Vector2(282, -340)
+position = Vector2(311.88, -340)
 
 [node name="FruitContainer" type="Node2D" parent="." unique_id=238491061]
 unique_name_in_owner = true
@@ -71,6 +78,10 @@ script = ExtResource("10")
 unique_name_in_owner = true
 z_index = 70
 script = ExtResource("11")
+
+[node name="PetAbilityController" type="Node" parent="." unique_id=1699089039]
+unique_name_in_owner = true
+script = ExtResource("12")
 
 [node name="Interface" type="CanvasLayer" parent="." unique_id=1980987107]
 

@@ -90,7 +90,7 @@ mode-selection, three-power loadout, and lively fruit-impact pass:
   input-locked Time Attack finish resolution; non-matching fruit impacts now use
   soft rebound, mass-aware wake motion, squash/tilt, rate-limited plops, and strong
   impact haptics without delaying matching merges;
-- validation: save-v8 migration, three-mode catalog, all mission definitions,
+- validation: save-v9 migration (including Mango-tier removal), three-mode catalog, all mission definitions,
   power coverage, Run Setup interaction, fruit-chain and live impact response,
   shop/UI contracts, direct Home/Game/Shop smoke scenes, and core scenes passed.
 

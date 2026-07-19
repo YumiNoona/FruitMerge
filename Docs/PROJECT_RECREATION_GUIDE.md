@@ -68,7 +68,7 @@ The intended player loop is:
 4. From Home, start a run or open the Shop, Settings, Achievements info, or No Ads panel.
 5. In a run, aim the preview fruit by moving/touching across the container and release to drop it.
 6. Match two equal fruits. The pair shrinks, a new fruit appears, score is awarded, particles and a merge burst play, and the combo system may increase the multiplier.
-7. Use tickets to purchase power-ups. Use powers during a run to level a fruit, shake the pile, remove one smallest fruit, or reposition one fruit.
+7. Equip one purchased pet for a run-local companion ability, and select exactly three purchased power-up types for direct actions.
 8. Create Pineapple, Dragonfruit, or Watermelon to earn 1, 2, or 3 tickets respectively.
 9. If fruit lingers at the dashed danger line long enough, the run ends. Coins are awarded from the run score and the result card appears.
 10. Restart or return Home. The high score, coins, tickets, purchases, and settings persist.
@@ -115,6 +115,7 @@ Merge/
 ├─ Autoloads/                 # Global runtime services
 ├─ Data/
 │  ├─ Fruits/                 # FruitData `.tres` resources
+│  ├─ PetAbilities/           # One PetAbilityData resource per shop pet
 │  ├─ Resources/              # Physics materials
 │  ├─ ShopItems/              # ShopItemData `.tres` resources
 │  └─ Themes/                 # Cozy Godot theme and design notes
@@ -152,12 +153,12 @@ This is the complete high-level map of the current authored scenes. Per-fruit va
 
 | Scene path | Script path | Role |
 | --- | --- | --- |
-| `Scenes/Core/main.tscn` | `Scripts/Core/main.gd` | Live gameplay composition, power-up execution, camera/world feedback. |
+| `Scenes/Core/main.tscn` | `Scripts/Core/main.gd` | Live gameplay composition, pet/power execution, camera/world feedback. |
 | `Scenes/Entities/Box/box.tscn` | `Scripts/Entities/Box/box.gd` | Physical walls/floor and danger line. |
 | `Scenes/Entities/Spawner/spawner.tscn` | `Scripts/Entities/Spawner/spawner.gd` | Preview, aim input, animated guide, and fruit spawning. |
 | `Scenes/Entities/Pet/pet.tscn` | `Scripts/Entities/Pet/pet.gd` | Optional equipped companion in the gameplay world. |
 | `Scenes/Fruits/fruit.tscn` | `Scripts/Entities/Fruit/fruit.gd` | Generic/reference fruit composition. |
-| `Scenes/Fruits/Variants/*.tscn` | `Scripts/Entities/Fruit/fruit.gd` | The fourteen playable tier-specific fruit scenes and manual collision shapes. |
+| `Scenes/Fruits/Variants/*.tscn` | `Scripts/Entities/Fruit/fruit.gd` | The thirteen playable tier-specific fruit scenes and manual collision shapes. |
 | `Scenes/UI/MainMenu/main_menu.tscn` | `Scripts/UI/MainMenu/main_menu.gd` | Loading screen, random tips, daily/home routing. |
 | `Scenes/UI/Home/home.tscn` | `Scripts/UI/Home/home.gd` | Main home screen, mascot, dock, currencies, navigation. |
 | `Scenes/UI/HUD/hud.tscn` | `Scripts/UI/HUD/hud.gd` | In-game score/powers/next fruit/danger/combo/pause UI. |
@@ -329,7 +330,11 @@ Owns two persistent music players for shuffled crossfades and a pool of eight SF
 
 ### `Bootstrap.gd`
 
-Restores saved data and settings at startup. In debug builds it calls `EconomyManager.set_debug_powerups(1)`, so every implemented power begins at ×1 for testing. This overwrites any previous debug-session inventory on each launch; remove or gate the grant before release.
+Restores saved data and settings at startup. In debug builds it calls
+`EconomyManager.set_debug_powerups(1)` and `set_debug_wallet(10000, 100)`, so every
+implemented power begins at ×1 and the test wallet begins at 10K coins/100 tickets.
+This overwrites previous debug-session test balances on each launch; remove or keep
+the entire seed behind `OS.is_debug_build()` before release.
 
 ### `AdManager.gd`
 
@@ -369,6 +374,8 @@ These are the important `EventBus` signals and normal producers/consumers:
 | --- | --- | --- |
 | `fruit_merged(tier, world_pos, score)` | MergeService | Main VFX, HUD combo text, Pet |
 | `fruit_dropped(tier)` | Spawner | HUD next-fruit preview |
+| `fruit_spawned(fruit)` | Spawner | Equipped pet's direct-drop physics effect |
+| `next_fruit_changed(primary,secondary,show_secondary)` | Spawner | HUD one/two-fruit preview |
 | `score_changed(score)` | GameManager | HUD |
 | `high_score_changed(high_score)` | GameManager | HUD/Home |
 | `coins_changed(coins)` | EconomyManager | HUD/Home/Shop |
@@ -380,6 +387,8 @@ These are the important `EventBus` signals and normal producers/consumers:
 | `powerup_count_changed(id,count)` | EconomyManager | HUD/Shop |
 | `powerup_requested(id)` | HUD | Main gameplay coordinator |
 | `powerup_targeting_changed(active,message)` | Main | HUD hint/highlight |
+| `pet_ability_charge_changed(...)` | PetAbilityController | Companion presentation/debugging |
+| `pet_ability_activated(...)` | PetAbilityController | Companion presentation/telemetry |
 | `state_changed(state)` | GameManager | Spawner/Box/Pet/etc. |
 
 Rule of thumb: emit data, not nodes where possible. `fruit_merged` emits world position and tier rather than exposing a mutable fruit node to UI. This reduces use-after-free errors.
@@ -405,12 +414,11 @@ They must remain identical. The current order is:
 | 5 | `LEMON` | Lemon | Orange |
 | 6 | `ORANGE` | Orange | Apple |
 | 7 | `APPLE` | Apple | Peach |
-| 8 | `PEACH` | Peach | Mango |
-| 9 | `MANGO` | Mango | Coconut |
-| 10 | `COCONUT` | Coconut | Pineapple |
-| 11 | `PINEAPPLE` | Pineapple | Dragonfruit |
-| 12 | `DRAGONFRUIT` | Dragonfruit | Watermelon |
-| 13 | `WATERMELON` | Watermelon | none; final tier |
+| 8 | `PEACH` | Peach | Coconut |
+| 9 | `COCONUT` | Coconut | Pineapple |
+| 10 | `PINEAPPLE` | Pineapple | Dragonfruit |
+| 11 | `DRAGONFRUIT` | Dragonfruit | Watermelon |
+| 12 | `WATERMELON` | Watermelon | none; final tier |
 
 Each `Data/Fruits/*.tres` is a `FruitData` resource. Its relevant fields are:
 
@@ -460,7 +468,7 @@ The root has `use_scene_visuals = true` and `use_scene_collision = true`. This i
 
 ### Collision tuning procedure
 
-1. Open the variant scene, for example `Scenes/Fruits/Variants/mango.tscn`.
+1. Open the variant scene, for example `Scenes/Fruits/Variants/coconut.tscn`.
 2. Select `CollisionShape2D`.
 3. Use Circle, Capsule, or Rectangle based on the silhouette.
 4. Move the shape if stems/leaves make the visual centre different from the physical centre.
@@ -508,7 +516,16 @@ This stateful check is important: a newly dropped fruit normally crosses the das
 
 ### Important layout relationship
 
-The visual `ContainerArt` and physical `BoxContainer/Box` are authored together under `Main/WorldOrigin/ContainerRig`. Open `Scenes/Core/main.tscn` and move `ContainerRig.position` to reposition the complete container without desynchronizing its artwork, floor, walls, or danger line. The shipped rig has a local `y = 50` downward offset. Do not try to position the gameplay container from `hud.tscn`: HUD is a CanvasLayer-only reusable UI scene and intentionally has no world physics.
+The visual `ContainerArt` and physical `BoxContainer/Box` are authored together under `Main/WorldOrigin/ContainerRig`. Open `Scenes/Core/main.tscn` and move `ContainerRig.position` to reposition the complete container without desynchronizing its artwork, floor, walls, or danger line. The shipped rig has a local `y = 90` downward offset. Do not try to position the gameplay container from `hud.tscn`: HUD is a CanvasLayer-only reusable UI scene and intentionally has no world physics.
+
+To resize safely, select `WorldOrigin/ContainerRig` and change
+`Container Sizing > Container Width Multiplier` or `Container Height Multiplier`.
+The shipped values are `1.12` wide and `1.00` high; supported Inspector ranges are
+`0.85–1.20` and `0.85–1.15`. `container_rig.gd` updates the container texture,
+both walls, floor, danger-line depth, horizontal drop clamp, spawner height, and
+pet edge position together. Keep `ContainerRig.scale = (1, 1)` and do not scale
+`ContainerArt`, `Box`, or individual collision shapes manually. Use the rig's
+`Position Y` separately when the goal is only to move the complete container.
 
 The Box scene is an authored child instance, so it appears in Main's scene tree. Expand `WorldOrigin/ContainerRig/BoxContainer/Box` to locate it; open `box.tscn` to edit the three collision shapes, or enable editable children on the instance when inspecting them in Main.
 
@@ -633,7 +650,7 @@ Main (Node2D, main.gd)
    └─ GameOverPanel
 ```
 
-The camera keeps a local position of `(0, -640)` inside `WorldOrigin`. Its global editor position is therefore `(360, 640)`, aligning the 720×1280 Camera2D rectangle with the HUD canvas. This makes the world’s physical floor land low in the phone viewport while keeping room for the top HUD and bottom FruitDock. UI should not be placed in world coordinates unless it deliberately belongs to a fruit/physics effect.
+The camera keeps a local position of `(0, -640)` inside `WorldOrigin`. Its global editor position is therefore `(360, 640)`, aligning the 720×1280 Camera2D rectangle with the HUD canvas. This makes the world’s physical floor land low in the phone viewport while keeping room for the top HUD. UI should not be placed in world coordinates unless it deliberately belongs to a fruit/physics effect.
 
 ### Coordinate conversion
 
@@ -660,9 +677,9 @@ HUD overlays that are visual only must use `MOUSE_FILTER_IGNORE`. Interactive bu
 - coin and ticket pills;
 - up to three loadout-filtered power buttons below the header;
 - next fruit panel on the opposite side;
+- an optional second upcoming-fruit icon used only by Banana Fox;
 - danger overlay/warning;
 - combo banner and score pop container;
-- FruitDock art at the bottom;
 - ticket reward banner;
 - Pause Menu instance.
 
@@ -673,15 +690,17 @@ HUD overlays that are visual only must use `MOUSE_FILTER_IGNORE`. Interactive bu
 | Top 8–106 px | pause, score, currencies | none; dedicated HUD strip |
 | 112–206 px | powers left, next fruit right | top edge of box / drop preview |
 | ~215–1050 px | actual container and fruit playfield | all interactive gameplay |
-| bottom ~117 px | FruitDock art | physical floor / pile |
+| bottom ~117 px | clear gameplay view | physical floor / pile |
 
-The FruitDock image already includes the merge-order fruit artwork. HUD must **not** dynamically add another row of fruit icons over it. The old `FruitGuide` runtime system was removed specifically to avoid duplicated art and null-node errors.
+The HUD intentionally has no fruit-progression dock and must not dynamically add
+a second fruit row. The old `FruitGuide` runtime system was removed to avoid
+duplicated art and null-node errors.
 
-`hud.gd` listens to EventBus rather than polling gameplay objects. It updates score/currencies/next fruit, launches combo animation, shows power counts, opens Pause, and displays high-tier ticket reward text.
+`hud.gd` listens to EventBus rather than polling gameplay objects. It updates score/currencies/one-or-two upcoming fruits, launches combo animation, shows power counts, opens Pause, and displays high-tier ticket reward text. The standalone `ModeLabel` and decorative `PowerupTray` were removed. Time Attack writes its countdown into `ScoreCaption`; safe-area placement and loadout visibility use `PowerupColumn` directly.
 
 Mission runs add two runtime panels: a compact objective/progress card and a
 larger dismissible instruction card with the relevant fruit icon. Level 1 hides
-the power tray; later lessons show only their pinned power. Classic and Time
+the power column; later lessons show only their pinned power. Classic and Time
 Attack show exactly the three types selected in Run Setup.
 
 ---
@@ -762,10 +781,10 @@ card because its large content margins make rows overlap. The name row is reserv
 above the icon, the optional stacked power-up count stays over the icon, and both
 the card root and catalog panel clip children. The old owned badge and its status
 label were removed; an owned cosmetic uses the existing action label to show
-`SELECT` or `ACTIVE` instead. Pet descriptions are hidden and their icons expand
-into the reclaimed space; descriptions remain available on skins and power-ups.
-Those descriptions reserve a two-line 50 px row and use 16 px NERILLKID text with
-a light warm outline, while non-pet artwork uses a 150 px row. The catalog remains
+`SELECT` or `ACTIVE` instead. Pet flavor descriptions remain hidden; the same
+two-line row now shows the pet's concise ability summary loaded from
+`PetAbilityData`. Ability, skin, and power-up copy uses 16 px NERILLKID text with
+a light warm outline, while all artwork uses a contained 150 px row. The catalog remains
 wheel-, drag-, and touch-scrollable, but `ShopScroll.vertical_scroll_mode` is
 `SCROLL_MODE_SHOW_NEVER` so no scrollbar covers the card edge.
 `ShopScroll.scroll_deadzone` is 8 px. The grid and each card keep
@@ -782,7 +801,8 @@ not the old 7–9 px floating blocks. Tabs use `ShopTabButton`: warm peach is id
 sunny orange is hover/focus, and vibrant leaf green is selected. Tooltips use the
 theme's cream `TooltipPanel` with coral border and dark-brown `TooltipLabel`; do
 not rely on Godot's unstyled default tooltip. Card tooltip copy is action-oriented
-(`Unlock`, `Need`, `Tap to select`, or `active`) and never restores pet descriptions.
+(`Unlock`, `Need`, `Tap to select`, or `active`). Pet tooltips append the concise
+ability summary and never restore the old flavor paragraph.
 
 ---
 
@@ -853,9 +873,52 @@ id, display_name, icon, cost, currency, category, description
 
 `shop_item_button.gd` does presentation and button handling. The dependency-free `shop_item_display_rules.gd` owns small display policies such as hiding a redundant `x1` consumable badge; keeping those rules separate also lets tests load them without compiling the scene-bound button and its autoload dependencies. `EconomyManager` is the authority for affordability, spending, ownership, and save calls. Do not let a UI card edit money dictionaries directly.
 
+Home, HUD, Shop, and the reusable CurrencyPill route wallet balances through
+`CurrencyFormatter.format_amount()`. Exact integers below 1000 remain unchanged;
+four-digit values use `K` (`1000 → 1K`, `1250 → 1.2K`, `10000 → 10K`) and
+million-scale values use `M`. Only wallet counters are compacted. Item prices,
+reward-card amounts, arithmetic, and saved values remain exact integers. Wallet
+tooltips retain the exact amount for desktop inspection.
+
 ### Pets
 
-The currently equipped pet is spawned only when a run begins. `pet.gd` maps item IDs to textures and responds to merges/danger/game over with small mood animations. Equipping a pet during a run does not replace the existing pet until the next run unless that behavior is deliberately added.
+The currently equipped pet is spawned only when a run begins. `pet.gd` maps item
+IDs to textures and owns mood, charge-ring, touch-target, callout, and companion
+animation presentation. `PetAbilityController` owns gameplay rules, and the
+resources in `Data/PetAbilities/` own balance values. Do not put effect switches
+back into the visual Pet script or the generic `ShopItemData` resource.
+
+Only the equipped pet is active; purchased pets never stack. Mission Levels 1-7
+disable abilities to preserve deterministic tutorials. Classic and Time Attack
+allow one equipped companion. Charged pets are activated by touching the pet's
+128 px diameter Area2D after its ring fills. Passive and automatic effects call
+out through the same scene but require no additional HUD slot.
+
+| Pet | Ability | Rule |
+| --- | --- | --- |
+| Strawberry Cat | Match Pounce | Six merges; next direct drop is gently nudged toward a present match; two uses. |
+| Watermelon Pup | Safety Bark | First danger warning is cleared and followed by 2.5 seconds of grace. |
+| Peach Bunny | Gentle Landing | Every fifth direct drop temporarily falls and spins more softly. |
+| Pineapple Meow | High Perch | Up to three danger entries display the least crowded lane. |
+| Melon Bear | Cozy Hug | Seven merges; touch to settle the current pile; two uses. |
+| Banana Fox | Future Sight | Shows the reserve tier as a second Next Fruit icon. |
+| Berry Hamster | Coin Cache | Up to three x3 combo chains award one extra coin. |
+| Cherry Bird | Encore | Adds 0.22 seconds to the combo window. |
+| Lemon Frog | Lucky Hop | Six merges; touch to reroll the immediate next tier; two uses. |
+
+Equipping a pet during a run does not replace the existing pet until the next run.
+Spawner owns its upcoming-tier queue and safe-lane arrows, Box owns danger grace,
+Fruit restores temporary physics modifiers, and GameManager owns the combo bonus.
+
+### Add a new pet
+
+1. Add the art and `Data/ShopItems/pet_<id>.tres`, then register it in `ShopCatalog.tres`.
+2. Add its texture ID to `pet.gd`.
+3. Create one `PetAbilityData` resource under `Data/PetAbilities/`.
+4. Register the stable pet ID and resource path in `PetAbilityCatalog`.
+5. Reuse an existing effect or add a focused effect to `PetAbilityController` and the authoritative gameplay system it needs.
+6. Keep the effect out of Missions unless the mission definition explicitly supports it.
+7. Add validation and test coverage; every catalog pet must have exactly one valid ability.
 
 ---
 
@@ -977,7 +1040,7 @@ If `FruitData.merge_sfx` is empty, a procedural 16-bit WAV pop is generated and 
 - pooled `GPUParticles2D` in Main: short yellow/orange particle burst.
 - `score_pop.tscn`: floating `+score` UI label at the world-to-screen conversion of a merge.
 - combo banner: back-eased scale/rotation, then rising fade.
-- high-tier ticket banner: bounce/fade notification over the FruitDock area.
+- high-tier ticket banner: bounce/fade notification near the bottom playfield.
 - Grab ring: drawn by Main in `_draw()` around the held fruit.
 - remove crosshair: temporary Sprite2D marker attached to candidates.
 
@@ -1017,7 +1080,7 @@ fake softness because collision remains scene-authoritative.
 
 ```json
 {
-  "version": 8,
+  "version": 9,
   "coins": 0,
   "tickets": 0,
   "owned_items": "[...]",
@@ -1053,7 +1116,7 @@ The day advances by one when the player next opens an unclaimed new day after a 
 
 ### Resetting saves during development
 
-Delete `user://savegame.json` through Godot’s user-data location or provide a debug reset button. Do not hard-code a filesystem path in release code. Remember that debug power-up injection is memory-only at startup but consumed counts may still be saved during that play session.
+Delete `user://savegame.json` through Godot’s user-data location or provide a debug reset button. Do not hard-code a filesystem path in release code. Remember that debug startup reapplies one of each power, 10,000 coins, and 100 tickets after loading; purchases and consumed counts may still be saved during that play session but the test wallet is reset on the next debug launch.
 
 ---
 
@@ -1163,7 +1226,7 @@ Use this order to avoid building UI before the game has a stable world:
 ### Phase E — UX and meta game
 
 21. Add Loading, Home, bottom dock, Shop, Pause, Settings, Daily Reward, and No Ads scenes.
-22. Add ShopItemData, purchases, ownership/equipping, pets, coins, and tickets.
+22. Add ShopItemData, purchases, ownership/equipping, coins/tickets, then add PetAbilityData, PetAbilityCatalog, and the run-local companion controller.
 23. Add power-up inventory, HUD counts, and gameplay-side power execution.
 24. Move all power feel values into the resources’ Power-up Juice section.
 25. Add daily reward gating and persistence.
@@ -1198,7 +1261,9 @@ Also run `git diff --check` if using Git to catch whitespace errors.
 
 | Symptom | Likely cause | Correct fix |
 | --- | --- | --- |
-| HUD says `FruitGuide` node not found | Script still references a deleted dynamic dock node | Keep only FruitDock art and remove dynamic guide code. |
+| HUD says `FruitGuide` or `FruitDockArt` not found | Script/validator still references a deleted progression dock | Remove the stale reference; the current HUD has no fruit dock. |
+| GDScript warns that `floor` shadows a built-in | A local collision variable reused the global `floor()` function name | Name the node reference `floor_collision`; keep `Floor` only as the scene-node name. |
+| HUD says `PowerupTray` or `ModeLabel` not found | The retired visual nodes were deleted but stale script paths remain | Use `PowerupColumn` directly and display Time Attack in `ScoreCaption`. |
 | Watermelon resource not found | Filename spelling/case mismatch or scene missing | Use `Watermelon.png`, fix `.tres` and GameOver references, retain `watermelon.tscn`. |
 | Fruit leaks through a wall | collision shape/wall mismatch or fast body | inspect variant collision, wall collision, continuous collision detection. |
 | Fruits land on tips / feel stiff | shape does not match silhouette, mass/damping/material needs tuning | adjust the per-fruit collision scene first; then material values. |
@@ -1219,7 +1284,9 @@ Also run `git diff --check` if using Git to catch whitespace errors.
 - physics material live-tuning panel;
 - an event log for merges and power consumption.
 
-The current debug build grants each implemented power ×1 at launch and overwrites any previous debug-session count. Remove this behavior before a production release.
+The current debug build grants each implemented power ×1 and resets the wallet to
+10,000 coins/100 tickets at launch. All grants are guarded by
+`OS.is_debug_build()`; remove this behavior before a production release.
 
 ---
 
@@ -1267,7 +1334,7 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 
 ### Gameplay
 
-- [ ] All 14 fruit tiers load in the exact correct order.
+- [ ] All 13 fruit tiers load in the exact correct order; Peach merges directly into Coconut.
 - [ ] Every fruit scene has `Sprite2D`, `Face`, `CollisionShape2D`, `WakeTimer`, and `IdleTimer`.
 - [ ] Fruit collision shapes are tuned manually and match art.
 - [ ] Preview clamps inside the container and guide animates to the real landing point.
@@ -1284,7 +1351,7 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 - [ ] Loading → conditional daily reward → Home flow works.
 - [ ] Daily reward only returns while today’s reward is unclaimed.
 - [ ] HUD does not block pointer input over the container.
-- [ ] FruitDock is art-only; no duplicate dynamic fruit row exists.
+- [ ] HUD has no fruit-progression dock or duplicate dynamic fruit row.
 - [ ] Pause, Settings, Shop, Game Over, and No Ads screens close/navigate correctly.
 - [ ] All canvas-screen layouts fit the logical 720 × 1280 viewport.
 - [ ] Run Setup requires exactly three distinct powers for Classic/Time Attack;
@@ -1292,8 +1359,8 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 
 ### Meta game
 
-- [ ] Coins/tickets update in Home, HUD, Shop, and save file.
-- [ ] Pets/skins buy and equip correctly.
+- [ ] Coins/tickets update in Home, HUD, Shop, and save file; wallet counters compact values at 1K while prices/rewards remain exact.
+- [ ] Pets/skins buy and equip correctly; only the equipped pet activates one valid ability, and Missions keep abilities disabled.
 - [ ] Power counts buy, display, consume, and save correctly.
 - [ ] Debug power grant is disabled or release-gated before launch.
 - [ ] Ad/billing bridge is real and verified before release.

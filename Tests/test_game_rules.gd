@@ -2,6 +2,7 @@ extends RefCounted
 
 const ShopItemDisplayRulesScript = preload("res://Scripts/UI/Components/shop_item_display_rules.gd")
 const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
+const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_formatter.gd")
 
 
 static func run() -> PackedStringArray:
@@ -32,6 +33,18 @@ static func run() -> PackedStringArray:
 		failures.append("Existing profiles must migrate with onboarding complete and all modes unlocked")
 	if migrated_v7.get("settings", {}).get("power_loadout", []).size() != 3:
 		failures.append("Save v8 migration must create a valid three-power loadout")
+	var migrated_v8: Dictionary = SaveManager.call("_migrate_data", {
+		"version": 8,
+		"lifetime_highest_tier": 13,
+		"discovered_tiers": [0, 8, 9, 10, 13],
+		"settings": {},
+	})
+	if int(migrated_v8.get("version", 0)) != 9:
+		failures.append("Save migration must upgrade profiles to version 9")
+	if int(migrated_v8.get("lifetime_highest_tier", -1)) != Enums.FruitTier.WATERMELON:
+		failures.append("Save v9 migration must shift post-Mango highest tiers down once")
+	if migrated_v8.get("discovered_tiers", []) != [0, 8, 9, 12]:
+		failures.append("Save v9 migration must remove Mango and preserve later discoveries")
 	if Enums.GameMode.keys() != ["CLASSIC", "MISSIONS", "TIME_ATTACK"]:
 		failures.append("Only Classic, Missions, and Time Attack may be exposed")
 	if MissionManager.definitions.size() != 7:
@@ -54,10 +67,42 @@ static func run() -> PackedStringArray:
 		failures.append("Time Attack must retain its two-minute resource setting")
 	if FruitDatabase.get_next_fruit(Enums.FruitTier.WATERMELON) != null:
 		failures.append("Watermelon must be the end of the chain")
+	if FruitDatabase.get_next_fruit(Enums.FruitTier.PEACH) != FruitDatabase.get_fruit(Enums.FruitTier.COCONUT):
+		failures.append("Peach must merge directly into Coconut after Mango removal")
+	var box_scene := load("res://Scenes/Entities/Box/box.tscn") as PackedScene
+	var resized_box := box_scene.instantiate() as Box if box_scene else null
+	if not resized_box:
+		failures.append("Box scene must instantiate for synchronized container sizing")
+	else:
+		resized_box.configure_dimensions(548.0, 902.0, 24.2, 770.0)
+		var left_wall := resized_box.get_node_or_null("LeftWall") as CollisionShape2D
+		var floor_collision := resized_box.get_node_or_null("Floor") as CollisionShape2D
+		var left_shape := left_wall.shape as RectangleShape2D if left_wall else null
+		var floor_shape := floor_collision.shape as RectangleShape2D if floor_collision else null
+		if not left_shape or not floor_shape \
+				or not is_equal_approx(left_shape.size.y, 902.0) \
+				or not is_equal_approx(floor_shape.size.x, 596.4) \
+				or not is_equal_approx(resized_box.container_half_width, 274.0) \
+				or not is_equal_approx(resized_box.danger_line_y, -770.0):
+			failures.append("Container resizing must update walls, floor, width, and danger depth together")
+		resized_box.free()
 	if EconomyManager.get_currency_balance(&"invalid") != -1:
 		failures.append("Unknown currency must be rejected")
 	if Bootstrap.DEBUG_POWERUP_COUNT != 1:
 		failures.append("Debug builds must seed exactly one of each power-up")
+	if Bootstrap.DEBUG_COIN_COUNT != 10_000 or Bootstrap.DEBUG_TICKET_COUNT != 100:
+		failures.append("Debug builds must seed the 10K coin and 100 ticket test wallet")
+	var compact_currency_cases := {
+		0: "0",
+		999: "999",
+		1000: "1K",
+		1250: "1.2K",
+		10_000: "10K",
+		1_250_000: "1.2M",
+	}
+	for raw_amount in compact_currency_cases:
+		if CurrencyFormatterScript.format_amount(raw_amount) != compact_currency_cases[raw_amount]:
+			failures.append("Compact currency formatting failed for %d" % raw_amount)
 	if ShopItemDisplayRulesScript.should_show_inventory_count(1):
 		failures.append("The shop must hide redundant x1 power-up inventory badges")
 	if not ShopItemDisplayRulesScript.should_show_inventory_count(2):
@@ -66,6 +111,24 @@ static func run() -> PackedStringArray:
 		failures.append("Pet cards must keep descriptions hidden")
 	if not ShopItemDisplayRulesScript.should_show_description(&"powerup"):
 		failures.append("Non-pet shop cards must retain useful descriptions")
+	var pet_abilities := PetAbilityCatalog.get_all()
+	if pet_abilities.size() != 9:
+		failures.append("All nine purchasable pets must have gameplay ability data")
+	var pet_ids: Dictionary = {}
+	var pet_effects: Dictionary = {}
+	for ability in pet_abilities:
+		if not ability.is_valid_definition():
+			failures.append("Pet ability resources must pass their data contract")
+		pet_ids[ability.pet_id] = true
+		pet_effects[ability.effect] = true
+	if pet_ids.size() != 9 or pet_effects.size() != 9:
+		failures.append("Pet IDs and gameplay effects must remain one-to-one")
+	var pup_ability := PetAbilityCatalog.get_ability(&"pet_watermelon_pup")
+	if not pup_ability or pup_ability.max_uses_per_run != 1 or pup_ability.effect_duration < 2.0:
+		failures.append("Watermelon Pup must retain one meaningful automatic danger rescue")
+	var fox_ability := PetAbilityCatalog.get_ability(&"pet_banana_fox")
+	if not fox_ability or fox_ability.effect != PetAbilityData.Effect.FUTURE_SIGHT:
+		failures.append("Banana Fox must own the second-preview Future Sight effect")
 	if FloatingButtonAnimatorScript.DEFAULT_FLOAT_HEIGHT < 6.0 \
 		or FloatingButtonAnimatorScript.DEFAULT_FLOAT_HEIGHT > 12.0 \
 		or FloatingButtonAnimatorScript.DEFAULT_TRAVEL_DURATION < 0.8:

@@ -3,7 +3,7 @@ extends Node
 const SAVE_PATH := "user://savegame.json"
 const TEMP_PATH := "user://savegame.tmp"
 const BACKUP_PATH := "user://savegame.backup.json"
-const SAVE_VERSION := 8
+const SAVE_VERSION := 9
 
 var _settings: Dictionary = {}
 var _loaded := false
@@ -145,8 +145,31 @@ func _migrate_data(data: Dictionary) -> Dictionary:
 		var loadout_settings: Dictionary = migrated.get("settings", {}).duplicate(true)
 		loadout_settings["power_loadout"] = ["powerup_level_up", "powerup_shake_box", "powerup_remove_smallest"]
 		migrated["settings"] = loadout_settings
+	if version < 9:
+		migrated["lifetime_highest_tier"] = _migrate_removed_mango_tier(
+			int(migrated.get("lifetime_highest_tier", 0))
+		)
+		var legacy_discoveries = migrated.get("discovered_tiers", [Enums.FruitTier.CHERRY])
+		var migrated_discoveries: Array[int] = []
+		if legacy_discoveries is Array:
+			for raw_tier in legacy_discoveries:
+				var migrated_tier := _migrate_removed_mango_tier(int(raw_tier))
+				if migrated_tier not in migrated_discoveries:
+					migrated_discoveries.append(migrated_tier)
+		if migrated_discoveries.is_empty():
+			migrated_discoveries.append(Enums.FruitTier.CHERRY)
+		migrated_discoveries.sort()
+		migrated["discovered_tiers"] = migrated_discoveries
 	migrated["version"] = SAVE_VERSION
 	return migrated
+
+
+func _migrate_removed_mango_tier(old_tier: int) -> int:
+	if old_tier < 9:
+		return clampi(old_tier, Enums.FruitTier.CHERRY, Enums.FruitTier.WATERMELON)
+	if old_tier == 9:
+		return Enums.FruitTier.PEACH
+	return clampi(old_tier - 1, Enums.FruitTier.CHERRY, Enums.FruitTier.WATERMELON)
 
 
 func _load_data(data: Dictionary) -> void:

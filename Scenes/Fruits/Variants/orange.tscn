@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://c6cxm4w76tscr" path="res://Assets/Fruits/Orange.png" id="4"]
 
 [sub_resource type="CircleShape2D" id="CollisionCircle"]
-radius = 57.0
+radius = 60.0
 
 [node name="Orange" type="RigidBody2D" unique_id=1910019761 groups=["fruits"]]
 z_index = 10

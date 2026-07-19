@@ -1,14 +1,15 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bji6my34plcel"]
 
-[ext_resource type="Script" path="res://Scripts/Entities/Fruit/fruit.gd" id="1"]
+[ext_resource type="Script" uid="uid://bkb1mxfyg0jrf" path="res://Scripts/Entities/Fruit/fruit.gd" id="1"]
 [ext_resource type="PhysicsMaterial" path="res://Data/Resources/fruit_physics.tres" id="2"]
-[ext_resource type="Resource" path="res://Data/Fruits/watermelon.tres" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/Fruits/Watermelon.png" id="4"]
+[ext_resource type="Resource" uid="uid://s31mutudiwqb" path="res://Data/Fruits/watermelon.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://d2s5jyg0h0uba" path="res://Assets/Fruits/Watermelon.png" id="4"]
 
-[sub_resource type="CircleShape2D" id="CollisionCircle"]
-radius = 132.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8lxnx"]
+radius = 126.76701
+height = 253.53403
 
-[node name="Watermelon" type="RigidBody2D" groups=["fruits"]]
+[node name="Watermelon" type="RigidBody2D" unique_id=131313629 groups=["fruits"]]
 z_index = 10
 mass = 0.5
 physics_material_override = ExtResource("2")
@@ -23,27 +24,29 @@ data = ExtResource("3")
 use_scene_visuals = true
 use_scene_collision = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=144987212]
 unique_name_in_owner = true
 scale = Vector2(0.733333, 0.733333)
 texture = ExtResource("4")
 
-[node name="Face" type="AnimatedSprite2D" parent="."]
+[node name="Face" type="AnimatedSprite2D" parent="." unique_id=1887972159]
 unique_name_in_owner = true
 visible = false
 z_index = 1
 position = Vector2(0, -4)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=70511202]
 unique_name_in_owner = true
-shape = SubResource("CollisionCircle")
+position = Vector2(2, 15)
+rotation = 1.6929693
+shape = SubResource("CapsuleShape2D_8lxnx")
 
-[node name="WakeTimer" type="Timer" parent="."]
+[node name="WakeTimer" type="Timer" parent="." unique_id=1647150621]
 unique_name_in_owner = true
 wait_time = 0.4
 one_shot = true
 
-[node name="IdleTimer" type="Timer" parent="."]
+[node name="IdleTimer" type="Timer" parent="." unique_id=530210180]
 unique_name_in_owner = true
 wait_time = 9.0
 one_shot = true

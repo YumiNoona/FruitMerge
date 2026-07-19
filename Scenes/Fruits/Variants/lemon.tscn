@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://b6buneydg5qla" path="res://Assets/Fruits/Lemon.png" id="4"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_e0pm2"]
-radius = 50.0
-height = 108.0
+radius = 52.0
+height = 114.0
 
 [node name="Lemon" type="RigidBody2D" unique_id=274619178 groups=["fruits"]]
 z_index = 10
@@ -37,7 +37,7 @@ position = Vector2(0, -4)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=918056350]
 unique_name_in_owner = true
-position = Vector2(0, 8)
+position = Vector2(0, 6)
 shape = SubResource("CapsuleShape2D_e0pm2")
 
 [node name="WakeTimer" type="Timer" parent="." unique_id=44747523]

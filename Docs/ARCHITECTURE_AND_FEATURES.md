@@ -8,6 +8,11 @@ chain metadata (tier, score, next tier, mass, preview fallbacks, and the UI-only
 `guide_color` accent). Do not
 replace a variant collision shape from code.
 
+The live chain has 13 contiguous tiers: Cherry, Berries, Strawberry, Grape,
+Kiwi, Lemon, Orange, Apple, Peach, Coconut, Pineapple, Dragonfruit, and
+Watermelon. Mango was removed; Peach now merges directly into Coconut. The
+gameplay HUD intentionally has no fruit-progression dock.
+
 When adding a fruit:
 
 1. Add its enum tier in `Scripts/Data/enums.gd`.
@@ -30,11 +35,53 @@ When adding a fruit:
 - `FruitDatabase`: scene-authoritative fruit scene and preview cache.
 - `GameplayJuice`: merge particles, bursts, shake, haptics, and tier rewards.
 - `PowerupController`: input targeting and the six gameplay power-up behaviors.
+- `PetAbilityController`: run-local companion charge, activation, balancing, and
+  effects; it keeps gameplay rules out of the visual `Pet` script.
 - `PowerLoadoutManager`: validates the saved three-type selection, exposes the
   active HUD slots, and routes consumption through tutorial or saved inventory.
 - `MissionManager`: loads the seven mission resources, owns campaign progress,
   deterministic spawn sequences, tutorial charges, objectives, and unlocks.
 - `FruitFactory`: creates fruit under the dedicated gameplay `FruitContainer`.
+
+## Companion pet abilities
+
+Pets are gameplay companions rather than stacked account bonuses. Buying a pet
+unlocks it permanently, but only the pet equipped in the `pet` equipment slot is
+spawned and active during a run. Owned pets never stack. Mission Levels 1-7 keep
+pet abilities disabled so their authored spawn sequences and power-up lessons
+remain deterministic; the equipped pet may still appear and react cosmetically.
+
+`PetAbilityData` is separate from the generic shop item and power-up juice data.
+The nine resources under `Data/PetAbilities/` define the pet ID, activation type,
+effect, merge charge, run-use cap, interval, duration, strength, shop summary,
+and accent color. `PetAbilityCatalog` maps stable shop IDs to those resources.
+`PetAbilityController` reads the equipped ID once when Main starts, listens to
+EventBus, and delegates presentation to the existing `Pet` scene.
+
+| Pet | Ability | Runtime behavior |
+| --- | --- | --- |
+| Strawberry Cat | Match Pounce | Six merges charge a tap that nudges the next drop toward an existing match; two uses. |
+| Watermelon Pup | Safety Bark | The first danger warning automatically clears dwell and grants 2.5 seconds of grace. |
+| Peach Bunny | Gentle Landing | Every fifth direct drop temporarily reduces gravity, spin, and landing motion. |
+| Pineapple Meow | High Perch | Up to three danger warnings reveal the least crowded drop lane for four seconds. |
+| Melon Bear | Cozy Hug | Seven merges charge a tap that damps and settles the pile; two uses. |
+| Banana Fox | Future Sight | The Next panel reveals a second queued fruit. |
+| Berry Hamster | Coin Cache | The first three combo chains reaching x3 grant one bonus coin each. |
+| Cherry Bird | Encore | Adds 0.22 seconds to the combo grace window without a direct score multiplier. |
+| Lemon Frog | Lucky Hop | Six merges charge a next-fruit reroll; two uses. |
+
+Charged abilities use the pet itself as a mobile touch target rather than adding
+a seventh HUD power. The Pet scene has a 128 px world-space touch diameter, a
+colored charge ring, READY/callout text, reduced-motion-aware jump/squash motion,
+a procedural chirp, particles, and power haptic. Passive/automatic pets briefly
+call out their effect when it triggers. Shop cards continue hiding the old flavor
+description and instead show the concise ability name/effect from PetAbilityData.
+
+Spawner maintains one reserve tier for Future Sight and emits
+`next_fruit_changed`; without Banana Fox the reserve remains hidden. Lucky Hop
+rerolls only the immediate next tier and is disabled in Missions. Box owns danger
+grace, Fruit owns temporary gentle/calm physics restoration, and Spawner owns the
+temporary safe-lane arrows, keeping each effect with its authoritative system.
 
 ## Game modes and run setup
 
@@ -61,7 +108,8 @@ Time Attack reads `duration_seconds` from `Data/Modes/time_attack.tres`. At zero
 new drops and power input lock immediately, existing merges get a 0.35-second
 resolution window, then the mode-specific result screen saves its separate best.
 The HUD pulses the final ten seconds and adds stronger haptics at 10, 5, 3, 2,
-and 1 seconds.
+and 1 seconds. The removed standalone `ModeLabel` is not required: Time Attack
+uses the existing score caption for its countdown, while other modes show SCORE.
 
 ## Seven-level mission campaign
 
@@ -125,6 +173,17 @@ panel bounce and reward haptic. Only the currency texture travels—there is no
 duplicate amount label—and the wallet number changes on impact. The target is
 measured after safe-area placement.
 
+Wallet balances in Home, gameplay HUD, Shop, and the reusable CurrencyPill use
+the shared `CurrencyFormatter`. Values with four or more digits are compact:
+`1000` becomes `1K`, `1250` becomes `1.2K`, and million-scale values use `M`.
+The compact text is presentation only; EconomyManager and save data retain the
+exact integer, and each wallet label exposes that exact value in its tooltip.
+Reward amounts and shop prices remain unshortened so costs stay unambiguous.
+
+Debug startup reapplies an exact test wallet of 10,000 coins and 100 tickets after
+the profile is loaded, alongside one of each power-up. These are debug conveniences
+owned by Bootstrap/EconomyManager and must remain guarded by `OS.is_debug_build()`.
+
 Imported WAV loop flags are disabled on private runtime copies. The manager plays
 every track once in a shuffled four-track cycle, reshuffles after the cycle, and
 prevents the last track of one cycle from immediately repeating as the first track
@@ -139,11 +198,15 @@ Camera2D and authored gameplay world together so the camera's 720×1280 rectangl
 overlaps the fixed-screen HUD in the 2D editor without changing runtime composition.
 Inside it, a scene-authored `ContainerRig` contains both `ContainerArt` and the
 physical `BoxContainer/Box` instance. Moving that one rig keeps the artwork, walls,
-floor, and danger line aligned; its shipped local Y offset is 50 pixels. The Box
-instance remains expandable in Main and its collision shapes are edited in
-`Scenes/Entities/Box/box.tscn`. The standalone HUD scene intentionally contains no
-world visuals or physics. World-space clamps must use the Box's global center and
-must not assume that gameplay is centered around global X zero.
+floor, and danger line aligned; its shipped local Y offset is 90 pixels. The
+`ContainerRig` script exposes safe width and height multipliers. Width ships at
+`1.12` and height at `1.00`, giving mobile play more horizontal room without
+pushing the preview into the header. They update the art, wall/floor dimensions,
+danger depth, spawner height/drop width, and pet edge placement together. Resize
+through those properties only—leave the rig's Node2D scale at `(1, 1)` and do not
+resize individual collision children. The standalone HUD scene intentionally contains
+no world visuals or physics. World-space clamps must use the Box's global center
+and must not assume that gameplay is centered around global X zero.
 
 The central peach Play button on the Home and Shop docks shares
 `Scripts/UI/Components/floating_button_animator.gd`. It runs a subtle looping
@@ -213,8 +276,9 @@ The three-column shop grid uses compact 210 x 320 minimum cards with a card-loca
 panel style. Card contents now fit their declared minimum height, titles have a
 dedicated row, and the optional stacked power-up count sits over the icon. The
 owned badge was removed; owned cosmetics reuse the action label for `SELECT` and
-`ACTIVE`. Pet descriptions stay hidden and pet icons use the extra vertical room.
-Skin and power-up descriptions use 16 px NERILLKID text, a warm two-pixel outline,
+`ACTIVE`. Pet flavor descriptions stay hidden; their former text row now contains
+a concise two-line companion ability summary. Pet, skin, and power-up summaries
+use 16 px NERILLKID text, a warm two-pixel outline,
 and a dedicated two-line row. Both cards and the catalog panel clip their children.
 The catalog scrollbar is visually hidden while touch drag and wheel scrolling remain
 available. The grid and Shop card roots use `MOUSE_FILTER_PASS`, while decorative
@@ -246,17 +310,22 @@ Shake Box uses one synchronized directional tween for its physical walls and
 container art, plus an upward fruit impulse, delayed lateral kick, spin, camera
 feedback, and two-stage haptics. Its strength and timing values remain data-driven.
 
-The scene still contains six reusable HUD slots, but `hud.gd` hides every slot not
+The scene still contains six reusable HUD slots under `PowerupColumn`, but
+`hud.gd` hides every slot not
 present in `PowerLoadoutManager.active_loadout`; normal runs therefore display
 exactly three and tutorial missions display zero or one. `PowerupController`
 validates and consumes through the loadout manager, preventing hidden/unselected
-types from being activated by an event or stale UI reference.
+types from being activated by an event or stale UI reference. The retired
+`PowerupTray` panel and `ModeLabel` must not be referenced by either the scene or
+script; mobile safe-area placement and visibility are applied directly to
+`PowerupColumn`.
 
 ## Cosmetics
 
-Pets use their existing texture map. Skin equipment changes the in-game fruit and
-container palette. The Sunny Garden background enables the supplied background art.
-Equipment is stored as profile settings and applies on the next gameplay scene.
+Pets use their existing texture map and combine cosmetic mood reactions with the
+companion abilities documented above. Skin equipment changes the in-game fruit
+and container palette. The Sunny Garden background enables the supplied background
+art. Equipment is stored as profile settings and applies on the next gameplay scene.
 
 ## Mobile UX
 
@@ -270,15 +339,18 @@ a vibration toggle. Their taller rows and 12 px gaps provide mobile touch and re
 space. The unused Theme, Game Feel, and Language selectors were removed; the settings
 scene has no placeholder controls that claim to apply an unavailable option.
 
-Save version 8 builds on the version-7 cleanup of retired `theme`,
+Save version 9 builds on the version-7 cleanup of retired `theme`,
 `feedback_level`, and audio-restore keys.
 It restores standard haptic/shake/motion values so a previously saved Minimal/Off
-preset cannot remain active without a corresponding control. Version 8 also adds
+preset cannot remain active without a corresponding control. Version 8 adds
 the Time Attack best, three-power loadout, campaign progress, and a dedicated
 `daily_mission_data` dictionary. During migration, the old `mission_data` daily
 payload moves to `daily_mission_data`; existing users receive completed onboarding,
 while a new profile starts at Mission 1. Music/SFX volumes, the internal locale
-value, and the independent vibration toggle are preserved.
+value, and the independent vibration toggle are preserved. Version 9 removes the
+old Mango tier from saved discoveries: old Mango maps back to Peach, and old
+Coconut-through-Watermelon values shift down once so existing progress remains
+attached to the same fruit.
 
 Hindi and Spanish `.po` resources translate the core interface. Newly added copy
 should use stable English source strings so Godot's automatic translation lookup

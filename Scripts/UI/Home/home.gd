@@ -3,6 +3,7 @@ extends Control
 const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
 const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
 const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
+const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_formatter.gd")
 
 @onready var _best_score_label: Label = %BestScoreLabel
 @onready var _coins_label: Label = %CoinsLabel
@@ -171,11 +172,13 @@ func _finish_wallet_reward(currency: StringName, target_panel: PanelContainer) -
 
 
 func _update_coins(amount: int) -> void:
-	_coins_label.text = "%d" % amount
+	_coins_label.text = CurrencyFormatterScript.format_amount(amount)
+	_coins_label.tooltip_text = "%d coins" % amount
 
 
 func _update_tickets(amount: int) -> void:
-	_tickets_label.text = "%d" % amount
+	_tickets_label.text = CurrencyFormatterScript.format_amount(amount)
+	_tickets_label.tooltip_text = "%d tickets" % amount
 
 
 func _start_game() -> void:

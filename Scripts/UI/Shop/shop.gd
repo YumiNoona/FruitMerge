@@ -2,6 +2,7 @@ extends Control
 
 const CATALOG: ShopCatalogData = preload("res://Data/ShopCatalog.tres")
 const FloatingButtonAnimatorScript = preload("res://Scripts/UI/Components/floating_button_animator.gd")
+const CurrencyFormatterScript = preload("res://Scripts/UI/Components/currency_formatter.gd")
 
 var _current_category: StringName = &"pet"
 var _shop_items: Array[ShopItemData] = []
@@ -86,11 +87,13 @@ func _populate_shop() -> void:
 
 
 func _on_coins_changed(amount: int) -> void:
-	_shop_coins_label.text = "%d" % amount
+	_shop_coins_label.text = CurrencyFormatterScript.format_amount(amount)
+	_shop_coins_label.tooltip_text = "%d coins" % amount
 
 
 func _on_tickets_changed(amount: int) -> void:
-	_shop_tickets_label.text = "%d" % amount
+	_shop_tickets_label.text = CurrencyFormatterScript.format_amount(amount)
+	_shop_tickets_label.tooltip_text = "%d tickets" % amount
 
 
 func _on_rewarded_ad_pressed() -> void:

@@ -5,8 +5,8 @@
 [ext_resource type="Resource" path="res://Data/Fruits/apple.tres" id="3"]
 [ext_resource type="Texture2D" uid="uid://bdem4r2snexac" path="res://Assets/Fruits/Apple.png" id="4"]
 
-[sub_resource type="CircleShape2D" id="CollisionCircle"]
-radius = 66.1211
+[sub_resource type="CircleShape2D" id="CircleShape2D_6d70p"]
+radius = 68.007355
 
 [node name="Apple" type="RigidBody2D" unique_id=1979707704 groups=["fruits"]]
 z_index = 10
@@ -37,7 +37,7 @@ position = Vector2(0, -4)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=840150242]
 unique_name_in_owner = true
 position = Vector2(0, 9)
-shape = SubResource("CollisionCircle")
+shape = SubResource("CircleShape2D_6d70p")
 
 [node name="WakeTimer" type="Timer" parent="." unique_id=1070577265]
 unique_name_in_owner = true

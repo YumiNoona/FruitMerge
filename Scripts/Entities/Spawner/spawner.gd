@@ -10,6 +10,8 @@ const SPAWN_TIERS: Array[Enums.FruitTier] = [
 	Enums.FruitTier.GRAPE,
 ]
 const GUIDE_FALLBACK_COLOR := Color(1.0, 0.72, 0.2, 1.0)
+const SAFE_LANE_COLOR := Color(0.50, 0.92, 0.35, 0.92)
+const UI_FONT: FontFile = preload("res://Assets/Fonts/NERILLKID Trial.ttf")
 
 @export var drop_cooldown: float = 0.55
 @export var max_x_spread: float = 238.0
@@ -35,6 +37,10 @@ var _guide_phase: float = 0.0
 var _guide_color: Color = GUIDE_FALLBACK_COLOR
 var _current_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
 var _next_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
+var _reserve_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
+var _show_second_preview := false
+var _safe_lane_timer := 0.0
+var _safe_lane_global_x := 0.0
 var _fruit_parent: Node
 
 @onready var _cooldown_timer: Timer = $CooldownTimer
@@ -43,16 +49,27 @@ var _fruit_parent: Node
 
 func _ready() -> void:
 	_cooldown_timer.timeout.connect(_on_cooldown_ready)
-	_update_tiers()
+	_next_tier = _get_random_spawn_tier()
+	_reserve_tier = _get_random_spawn_tier()
+	_publish_upcoming_fruits()
 	EventBus.state_changed.connect(_on_state_changed)
 	_refresh_preview()
 
 
-func configure(fruit_parent: Node) -> void:
+func configure(fruit_parent: Node, playfield_half_width: float = -1.0) -> void:
 	_fruit_parent = fruit_parent
+	if playfield_half_width > 0.0:
+		set_playfield_half_width(playfield_half_width)
+
+
+func set_playfield_half_width(playfield_half_width: float) -> void:
+	max_x_spread = maxf(40.0, playfield_half_width - 11.0)
 
 
 func _process(delta: float) -> void:
+	if _safe_lane_timer > 0.0:
+		_safe_lane_timer = maxf(0.0, _safe_lane_timer - delta)
+		queue_redraw()
 	if GameManager.is_powerup_targeting:
 		_preview.visible = false
 		queue_redraw()
@@ -69,6 +86,8 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
+	if _safe_lane_timer > 0.0:
+		_draw_safe_lane_hint()
 	if GameManager.is_powerup_targeting or not _can_drop or not GameManager.can_accept_gameplay_input() or not _preview.visible:
 		return
 	var bottom_extent := FruitDatabase.get_collision_bottom_extent(_current_tier)
@@ -106,14 +125,90 @@ func _on_state_changed(state: Enums.GameState) -> void:
 	_preview.visible = state == Enums.GameState.PLAYING and _can_drop
 	if state != Enums.GameState.PLAYING:
 		_is_aiming = false
+		_safe_lane_timer = 0.0
 	queue_redraw()
 
 
 func _update_tiers() -> void:
 	_current_tier = _next_tier
-	_next_tier = _get_random_spawn_tier()
-	GameManager.next_fruit_tier = _next_tier
+	_next_tier = _reserve_tier
+	_reserve_tier = _get_random_spawn_tier()
+	_publish_upcoming_fruits()
 	_refresh_preview()
+
+
+func _publish_upcoming_fruits() -> void:
+	GameManager.next_fruit_tier = _next_tier
+	GameManager.second_next_fruit_tier = _reserve_tier
+	GameManager.show_second_next_preview = _show_second_preview
+	EventBus.next_fruit_changed.emit(_next_tier, _reserve_tier, _show_second_preview)
+
+
+func set_second_preview_enabled(enabled: bool) -> void:
+	_show_second_preview = enabled
+	_publish_upcoming_fruits()
+
+
+func reroll_next_fruit() -> bool:
+	if GameManager.current_mode == Enums.GameMode.MISSIONS:
+		return false
+	var previous := _next_tier
+	for _attempt in 5:
+		_next_tier = SPAWN_TIERS[GameManager.get_random_spawn_index(SPAWN_TIERS.size())]
+		if _next_tier != previous:
+			break
+	_publish_upcoming_fruits()
+	return _next_tier != previous
+
+
+func get_current_tier() -> int:
+	return _current_tier
+
+
+func show_safe_lane_hint(duration: float) -> void:
+	_safe_lane_global_x = _find_safest_lane_x()
+	_safe_lane_timer = maxf(duration, 0.1)
+	queue_redraw()
+
+
+func _find_safest_lane_x() -> float:
+	var best_x := global_position.x
+	var best_score := -INF
+	var samples := 7
+	for sample in samples:
+		var ratio := float(sample) / float(samples - 1)
+		var candidate_x := global_position.x + lerpf(-max_x_spread * 0.82, max_x_spread * 0.82, ratio)
+		var pile_peak := global_position.y + 980.0
+		for node in get_tree().get_nodes_in_group("fruits"):
+			if not node is Fruit or not is_instance_valid(node) or node.is_merging:
+				continue
+			var fruit := node as Fruit
+			if absf(fruit.global_position.x - candidate_x) > 62.0:
+				continue
+			var tier := fruit.data.tier as int if fruit.data else 0
+			pile_peak = minf(pile_peak, fruit.global_position.y - FruitDatabase.get_collision_top_extent(tier))
+		var center_preference := absf(candidate_x - global_position.x) * 0.025
+		var score := pile_peak - center_preference
+		if score > best_score:
+			best_score = score
+			best_x = candidate_x
+	return best_x
+
+
+func _draw_safe_lane_hint() -> void:
+	var local_x := to_local(Vector2(_safe_lane_global_x, global_position.y)).x
+	var fade := clampf(_safe_lane_timer / 0.35, 0.0, 1.0)
+	var color := SAFE_LANE_COLOR
+	color.a *= fade
+	draw_string(UI_FONT, Vector2(local_x - 23.0, 118.0), "SAFE", HORIZONTAL_ALIGNMENT_CENTER, 46.0, 17, color)
+	for index in 4:
+		var y := 136.0 + float(index) * 28.0
+		var arrow := PackedVector2Array([
+			Vector2(local_x - 11.0, y),
+			Vector2(local_x, y + 9.0),
+			Vector2(local_x + 11.0, y),
+		])
+		draw_polyline(arrow, color, 3.0, true)
 
 
 func _refresh_preview() -> void:
@@ -211,6 +306,7 @@ func _drop_at(x: float) -> void:
 	var parent := _fruit_parent if is_instance_valid(_fruit_parent) else get_parent()
 	parent.add_child(fruit)
 	fruit.global_position = spawn_position
+	EventBus.fruit_spawned.emit(fruit)
 
 	await get_tree().physics_frame
 	if is_instance_valid(fruit):

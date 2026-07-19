@@ -1,3 +1,4 @@
+@tool
 class_name Box
 extends StaticBody2D
 
@@ -14,9 +15,14 @@ var _game_over_triggered: bool = false
 var _entered_container: Dictionary = {}
 var _danger_dwell: Dictionary = {}
 var _worried_fruit: Fruit
+var _danger_grace_remaining := 0.0
+var _container_inner_height := 820.0
+var _wall_thickness := 22.0
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_physics_process(false)
 	var wall_mat := load("res://Data/Resources/wall_physics.tres") as PhysicsMaterial
 	if wall_mat:
 		physics_material_override = wall_mat
@@ -27,12 +33,55 @@ func _draw() -> void:
 	var calm := Color(0.84, 0.42, 0.28, 0.58)
 	var alert := Color(1.0, 0.3, 0.22, 0.95)
 	var line_color := calm.lerp(alert, get_danger_ratio())
-	draw_dashed_line(Vector2(-242, danger_line_y), Vector2(242, danger_line_y), line_color, 4.0, 14.0, true)
+	var line_half_width := maxf(1.0, container_half_width - _wall_thickness * 0.32)
+	draw_dashed_line(Vector2(-line_half_width, danger_line_y), Vector2(line_half_width, danger_line_y), line_color, 4.0, 14.0, true)
+
+
+func configure_dimensions(
+		inner_width: float,
+		inner_height: float,
+		wall_thickness: float,
+		danger_depth: float
+) -> void:
+	var safe_width := maxf(inner_width, 160.0)
+	var safe_height := maxf(inner_height, 240.0)
+	var safe_thickness := maxf(wall_thickness, 8.0)
+	container_half_width = safe_width * 0.5
+	_container_inner_height = safe_height
+	_wall_thickness = safe_thickness
+	danger_line_y = -clampf(danger_depth, safe_thickness * 2.0, safe_height - safe_thickness)
+
+	var wall_shape := RectangleShape2D.new()
+	wall_shape.size = Vector2(safe_thickness, safe_height)
+	var floor_shape := RectangleShape2D.new()
+	floor_shape.size = Vector2(safe_width + safe_thickness * 2.0, safe_thickness)
+	var wall_x := container_half_width + safe_thickness * 0.5
+	var wall_y := -safe_height * 0.5
+	var left_wall := get_node_or_null("LeftWall") as CollisionShape2D
+	var right_wall := get_node_or_null("RightWall") as CollisionShape2D
+	var floor_collision := get_node_or_null("Floor") as CollisionShape2D
+	if left_wall:
+		left_wall.position = Vector2(-wall_x, wall_y)
+		left_wall.shape = wall_shape
+	if right_wall:
+		right_wall.position = Vector2(wall_x, wall_y)
+		right_wall.shape = wall_shape
+	if floor_collision:
+		floor_collision.position = Vector2.ZERO
+		floor_collision.shape = floor_shape
+	queue_redraw()
+
+
+func get_container_inner_height() -> float:
+	return _container_inner_height
 
 
 func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	if _game_over_triggered:
 		return
+	_danger_grace_remaining = maxf(0.0, _danger_grace_remaining - delta)
 	var danger_world_y := global_position.y + danger_line_y
 	var live_ids: Dictionary = {}
 	var highest_dwell := 0.0
@@ -51,7 +100,7 @@ func _physics_process(delta: float) -> void:
 			_entered_container[fruit_id] = true
 
 		var fruit_top := fruit.global_position.y - FruitDatabase.get_collision_top_extent(tier)
-		var is_candidate := inside_width and is_danger_candidate(
+		var is_candidate := _danger_grace_remaining <= 0.0 and inside_width and is_danger_candidate(
 			bool(_entered_container.get(fruit_id, false)),
 			fruit.freeze,
 			fruit.is_merging,
@@ -136,6 +185,15 @@ func _reset_danger_state() -> void:
 		EventBus.danger_line_exited.emit()
 	_restore_worried_fruit()
 	queue_redraw()
+
+
+func grant_danger_grace(duration: float) -> void:
+	_danger_grace_remaining = maxf(_danger_grace_remaining, maxf(duration, 0.0))
+	_reset_danger_state()
+
+
+func get_danger_grace_remaining() -> float:
+	return _danger_grace_remaining
 
 
 func get_danger_ratio() -> float:

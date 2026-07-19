@@ -15,8 +15,11 @@ var lifetime_highest_tier := 0
 var discovered_tiers: Array[int] = [Enums.FruitTier.CHERRY]
 var is_new_high_score := false
 var next_fruit_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
+var second_next_fruit_tier: Enums.FruitTier = Enums.FruitTier.CHERRY
+var show_second_next_preview := false
 var active_combo := 0
 var combo_timer := 0.0
+var combo_window_bonus := 0.0
 var run_time_remaining := 0.0
 var run_end_reason := ""
 var run_input_locked := false
@@ -86,6 +89,9 @@ func start_new_run(mode := -1) -> void:
 	run_input_locked = false
 	_time_attack_finishing = false
 	next_fruit_tier = Enums.FruitTier.CHERRY
+	second_next_fruit_tier = Enums.FruitTier.CHERRY
+	show_second_next_preview = false
+	combo_window_bonus = 0.0
 	run_time_remaining = TIME_ATTACK_CONFIG.duration_seconds if current_mode == Enums.GameMode.TIME_ATTACK else 0.0
 	_last_timer_second = ceili(run_time_remaining)
 	_seed_run_rng()
@@ -133,7 +139,7 @@ func add_score(points: int) -> int:
 		active_combo += 1
 	else:
 		active_combo = 1
-	combo_timer = COMBO_WINDOW
+	combo_timer = COMBO_WINDOW + maxf(0.0, combo_window_bonus)
 	var multiplier := minf(1.0 + float(active_combo - 1) * 0.25, MAX_COMBO_MULTIPLIER)
 	var awarded_points := maxi(0, int(points * multiplier))
 	score += awarded_points

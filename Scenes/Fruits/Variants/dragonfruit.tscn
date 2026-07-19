@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://btotqis3rih4m" path="res://Assets/Fruits/Dragonfruit.png" id="4"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_trxwv"]
-radius = 95.0
-height = 224.0
+radius = 107.0
+height = 232.0
 
 [node name="Dragonfruit" type="RigidBody2D" unique_id=1221101773 groups=["fruits"]]
 z_index = 10

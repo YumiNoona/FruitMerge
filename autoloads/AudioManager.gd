@@ -42,6 +42,7 @@ var _spatial_pool_index: int = 0
 var _merge_sfx_cache: Dictionary = {}
 var _impact_sfx_cache: Dictionary = {}
 var _last_impact_sfx_msec := -1000
+var _pet_ability_sfx: AudioStreamWAV
 
 
 func _ready() -> void:
@@ -300,6 +301,12 @@ func play_fruit_impact(relative_speed: float, tier: int, position: Vector2) -> v
 	play_sfx_at(_impact_sfx_cache[cache_key] as AudioStream, position)
 
 
+func play_pet_ability_sfx(position: Vector2) -> void:
+	if not _pet_ability_sfx:
+		_pet_ability_sfx = _build_pet_chirp()
+	play_sfx_at(_pet_ability_sfx, position)
+
+
 func _build_merge_pop(tier: int) -> AudioStreamWAV:
 	var duration := 0.18 + minf(float(tier), 8.0) * 0.006
 	var sample_count := int(PROCEDURAL_SFX_RATE * duration)
@@ -339,6 +346,28 @@ func _build_impact_plop(bucket: int, tier: int) -> AudioStreamWAV:
 		var body := sin(TAU * pitch * time)
 		var soft_click := sin(TAU * pitch * 2.7 * time) * exp(-time * 48.0) * 0.20
 		var value := clampf((body + soft_click) * envelope * amplitude, -1.0, 1.0)
+		pcm.encode_s16(sample_index * 2, int(value * 32767.0))
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = PROCEDURAL_SFX_RATE
+	wav.stereo = false
+	wav.data = pcm
+	return wav
+
+
+func _build_pet_chirp() -> AudioStreamWAV:
+	var duration := 0.26
+	var sample_count := int(PROCEDURAL_SFX_RATE * duration)
+	var pcm := PackedByteArray()
+	pcm.resize(sample_count * 2)
+	for sample_index in sample_count:
+		var time := float(sample_index) / float(PROCEDURAL_SFX_RATE)
+		var progress := time / duration
+		var envelope := sin(PI * progress) * pow(1.0 - progress, 0.45)
+		var first_note := sin(TAU * 520.0 * time)
+		var second_note := sin(TAU * 780.0 * time) * smoothstep(0.34, 0.48, progress)
+		var sparkle := sin(TAU * 1260.0 * time) * 0.18
+		var value := clampf((first_note * 0.48 + second_note * 0.38 + sparkle) * envelope * 0.38, -1.0, 1.0)
 		pcm.encode_s16(sample_index * 2, int(value * 32767.0))
 	var wav := AudioStreamWAV.new()
 	wav.format = AudioStreamWAV.FORMAT_16_BITS

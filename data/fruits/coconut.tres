@@ -7,11 +7,11 @@
 script = ExtResource("1")
 sprite = ExtResource("2")
 sprite_visual_width = 306.0
-tier = 10
+tier = 9
 display_name = "Coconut"
 radius = 103.0
 score_value = 66
-next_tier = 11
+next_tier = 10
 mass = 2.95
 color = Color(1, 1, 1, 1)
 guide_color = Color(0.48, 0.25, 0.15, 1)

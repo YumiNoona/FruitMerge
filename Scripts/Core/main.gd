@@ -6,6 +6,7 @@ extends Node2D
 
 @onready var _box_container: Node2D = %BoxContainer
 @onready var _box: Box = %Box
+@onready var _container_rig: ContainerRig = %ContainerRig
 @onready var _spawner_container: Node2D = %SpawnerContainer
 @onready var _pet_container: Node2D = %PetContainer
 @onready var _fruit_container: Node2D = %FruitContainer
@@ -15,14 +16,17 @@ extends Node2D
 @onready var _hud: Control = %HUD
 @onready var _juice: GameplayJuice = %GameplayJuice
 @onready var _powerups: PowerupController = %PowerupController
+@onready var _pet_abilities: PetAbilityController = %PetAbilityController
 
 var _spawner: Spawner
+var _pet: Pet
 
 
 func _ready() -> void:
 	_setup_world()
 	_juice.configure(merge_burst_scene, _hud)
 	_powerups.configure(_box, _box_container, _container_art, _fruit_container, _juice)
+	_pet_abilities.configure(_pet, _box, _spawner, _fruit_container, _juice)
 	MissionManager.attach_gameplay(_fruit_container)
 	EventBus.state_changed.connect(_on_state_changed)
 	EventBus.fruit_merged.connect(_juice.on_fruit_merged)
@@ -34,9 +38,11 @@ func _setup_world() -> void:
 	if spawner_scene:
 		_spawner = spawner_scene.instantiate()
 		_spawner_container.add_child(_spawner)
-		_spawner.configure(_fruit_container)
+		_spawner.configure(_fruit_container, _container_rig.get_playfield_half_width())
 	if pet_scene and not EconomyManager.get_equipped_item(&"pet").is_empty():
-		_pet_container.add_child(pet_scene.instantiate())
+		_pet = pet_scene.instantiate() as Pet
+		if _pet:
+			_pet_container.add_child(_pet)
 
 
 func _apply_equipped_cosmetics() -> void:

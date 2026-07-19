@@ -3,6 +3,7 @@ extends Button
 const COIN_ICON: Texture2D = preload("res://Assets/Menu/Coin.png")
 const TICKET_ICON: Texture2D = preload("res://Assets/UI/Ticket.png")
 const ShopItemDisplayRulesScript = preload("res://Scripts/UI/Components/shop_item_display_rules.gd")
+const PetAbilityCatalogScript = preload("res://Scripts/Data/pet_ability_catalog.gd")
 
 var shop_item: ShopItemData
 
@@ -31,10 +32,10 @@ func setup(item: ShopItemData) -> void:
 
 func _apply_item() -> void:
 	_name_label.text = shop_item.display_name
-	_description_label.text = shop_item.description
-	var is_pet := not ShopItemDisplayRulesScript.should_show_description(shop_item.category)
-	_description_label.visible = not is_pet
-	_icon_rect.custom_minimum_size.y = 200.0 if is_pet else 150.0
+	var is_pet := shop_item.category == &"pet"
+	_description_label.text = PetAbilityCatalogScript.get_shop_summary(shop_item.id) if is_pet else shop_item.description
+	_description_label.visible = not _description_label.text.is_empty()
+	_icon_rect.custom_minimum_size.y = 150.0
 	_icon_rect.texture = shop_item.icon
 	_icon_rect.visible = shop_item.icon != null
 	_currency_glyph.texture = TICKET_ICON if shop_item.currency == &"tickets" else COIN_ICON
@@ -79,6 +80,10 @@ func _update_button_state() -> void:
 		tooltip_text = "Buy one %s" % shop_item.display_name
 	else:
 		tooltip_text = "Unlock %s" % shop_item.display_name
+	if shop_item.category == &"pet":
+		var ability_summary := PetAbilityCatalogScript.get_shop_summary(shop_item.id).replace("\n", " - ")
+		if not ability_summary.is_empty():
+			tooltip_text += "\n%s" % ability_summary
 
 
 func _on_coins_changed(_amount: int) -> void:

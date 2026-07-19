@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PetAbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/pet_ability_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+pet_id = &"pet_berry_hamster"
+ability_name = "COIN CACHE"
+shop_summary = "COIN CACHE\nUP TO THREE COMBO COINS"
+activation = 1
+effect = 6
+max_uses_per_run = 3
+interval = 3
+accent_color = Color(0.67, 0.34, 0.78, 1)

@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://bnrainhfkfu7d" path="res://Assets/Fruits/Pineapple.png" id="4"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_61sd3"]
-radius = 108.0
-height = 236.0
+radius = 113.01769
+height = 247.99715
 
 [node name="Pineapple" type="RigidBody2D" unique_id=657392621 groups=["fruits"]]
 z_index = 10
@@ -38,6 +38,7 @@ position = Vector2(0, -4)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=544047875]
 unique_name_in_owner = true
 position = Vector2(0, 56)
+rotation = 3.1241393
 shape = SubResource("CapsuleShape2D_61sd3")
 
 [node name="WakeTimer" type="Timer" parent="." unique_id=1347354099]

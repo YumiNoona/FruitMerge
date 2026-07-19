@@ -19,6 +19,14 @@ func set_debug_powerups(amount: int) -> void:
 		powerup_counts[item_id] = amount
 		EventBus.powerup_count_changed.emit(item_id, amount)
 
+
+func set_debug_wallet(coin_amount: int, ticket_amount: int) -> void:
+	# Debug-only launch seed. Bootstrap reapplies it after loading the profile.
+	coins = maxi(0, coin_amount)
+	tickets = maxi(0, ticket_amount)
+	EventBus.coins_changed.emit(coins)
+	EventBus.tickets_changed.emit(tickets)
+
 func add_coins(amount: int) -> void:
 	if amount <= 0:
 		return

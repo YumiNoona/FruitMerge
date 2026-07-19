@@ -7,11 +7,11 @@
 script = ExtResource("1")
 sprite = ExtResource("2")
 sprite_visual_width = 313.0
-tier = 12
+tier = 11
 display_name = "Dragonfruit"
 radius = 122.0
 score_value = 91
-next_tier = 13
+next_tier = 12
 mass = 4.0
 color = Color(1, 1, 1, 1)
 guide_color = Color(0.94, 0.12, 0.45, 1)

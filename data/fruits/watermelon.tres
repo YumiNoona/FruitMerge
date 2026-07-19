@@ -7,7 +7,7 @@
 script = ExtResource("1")
 sprite = ExtResource("2")
 sprite_visual_width = 360.0
-tier = 13
+tier = 12
 display_name = "Watermelon"
 radius = 132.0
 score_value = 105

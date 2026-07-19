@@ -1,6 +1,8 @@
 extends Node
 
 const DEBUG_POWERUP_COUNT := 1
+const DEBUG_COIN_COUNT := 10_000
+const DEBUG_TICKET_COUNT := 100
 const ProjectValidatorScript = preload("res://Scripts/Debug/project_validator.gd")
 
 
@@ -10,6 +12,7 @@ func _ready() -> void:
 	SaveManager.load_game()
 	if OS.is_debug_build():
 		EconomyManager.set_debug_powerups(DEBUG_POWERUP_COUNT)
+		EconomyManager.set_debug_wallet(DEBUG_COIN_COUNT, DEBUG_TICKET_COUNT)
 	AudioManager.music_vol = SaveManager.get_setting("music_volume", 0.8)
 	AudioManager.sfx_vol = SaveManager.get_setting("sfx_volume", 0.8)
 	if DisplayServer.get_name() != "headless":
