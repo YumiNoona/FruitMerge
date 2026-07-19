@@ -18,6 +18,7 @@ var _shop_items: Array[ShopItemData] = []
 @onready var _tab_powerups: Button = %TabPowerups
 @onready var _shop_header: TextureRect = $ShopHeader
 @onready var _settings_menu = $SettingsMenu
+@onready var _run_setup: RunSetupPanel = $RunSetup
 
 
 func _ready() -> void:
@@ -35,6 +36,7 @@ func _ready() -> void:
 	%SettingsButton.pressed.connect(_open_settings)
 	%ShopButton.pressed.connect(_bounce_shop_header)
 	_play_button.pressed.connect(_on_play_pressed)
+	_run_setup.closed.connect(func(): _play_button.disabled = false)
 	_rewarded_ad_button.pressed.connect(_on_rewarded_ad_pressed)
 	AdManager.ad_message.connect(_on_ad_message)
 	AdManager.rewarded_ad_availability_changed.connect(_on_rewarded_ad_availability_changed)
@@ -120,7 +122,8 @@ func _on_back_pressed() -> void:
 
 
 func _on_play_pressed() -> void:
-	GameManager.start_new_run()
+	_play_button.disabled = true
+	_run_setup.open()
 
 
 func _open_settings() -> void:

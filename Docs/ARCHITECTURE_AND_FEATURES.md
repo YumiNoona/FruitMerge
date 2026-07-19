@@ -30,17 +30,56 @@ When adding a fruit:
 - `FruitDatabase`: scene-authoritative fruit scene and preview cache.
 - `GameplayJuice`: merge particles, bursts, shake, haptics, and tier rewards.
 - `PowerupController`: input targeting and the six gameplay power-up behaviors.
+- `PowerLoadoutManager`: validates the saved three-type selection, exposes the
+  active HUD slots, and routes consumption through tutorial or saved inventory.
+- `MissionManager`: loads the seven mission resources, owns campaign progress,
+  deterministic spawn sequences, tutorial charges, objectives, and unlocks.
 - `FruitFactory`: creates fruit under the dedicated gameplay `FruitContainer`.
 
-## Game modes
+## Game modes and run setup
 
-- Classic: standard danger-line endless play.
-- Relaxed: danger-line game over is disabled.
-- Time Attack: a two-minute scoring run.
-- Daily Challenge: the spawn sequence is seeded from the date and the first
-  completed run each day awards a bonus ticket.
+`Enums.GameMode` intentionally exposes exactly three entries:
 
-The mode button below Play cycles through these modes.
+- Classic: standard danger-line endless play with its own best score.
+- Missions: a seven-level guided campaign with authored objectives and setups.
+- Time Attack: a resource-configured two-minute scoring run with a separate best.
+
+Home's Play/Choose Mode buttons and Shop's center Play button open the same
+`RunSetupPanel`. A new profile is routed
+to Mission 1 instead of free play. Completing Mission 1 unlocks Classic;
+completing Mission 7 unlocks Time Attack. Existing version-7 profiles migrate as
+fully onboarded so an update never re-locks modes for current players.
+
+Classic and Time Attack advance from mode selection to a six-card power picker.
+Exactly three distinct types are required. The selection is saved as
+`settings.power_loadout`, but quantities remain in `EconomyManager`. Retry keeps
+the active selection; every fresh Play flow asks for a loadout again.
+Pause/Game Over retry keeps a normal run's selected types. Mission retry is routed
+through `MissionManager`, restoring the authored scenario and free tutorial charge.
+
+Time Attack reads `duration_seconds` from `Data/Modes/time_attack.tres`. At zero,
+new drops and power input lock immediately, existing merges get a 0.35-second
+resolution window, then the mode-specific result screen saves its separate best.
+The HUD pulses the final ten seconds and adds stronger haptics at 10, 5, 3, 2,
+and 1 seconds.
+
+## Seven-level mission campaign
+
+Mission definitions live in `Data/Missions/mission_01.tres` through
+`mission_07.tres`, backed by `MissionDefinition`. Each resource owns its title,
+target fruit/count, deterministic spawn sequence, starting fruit/positions,
+instruction copy, required power, free charge, and coin/ticket reward.
+
+Level 1 teaches matching and merging. Levels 2-7 introduce Level Up, Shake Box,
+Remove Smallest, Grab 'Em, Hammer, and Juice Bomb once each. The required power
+is the only visible mission slot and receives one temporary charge. Temporary
+charges are consumed before permanent inventory, emit the same gameplay events,
+and are recreated on retry; they are never written into `powerup_counts`.
+
+`fruit_merged` retains source-tier semantics for juice. `fruit_created` carries
+the new tier for mission progress, including Level Up results. Tutorial cards
+react to drops, created fruit, and power usage, while scenario target fruit receive
+a short visual pulse unless reduced motion is enabled.
 
 ## Fruit-colored landing guide
 
@@ -126,11 +165,10 @@ only while the fruit remains above the line and is sleeping or moving below the
 configured settled-speed threshold. Frozen/grabbed, merging, fast-falling, and
 outside-container fruit are ignored.
 
-Classic mode shows the warning tint after `danger_warning_delay` (0.5 seconds in
+All three modes show the warning tint after `danger_warning_delay` (0.5 seconds in
 the box scene) and ends the run only at `danger_settle_time` (2.4 seconds). Brief
 bounces recover faster than danger accumulates, preventing warning flashes during
-normal drops while still keeping pressure on a genuinely full container. Relaxed
-mode clears the danger state and never shows the overflow warning.
+normal drops while still keeping pressure on a genuinely full container.
 
 ## Responsive merge timing
 
@@ -140,6 +178,34 @@ convergence instead of a long anticipation pause. Source fruit shrink/fade over
 lock. Normal dropped fruit retain a 0.10-second contact lock. This makes direct
 merges and cascades feel immediate without allowing a fruit to merge twice during
 the same physics contact.
+
+## Lively fruit impact motion
+
+Non-matching fruit collisions use a layered response instead of relying on rigid
+body separation alone. `fruit_physics.tres` uses `0.19` bounce and `0.34` friction,
+which gives a soft rebound and lets round fruit roll out of rigid vertical stacks
+without turning the box into a trampoline. `Fruit._apply_data()` also applies the
+shared lively damping defaults (`0.18` linear and `0.32` angular) after loading the
+scene-authoritative mass.
+
+`Fruit._handle_fruit_impact()` compares the previous and post-contact relative
+velocities. Contacts below `impact_min_speed` are ignored so a resting pile does
+not jitter. Stronger contacts smoothly scale from zero to one and produce:
+
+- directional squash, rebound stretch, and a five-degree sprite tilt;
+- a small mass-aware sideways/lift impulse on the receiving fruit;
+- a small angular wake response so stacked fruit rock and settle naturally;
+- a quiet tier-grouped procedural plop through the spatial SFX pool;
+- a light mobile drop haptic only for strong impacts.
+
+Matching tiers skip this path because MergeService already owns their movement,
+sound, VFX, and haptics. Each receiver has a 0.12-second impact cooldown, while
+AudioManager globally limits plops to one every 45 ms to prevent Shake Box or a
+cascade from becoming noisy. Reduced Motion disables sprite deformation but keeps
+the restrained physical response. All thresholds, impulse velocities, damping,
+visual strength, and timing are exported under the Fruit scene's `Impact feel`
+Inspector category; change these shared script defaults before adding per-tier
+overrides.
 
 ## Portrait shop containment
 
@@ -158,6 +224,11 @@ swallowing vertical drag events before they reach the ScrollContainer. An explic
 old cards immediately, preventing one-frame overlap. Header ad copy is ASCII-only
 and sized for the 720-wide portrait canvas.
 
+The default Cherry and Lemon skin resources are stored as `skin_cherry.tres` and
+`skin_lemon.tres` while retaining the stable save IDs `skin_default` and
+`skin_pastel`. `ShopCatalog.tres` references those current filenames and no longer
+references the retired generic `pet_cat.tres` entry.
+
 Shop presentation comes from `cozy_theme.tres`: cards and buttons use shallow
 2–4 px low-opacity shadows, shop tabs have peach/orange/leaf-green idle/hover/active
 states, and item action panels use green/coral/gold/teal ready/locked/select/active
@@ -174,6 +245,12 @@ implementation. The debug validator ensures every required power-up is catalogue
 Shake Box uses one synchronized directional tween for its physical walls and
 container art, plus an upward fruit impulse, delayed lateral kick, spin, camera
 feedback, and two-stage haptics. Its strength and timing values remain data-driven.
+
+The scene still contains six reusable HUD slots, but `hud.gd` hides every slot not
+present in `PowerLoadoutManager.active_loadout`; normal runs therefore display
+exactly three and tutorial missions display zero or one. `PowerupController`
+validates and consumes through the loadout manager, preventing hidden/unselected
+types from being activated by an event or stale UI reference.
 
 ## Cosmetics
 
@@ -193,10 +270,15 @@ a vibration toggle. Their taller rows and 12 px gaps provide mobile touch and re
 space. The unused Theme, Game Feel, and Language selectors were removed; the settings
 scene has no placeholder controls that claim to apply an unavailable option.
 
-Save version 7 removes retired `theme`, `feedback_level`, and audio-restore keys.
+Save version 8 builds on the version-7 cleanup of retired `theme`,
+`feedback_level`, and audio-restore keys.
 It restores standard haptic/shake/motion values so a previously saved Minimal/Off
-preset cannot remain active without a corresponding control. Music/SFX volumes,
-the internal locale value, and the independent vibration toggle are preserved.
+preset cannot remain active without a corresponding control. Version 8 also adds
+the Time Attack best, three-power loadout, campaign progress, and a dedicated
+`daily_mission_data` dictionary. During migration, the old `mission_data` daily
+payload moves to `daily_mission_data`; existing users receive completed onboarding,
+while a new profile starts at Mission 1. Music/SFX volumes, the internal locale
+value, and the independent vibration toggle are preserved.
 
 Hindi and Spanish `.po` resources translate the core interface. Newly added copy
 should use stable English source strings so Godot's automatic translation lookup
@@ -248,9 +330,10 @@ godot --headless --rendering-method gl_compatibility --path . --script res://Tes
 ```
 
 The content validator also runs automatically in debug builds. It checks the fruit
-chain, scene-owned fruit nodes, shop IDs and definitions, required power-ups, core
-scene paths, settings-slider contract, removed settings options, and shop-card
-containment.
+chain, scene-owned fruit nodes, shop IDs and definitions, the exact three-mode
+catalog, all seven sequential mission definitions, one-time coverage of all six
+tutorial powers, required power-ups, core scene paths, settings-slider contract,
+removed settings options, and shop-card containment.
 
 GDScript warnings are treated as validation defects. Avoid local names that shadow
 base `Node2D`/`CanvasItem` properties, cast enum-to-integer calculations explicitly,

@@ -147,6 +147,7 @@ horizontal_alignment = 1
 [node name="Mascot" type="TextureRect" parent="." unique_id=1764906066]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 35.0
@@ -161,6 +162,7 @@ stretch_mode = 5
 
 [node name="Dock" type="TextureRect" parent="." unique_id=899878851]
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
@@ -197,6 +199,7 @@ stretch_mode = 0
 [node name="HomeButton" type="TextureButton" parent="." unique_id=1127890530]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 44.0
@@ -212,6 +215,7 @@ stretch_mode = 5
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 174.0
@@ -226,6 +230,7 @@ stretch_mode = 5
 [node name="PlayButton" type="TextureButton" parent="." unique_id=1437492734]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 288.0
@@ -240,6 +245,7 @@ stretch_mode = 5
 [node name="ModeButton" type="Button" parent="." unique_id=153993009]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 250.0
@@ -256,6 +262,7 @@ text = "CHOOSE MODE"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 421.0
@@ -271,6 +278,7 @@ stretch_mode = 5
 unique_name_in_owner = true
 custom_minimum_size = Vector2(125, 125)
 layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 551.0
@@ -350,5 +358,5 @@ layout_mode = 1
 [node name="NoAdsPurchase" parent="." unique_id=2116753313 instance=ExtResource("14")]
 layout_mode = 1
 
-[node name="RunSetup" parent="." instance=ExtResource("15")]
+[node name="RunSetup" parent="." unique_id=1728376815 instance=ExtResource("15")]
 layout_mode = 1

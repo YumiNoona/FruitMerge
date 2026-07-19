@@ -46,7 +46,7 @@ func _populate(score: int) -> void:
 func _populate_mission_result() -> void:
 	var definition := MissionManager.active_definition
 	var completed := GameManager.run_end_reason == "mission_complete"
-	_title.text = "MISSION COMPLETE!" if completed else "MISSION PAUSED"
+	_title.text = "MISSION COMPLETE!" if completed else "MISSION FAILED"
 	_new_high_label.visible = false
 	_high_score_label.text = "Level %d" % definition.level if definition else "Mission"
 	if completed and definition:

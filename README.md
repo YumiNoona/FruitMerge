@@ -18,6 +18,12 @@ See `Docs/ARCHITECTURE_AND_FEATURES.md` for the save/profile design, game modes,
 power-up flow, mobile haptics and safe-area behavior, cosmetics, localization,
 and the headless validation command.
 
+Play now opens a mobile-first run setup flow. New profiles begin with the first
+of seven guided Missions; completing Level 1 unlocks Classic, and completing
+Level 7 unlocks Time Attack. Classic and Time Attack require a three-type power
+loadout before each new run. Mission tutorial charges are temporary and never
+consume the player's saved shop inventory.
+
 ## Android debug build
 
 The project includes an ARM64 `Android Debug` export preset. See

@@ -22,6 +22,7 @@ const UI_SCENE_PATHS := [
 	"res://Scenes/UI/Components/score_pop.tscn",
 	"res://Scenes/UI/Components/currency_pill.tscn",
 	"res://Scenes/UI/GameOver/game_over.tscn",
+	"res://Scenes/UI/RunSetup/run_setup.tscn",
 ]
 const RETIRED_UI_FONTS := ["Spenbeb Game.otf", "Atop.ttf", "Cloudy.otf"]
 
@@ -31,12 +32,53 @@ static func validate_all() -> PackedStringArray:
 	issues.append_array(_validate_display_profile())
 	issues.append_array(_validate_fruits())
 	issues.append_array(_validate_shop())
+	issues.append_array(_validate_modes_and_missions())
 	issues.append_array(_validate_scenes())
 	issues.append_array(_validate_ui_contracts())
 	for issue in issues:
 		push_error("PROJECT VALIDATION: %s" % issue)
 	if issues.is_empty():
 		print("Project validation passed: fruit chain, catalog, UI contracts, and core scenes are consistent.")
+	return issues
+
+
+static func _validate_modes_and_missions() -> PackedStringArray:
+	var issues: PackedStringArray = []
+	if Enums.GameMode.keys() != ["CLASSIC", "MISSIONS", "TIME_ATTACK"]:
+		issues.append("GameMode must expose exactly Classic, Missions, and Time Attack")
+	var mode_paths := [
+		"res://Data/Modes/classic.tres",
+		"res://Data/Modes/missions.tres",
+		"res://Data/Modes/time_attack.tres",
+	]
+	var seen_modes: Dictionary = {}
+	for path in mode_paths:
+		var mode := load(path) as GameModeDefinition
+		if not mode or not mode.is_valid_definition():
+			issues.append("Invalid mode definition: %s" % path)
+			continue
+		seen_modes[mode.mode] = true
+	if seen_modes.size() != 3:
+		issues.append("The mode catalog must define each of the three modes once")
+	var taught_powerups: Array[StringName] = []
+	if MissionManager.definitions.size() != 7:
+		issues.append("Mission campaign must contain exactly seven levels")
+	for expected_level in range(1, 8):
+		var mission := MissionManager.get_definition(expected_level)
+		if not mission or not mission.is_valid_definition():
+			issues.append("Mission %d is missing or invalid" % expected_level)
+			continue
+		if expected_level == 1 and not mission.required_powerup.is_empty():
+			issues.append("Mission 1 must teach merging without a power-up")
+		if expected_level > 1:
+			if mission.required_powerup.is_empty() or mission.temporary_charges != 1:
+				issues.append("Mission %d must pin one free tutorial power charge" % expected_level)
+			elif mission.required_powerup not in taught_powerups:
+				taught_powerups.append(mission.required_powerup)
+	if taught_powerups.size() != PowerLoadoutManager.ALL_POWERUPS.size():
+		issues.append("Missions 2-7 must teach all six power-up types exactly once")
+	if GameManager.TIME_ATTACK_CONFIG.duration_seconds <= 0.0:
+		issues.append("Time Attack must use a positive resource-configured duration")
 	return issues
 
 
@@ -66,6 +108,11 @@ static func _validate_display_profile() -> PackedStringArray:
 
 static func _validate_fruits() -> PackedStringArray:
 	var issues: PackedStringArray = []
+	var fruit_material := load("res://Data/Resources/fruit_physics.tres") as PhysicsMaterial
+	if not fruit_material or fruit_material.bounce < 0.16 or fruit_material.bounce > 0.25:
+		issues.append("Fruit physics material must keep a soft 0.16-0.25 rebound")
+	elif fruit_material.friction < 0.28 or fruit_material.friction > 0.40:
+		issues.append("Fruit physics material friction must allow gentle rolling without sliding")
 	if FruitDatabase.get_tier_count() != Enums.FruitTier.size():
 		issues.append("Fruit database count does not match FruitTier enum")
 	for tier in Enums.FruitTier.size():
@@ -91,6 +138,10 @@ static func _validate_fruits() -> PackedStringArray:
 			continue
 		if not instance.get_node_or_null("Sprite2D") or not instance.get_node_or_null("CollisionShape2D"):
 			issues.append("%s scene is missing its scene-owned visual/collision" % data.display_name)
+		if instance.impact_min_speed >= instance.impact_full_speed \
+			or instance.impact_visual_strength <= 0.0 \
+			or instance.impact_side_velocity <= 0.0:
+			issues.append("%s has invalid impact-feel tuning" % data.display_name)
 		instance.free()
 	return issues
 

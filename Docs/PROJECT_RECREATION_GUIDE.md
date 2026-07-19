@@ -281,6 +281,8 @@ Stores **run state**:
 - next spawn tier;
 - combo count/timer;
 - whether a target-based power is currently capturing input.
+- separate Classic and Time Attack high scores;
+- run-end reason and the short Time Attack input-lock/merge-resolution phase.
 
 It owns `start_new_run()`, `change_state()`, and score calculation. It must not own scene UI details or direct fruit node paths.
 
@@ -298,6 +300,20 @@ This cache lets the Spawner preview the correct art and clamp drops to the manua
 ### `EconomyManager.gd`
 
 Owns coins, tickets, item ownership/equipping, and consumable power-up counts. Purchasing always goes through it. It emits events after balances/counts change.
+
+### `PowerLoadoutManager.gd`
+
+Owns the six supported power IDs, the saved three-type selection, and the active
+run selection. Normal runs require exactly three distinct IDs. Mission runs replace
+that selection with only the pinned lesson power and consume a temporary Mission
+charge before asking EconomyManager for permanent inventory.
+
+### `MissionManager.gd`
+
+Loads seven `MissionDefinition` resources, tracks completion/unlocks, provides
+deterministic spawn tiers, seeds authored starting fruit, updates objective and
+tutorial events, grants mission rewards, and unlocks Classic after Level 1 and
+Time Attack after Level 7.
 
 ### `RewardPresentationManager.gd`
 
@@ -488,7 +504,7 @@ The box script draws its dashed limit at `danger_line_y` and polls active fruit 
 5. At `danger_settle_time` (2.4 seconds), Box requests `GameManager.GAME_OVER`.
 6. If the pile drops, the dwell recovers faster than it accumulates. Once below the warning threshold, `danger_line_exited` restores normal HUD/Pet state.
 
-This stateful check is important: a newly dropped fruit normally crosses the dashed line on its way to the bottom, but that transit must never flash the warning tint. Relaxed mode clears all tracked danger dwell and disables this sequence.
+This stateful check is important: a newly dropped fruit normally crosses the dashed line on its way to the bottom, but that transit must never flash the warning tint. Classic, Missions, and Time Attack all retain this overflow rule.
 
 ### Important layout relationship
 
@@ -642,7 +658,7 @@ HUD overlays that are visual only must use `MOUSE_FILTER_IGNORE`. Interactive bu
 - compact top score bar;
 - pause button;
 - coin and ticket pills;
-- four power buttons below the header;
+- up to three loadout-filtered power buttons below the header;
 - next fruit panel on the opposite side;
 - danger overlay/warning;
 - combo banner and score pop container;
@@ -662,6 +678,11 @@ HUD overlays that are visual only must use `MOUSE_FILTER_IGNORE`. Interactive bu
 The FruitDock image already includes the merge-order fruit artwork. HUD must **not** dynamically add another row of fruit icons over it. The old `FruitGuide` runtime system was removed specifically to avoid duplicated art and null-node errors.
 
 `hud.gd` listens to EventBus rather than polling gameplay objects. It updates score/currencies/next fruit, launches combo animation, shows power counts, opens Pause, and displays high-tier ticket reward text.
+
+Mission runs add two runtime panels: a compact objective/progress card and a
+larger dismissible instruction card with the relevant fruit icon. Level 1 hides
+the power tray; later lessons show only their pinned power. Classic and Time
+Attack show exactly the three types selected in Run Setup.
 
 ---
 
@@ -684,6 +705,13 @@ Files:
 - Script: `Scripts/UI/Home/home.gd`
 
 Home shows the mascot, best score, currencies, Play, Shop, Achievements, Settings, No Ads, and the scene-authored `RewardsButton`. Pressing `RewardsButton` uses `SceneRouter.go_daily_reward()` so the seven-day panel can be reviewed even after the automatic startup gate has been completed. The bottom dock uses MenuDock art and is the only primary navigation system. Avoid duplicate floating Play/Settings controls elsewhere on the screen.
+
+Play on Home or Shop opens `Scenes/UI/RunSetup/run_setup.tscn`. New profiles see Mission 1 first.
+Returning players see three mode cards; locked cards explain progression. Missions
+open the seven-level map and lesson briefing. Classic/Time Attack open a two-column,
+touch-scrollable six-power picker and enable Play only at exactly three selections.
+Normal retry preserves the active three types; mission retry rebuilds the scenario
+and its temporary charge through `MissionManager`.
 
 The dock's central peach `PlayButton` uses the reusable `floating_button_animator.gd` on both Home and Shop. Its looping sine tween rises 8 pixels with a slight counter-clockwise tilt and scale-up, dips softly with the opposite tilt, then restores the exact authored position, rotation, and scale before repeating. Start it only after mobile safe-area offsets are applied. The animator accepts height and duration parameters and remains still when reduced motion is active.
 
@@ -786,6 +814,12 @@ baseline. This prevents an old Minimal/Off preset from remaining invisible and
 unrecoverable after its selector is removed. It does not change saved volume,
 locale, or the independent vibration-enabled value.
 
+Save migration version 8 separates the old daily goal payload from the new guided
+campaign. Legacy `mission_data` becomes `daily_mission_data`; campaign
+`mission_data` receives all seven completed for existing profiles. It also adds
+`time_attack_high_score` and a valid default `settings.power_loadout`. New saves
+remain un-onboarded at Level 1.
+
 ### Game Over
 
 Game Over is instantiated in Main’s CanvasLayer. `GameManager` emits `game_over`; the panel displays the score, high score, and the coin amount calculated as `int(score * 0.1)`. The actual award happens once in `SaveManager.save_run_result()` when GameManager enters GAME_OVER.
@@ -835,22 +869,29 @@ The currently equipped pet is spawned only when a run begins. `pet.gd` maps item
 | `powerup_shake_box` | ShakeIT | Mixes the pile with impulses, full-direction box movement, and a smaller camera shake. |
 | `powerup_remove_smallest` | SuckUP | Marks all lowest-tier fruits with crosshairs, locks one, then removes it. |
 | `powerup_grab_em` | GrabEM | Pick up one fruit, drag it inside the box, and release it onto the pile/matching fruit. |
+| `powerup_hammer` | Hammer | Select and destroy one troublesome fruit. |
+| `powerup_bomb` | Bomb | Select a cluster center and clear nearby eligible fruit. |
 
-`powerup_bomb.tres` and `powerup_hammer.tres` exist as assets/data but are not in `Shop.ITEM_PATHS` and have no gameplay behavior. Treat them as future work, not functional powers.
+All six powers are functional, purchasable, selectable, and taught exactly once
+across Mission Levels 2-7.
 
 ### Request flow
 
 ```text
-HUD button
+visible, selected HUD button
   → EventBus.powerup_requested(id)
-  → Main validates game state/count
+  → PowerupController validates run input and effective count
   → immediate action or target mode
-  → EconomyManager.consume_powerup(id)
+  → PowerLoadoutManager consumes a temporary tutorial charge first,
+	otherwise EconomyManager.consume_powerup(id)
+  → EventBus.powerup_used(id)
   → EventBus.powerup_count_changed
   → HUD and Shop refresh counts
 ```
 
-`Main` owns targeting because it can convert input to world coordinates and perform physics point queries. HUD only requests and displays the power.
+`PowerupController` owns targeting because it can convert input to world coordinates
+and perform physics point queries. HUD only requests and displays powers present in
+the active run loadout.
 
 ### Power-up data resources
 
@@ -944,6 +985,30 @@ If `FruitData.merge_sfx` is empty, a procedural 16-bit WAV pop is generated and 
 
 Use `Tween.TRANS_BACK` for a friendly pop/bounce, `Tween.TRANS_SINE` for physical sway/shake, and short durations during active play. Avoid long blocking tween sequences that prevent the player from dropping again.
 
+### Fruit-on-fruit impact response
+
+Normal rigid-body contact was visually too stiff, so non-matching fruit now use a
+small layered spring response. The shared fruit physics material is deliberately
+soft rather than rubbery: friction `0.34`, bounce `0.19`. Fruit applies linear
+damping `0.18` and angular damping `0.32` from its exported impact settings after
+the tier mass is loaded.
+
+On contact, only the lower instance ID evaluates the pair. It compares previous
+and current relative velocity, ignores contacts at or below 85 px/s, and uses a
+smooth 85-430 px/s strength curve. The faster source visually compresses; the
+receiver compresses, stretches past neutral, and settles with a tiny five-degree
+tilt. A mass-ratio-clamped impulse adds at most 17 px/s sideways, 9 px/s upward,
+and 0.75 rad/s spin. This is enough to wake the touched fruit without destabilizing
+large late-game tiers.
+
+Matching tiers bypass this behavior and go straight to MergeService. Receiver
+cooldown is 0.12 seconds, procedural plops are limited globally to one per 45 ms,
+and strong impacts share the existing Drop haptic category. The plop is generated
+as a short mono AudioStreamWAV, cached by impact strength and tier group, and played
+through the positional SFX pool. Reduced Motion keeps physics but skips squash and
+tilt. Tune `Impact feel` exports on `fruit.gd`; do not enlarge collision shapes to
+fake softness because collision remains scene-authoritative.
+
 ---
 
 ## 22. Save data and daily-reward rules
@@ -952,12 +1017,15 @@ Use `Tween.TRANS_BACK` for a friendly pop/bounce, `Tween.TRANS_SINE` for physica
 
 ```json
 {
-  "version": 3,
+  "version": 8,
   "coins": 0,
   "tickets": 0,
   "owned_items": "[...]",
   "powerup_counts": {},
   "high_score": 0,
+  "time_attack_high_score": 0,
+  "mission_data": {},
+  "daily_mission_data": {},
   "settings": {}
 }
 ```
@@ -972,6 +1040,7 @@ Important setting keys currently include:
 - `locale`
 - `equipped_pet`
 - `no_ads_purchased`
+- `power_loadout` (exactly three distinct power-up IDs)
 
 ### Daily reward rule, exactly
 
@@ -1098,12 +1167,16 @@ Use this order to avoid building UI before the game has a stable world:
 23. Add power-up inventory, HUD counts, and gameplay-side power execution.
 24. Move all power feel values into the resources’ Power-up Juice section.
 25. Add daily reward gating and persistence.
+26. Add the three mode resources, Run Setup, the three-power loadout manager, and
+	separate Classic/Time Attack records.
+27. Add seven MissionDefinition resources and MissionManager progression before
+	polishing tutorial overlays and scenario setup.
 
 ### Phase F — mobile release work
 
-26. Test touch input, safe areas, and different aspect ratios.
-27. Integrate real rewarded ads and billing bridge.
-28. Add analytics, privacy policy, store assets, test purchases, and export signing.
+28. Test touch input, safe areas, and different aspect ratios.
+29. Integrate real rewarded ads and billing bridge.
+30. Add analytics, privacy policy, store assets, test purchases, and export signing.
 
 At the end of every phase, make a playable build and resolve warnings before adding the next system.
 
@@ -1201,6 +1274,10 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 - [ ] Matching fruits merge once only; no use-after-free error occurs.
 - [ ] Danger line ends the run after a sustained violation.
 - [ ] Score, combos, high score, coins, tickets, and game-over rewards work.
+- [ ] Mission Levels 1-7 load sequentially, teach all six powers, grant temporary
+	  charges without changing inventory, and unlock Classic/Time Attack correctly.
+- [ ] Time Attack locks new input at zero, resolves pending merges, and saves a
+	  best score independently from Classic.
 
 ### UI
 
@@ -1210,6 +1287,8 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 - [ ] FruitDock is art-only; no duplicate dynamic fruit row exists.
 - [ ] Pause, Settings, Shop, Game Over, and No Ads screens close/navigate correctly.
 - [ ] All canvas-screen layouts fit the logical 720 × 1280 viewport.
+- [ ] Run Setup requires exactly three distinct powers for Classic/Time Attack;
+	  gameplay displays only those three slots.
 
 ### Meta game
 

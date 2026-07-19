@@ -49,7 +49,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _restart_game() -> void:
 	visible = false
-	GameManager.start_new_run()
+	if GameManager.current_mode == Enums.GameMode.MISSIONS:
+		MissionManager.restart_active_mission()
+	else:
+		PowerLoadoutManager.prepare_standard_run()
+		GameManager.start_new_run()
 
 
 func _go_home() -> void:

@@ -133,7 +133,8 @@ func _migrate_data(data: Dictionary) -> Dictionary:
 		cleaned_settings["reduced_motion"] = false
 		migrated["settings"] = cleaned_settings
 	if version < 8:
-		migrated["daily_mission_data"] = migrated.get("mission_data", {}).duplicate(true)
+		var legacy_daily = migrated.get("mission_data", {})
+		migrated["daily_mission_data"] = legacy_daily.duplicate(true) if legacy_daily is Dictionary else {}
 		migrated["mission_data"] = {
 			"highest_unlocked": 7,
 			"completed_levels": [1, 2, 3, 4, 5, 6, 7],

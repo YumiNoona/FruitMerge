@@ -160,24 +160,19 @@ theme_type_variation = &"WhiteLabel"
 theme_override_font_sizes/font_size = 19
 text = "0"
 
-[node name="PowerupTray" type="PanelContainer" parent="." unique_id=1193002709]
+[node name="PowerupColumn" type="HBoxContainer" parent="." unique_id=223288358]
 layout_mode = 0
-offset_left = 21.0
-offset_top = 115.0
-offset_right = 505.0
-offset_bottom = 247.0
-mouse_filter = 1
-
-[node name="PowerupColumn" type="HBoxContainer" parent="PowerupTray" unique_id=223288358]
-layout_mode = 2
+offset_left = 29.0
+offset_top = 117.0
+offset_right = 749.0
+offset_bottom = 217.0
 theme_override_constants/separation = 48
-alignment = 1
 
-[node name="LevelUpSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=2023733540]
+[node name="LevelUpSlot" type="Control" parent="PowerupColumn" unique_id=2023733540]
 custom_minimum_size = Vector2(80, 100)
 layout_mode = 2
 
-[node name="LevelUpButton" type="TextureButton" parent="PowerupTray/PowerupColumn/LevelUpSlot" unique_id=880568202]
+[node name="LevelUpButton" type="TextureButton" parent="PowerupColumn/LevelUpSlot" unique_id=880568202]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -191,7 +186,7 @@ texture_normal = ExtResource("7")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="LevelUpCount" type="Label" parent="PowerupTray/PowerupColumn/LevelUpSlot" unique_id=1224270999]
+[node name="LevelUpCount" type="Label" parent="PowerupColumn/LevelUpSlot" unique_id=1224270999]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 66.0
@@ -206,11 +201,11 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ShakeSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=696279286]
+[node name="ShakeSlot" type="Control" parent="PowerupColumn" unique_id=696279286]
 custom_minimum_size = Vector2(80, 100)
 layout_mode = 2
 
-[node name="ShakeButton" type="TextureButton" parent="PowerupTray/PowerupColumn/ShakeSlot" unique_id=1881890609]
+[node name="ShakeButton" type="TextureButton" parent="PowerupColumn/ShakeSlot" unique_id=1881890609]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(95, 95)
 layout_mode = 1
@@ -223,7 +218,7 @@ texture_normal = ExtResource("8")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ShakeCount" type="Label" parent="PowerupTray/PowerupColumn/ShakeSlot" unique_id=1821510251]
+[node name="ShakeCount" type="Label" parent="PowerupColumn/ShakeSlot" unique_id=1821510251]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 58.78
@@ -238,11 +233,11 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RemoveSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=1146480691]
+[node name="RemoveSlot" type="Control" parent="PowerupColumn" unique_id=1146480691]
 custom_minimum_size = Vector2(80, 100)
 layout_mode = 2
 
-[node name="RemoveButton" type="TextureButton" parent="PowerupTray/PowerupColumn/RemoveSlot" unique_id=1402959976]
+[node name="RemoveButton" type="TextureButton" parent="PowerupColumn/RemoveSlot" unique_id=1402959976]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(95, 95)
 layout_mode = 1
@@ -255,7 +250,7 @@ texture_normal = ExtResource("9")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="RemoveCount" type="Label" parent="PowerupTray/PowerupColumn/RemoveSlot" unique_id=1273027438]
+[node name="RemoveCount" type="Label" parent="PowerupColumn/RemoveSlot" unique_id=1273027438]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 58.78
@@ -270,11 +265,12 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GrabSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=1900851860]
+[node name="GrabSlot" type="Control" parent="PowerupColumn" unique_id=1900851860]
+visible = false
 custom_minimum_size = Vector2(80, 100)
 layout_mode = 2
 
-[node name="GrabButton" type="TextureButton" parent="PowerupTray/PowerupColumn/GrabSlot" unique_id=542860419]
+[node name="GrabButton" type="TextureButton" parent="PowerupColumn/GrabSlot" unique_id=542860419]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(105, 110)
 layout_mode = 1
@@ -293,7 +289,7 @@ texture_normal = ExtResource("9_2ep5d")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="GrabCount" type="Label" parent="PowerupTray/PowerupColumn/GrabSlot" unique_id=893376141]
+[node name="GrabCount" type="Label" parent="PowerupColumn/GrabSlot" unique_id=893376141]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 64.26
@@ -308,11 +304,12 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HammerSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=2081980764]
+[node name="HammerSlot" type="Control" parent="PowerupColumn" unique_id=2081980764]
+visible = false
 custom_minimum_size = Vector2(80, 100)
 layout_mode = 2
 
-[node name="HammerButton" type="TextureButton" parent="PowerupTray/PowerupColumn/HammerSlot" unique_id=1249503864]
+[node name="HammerButton" type="TextureButton" parent="PowerupColumn/HammerSlot" unique_id=1249503864]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(105, 110)
 layout_mode = 1
@@ -329,7 +326,7 @@ texture_normal = ExtResource("14")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="HammerCount" type="Label" parent="PowerupTray/PowerupColumn/HammerSlot" unique_id=1831492700]
+[node name="HammerCount" type="Label" parent="PowerupColumn/HammerSlot" unique_id=1831492700]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 64.26
@@ -344,11 +341,12 @@ text = "x0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BombSlot" type="Control" parent="PowerupTray/PowerupColumn" unique_id=528797845]
+[node name="BombSlot" type="Control" parent="PowerupColumn" unique_id=528797845]
+visible = false
 custom_minimum_size = Vector2(80, 100)
 layout_mode = 2
 
-[node name="BombButton" type="TextureButton" parent="PowerupTray/PowerupColumn/BombSlot" unique_id=1434903665]
+[node name="BombButton" type="TextureButton" parent="PowerupColumn/BombSlot" unique_id=1434903665]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(110, 110)
 layout_mode = 1
@@ -364,7 +362,7 @@ texture_normal = ExtResource("15")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BombCount" type="Label" parent="PowerupTray/PowerupColumn/BombSlot" unique_id=87191656]
+[node name="BombCount" type="Label" parent="PowerupColumn/BombSlot" unique_id=87191656]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 64.26
@@ -410,17 +408,17 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ModeLabel" type="Label" parent="."]
+[node name="ModeLabel" type="Label" parent="." unique_id=2000044227]
 unique_name_in_owner = true
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -160.0
-offset_top = 215.0
+offset_top = 221.14
 offset_right = 160.0
-offset_bottom = 250.0
+offset_bottom = 256.14014
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0.45, 0.24, 0.10, 1)
+theme_override_colors/font_color = Color(0.45, 0.24, 0.1, 1)
 theme_override_colors/font_outline_color = Color(1, 0.94, 0.76, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("6")

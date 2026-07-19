@@ -70,22 +70,29 @@ removes its local save data, so do this only for a disposable test installation.
 
 ## Latest validated debug build
 
-The signed debug APK was rebuilt and validated on 2026-07-19 after the tall-phone
-layout pass:
+The signed debug APK was rebuilt and validated on 2026-07-19 after the mission,
+mode-selection, three-power loadout, and lively fruit-impact pass:
 
 - path: `Builds/Android/FruitMerge-debug.apk`;
-- size: `71,433,524` bytes (`68.12 MiB`);
-- SHA-256: `AA11B0E89C7FEB7BAFE568155C2E6B7E90510EE03FD9D184EE3C495A74D2859C`;
+- size: `71,494,119` bytes (`68.18 MiB`);
+- SHA-256: `BC43B0927E1FA9D8367DCECE63FBC3B089FFB1F679C86593C769463ECB103A4B`;
 - manifest: package `com.yuna.fruitmerge`, version `0.1.0` / code `1`, minimum
   SDK `24`, target SDK `36`, portrait activity;
 - native ABI: `arm64-v8a` only;
 - permissions: `android.permission.VIBRATE` only;
 - signing: standard debug RSA certificate, verified with APK Signature Scheme
   v2 and v3;
-- layout: 9:20 desktop preview, responsive Home/Shop bottom docks, vertically
-  centered mascot art, stretching Shop catalog, touch-scrollable hidden-bar Pets
-  grid, and safe-area-aware loading footer;
-- validation: fruit chain, catalog, UI contracts, and core scenes passed.
+- layout: 9:20 desktop preview, responsive Home/Shop bottom docks, shared mobile
+  Run Setup overlay, three-slot gameplay loadout, touch-scrollable hidden bars,
+  mission objective/tutorial cards, and safe-area-aware loading footer;
+- gameplay: exactly Classic/Missions/Time Attack, seven mission resources, six
+  one-time power lessons with temporary charges, separate timed best score, and
+  input-locked Time Attack finish resolution; non-matching fruit impacts now use
+  soft rebound, mass-aware wake motion, squash/tilt, rate-limited plops, and strong
+  impact haptics without delaying matching merges;
+- validation: save-v8 migration, three-mode catalog, all mission definitions,
+  power coverage, Run Setup interaction, fruit-chain and live impact response,
+  shop/UI contracts, direct Home/Game/Shop smoke scenes, and core scenes passed.
 
 `Builds/` is ignored by Git. The checksum is a record of this exact APK and will
 change on later exports. Installation and launch still need to be smoke-tested on

@@ -40,6 +40,8 @@ var _spatial_sfx_pool: Array[AudioStreamPlayer2D] = []
 var _pool_index: int = 0
 var _spatial_pool_index: int = 0
 var _merge_sfx_cache: Dictionary = {}
+var _impact_sfx_cache: Dictionary = {}
+var _last_impact_sfx_msec := -1000
 
 
 func _ready() -> void:
@@ -77,6 +79,14 @@ func _exit_tree() -> void:
 		player.stream = null
 	_music_tracks.clear()
 	_shuffled_track_indices.clear()
+	for player in _sfx_pool:
+		player.stop()
+		player.stream = null
+	for player in _spatial_sfx_pool:
+		player.stop()
+		player.stream = null
+	_merge_sfx_cache.clear()
+	_impact_sfx_cache.clear()
 
 func _setup_buses() -> void:
 	var music_idx := AudioServer.get_bus_index(music_bus)
@@ -275,6 +285,21 @@ func play_merge_sfx(tier: int, custom_stream: AudioStream, position: Vector2) ->
 	play_sfx_at(stream, position)
 
 
+func play_fruit_impact(relative_speed: float, tier: int, position: Vector2) -> void:
+	if relative_speed < Fruit.DEFAULT_IMPACT_MIN_SPEED:
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_impact_sfx_msec < 45:
+		return
+	_last_impact_sfx_msec = now
+	var bucket := clampi(floori((relative_speed - Fruit.DEFAULT_IMPACT_MIN_SPEED) / 145.0), 0, 2)
+	var pitch_group := clampi(floori(float(tier) / 4.0), 0, 3)
+	var cache_key := "%d:%d" % [bucket, pitch_group]
+	if not _impact_sfx_cache.has(cache_key):
+		_impact_sfx_cache[cache_key] = _build_impact_plop(bucket, pitch_group * 4)
+	play_sfx_at(_impact_sfx_cache[cache_key] as AudioStream, position)
+
+
 func _build_merge_pop(tier: int) -> AudioStreamWAV:
 	var duration := 0.18 + minf(float(tier), 8.0) * 0.006
 	var sample_count := int(PROCEDURAL_SFX_RATE * duration)
@@ -290,6 +315,30 @@ func _build_merge_pop(tier: int) -> AudioStreamWAV:
 		var sparkle := sin(TAU * pitch_sweep * 2.01 * time) * 0.32
 		var transient := sin(TAU * 95.0 * time) * exp(-time * 35.0) * 0.45
 		var value := clampf((pop + sparkle) * envelope * 0.5 + transient, -1.0, 1.0)
+		pcm.encode_s16(sample_index * 2, int(value * 32767.0))
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = PROCEDURAL_SFX_RATE
+	wav.stereo = false
+	wav.data = pcm
+	return wav
+
+
+func _build_impact_plop(bucket: int, tier: int) -> AudioStreamWAV:
+	var duration := 0.075 + float(bucket) * 0.012
+	var sample_count := int(PROCEDURAL_SFX_RATE * duration)
+	var pcm := PackedByteArray()
+	pcm.resize(sample_count * 2)
+	var base_frequency := clampf(175.0 - float(tier) * 3.5 - float(bucket) * 16.0, 92.0, 180.0)
+	var amplitude := 0.10 + float(bucket) * 0.035
+	for sample_index in sample_count:
+		var time := float(sample_index) / float(PROCEDURAL_SFX_RATE)
+		var progress := time / duration
+		var envelope := pow(1.0 - progress, 2.8)
+		var pitch := base_frequency * lerpf(1.08, 0.72, progress)
+		var body := sin(TAU * pitch * time)
+		var soft_click := sin(TAU * pitch * 2.7 * time) * exp(-time * 48.0) * 0.20
+		var value := clampf((body + soft_click) * envelope * amplitude, -1.0, 1.0)
 		pcm.encode_s16(sample_index * 2, int(value * 32767.0))
 	var wav := AudioStreamWAV.new()
 	wav.format = AudioStreamWAV.FORMAT_16_BITS
