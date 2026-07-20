@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdauy0c8slxra"
-path="res://.godot/imported/Pets.png-3e5b23eaa57bb4513bfade591ac744be.ctex"
+uid="uid://cyhk5uhfpb1x3"
+path="res://.godot/imported/Attention.png-7165d50da075f1604ede0ae8a7d6cbb5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UI/Pets.png"
-dest_files=["res://.godot/imported/Pets.png-3e5b23eaa57bb4513bfade591ac744be.ctex"]
+source_file="res://Assets/Menu/Attention.png"
+dest_files=["res://.godot/imported/Attention.png-7165d50da075f1604ede0ae8a7d6cbb5.ctex"]
 
 [params]
 

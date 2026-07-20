@@ -29,8 +29,8 @@ power-up flow, nine equipped-pet companion abilities, mobile haptics and safe-ar
 and the headless validation command.
 
 The Store is a portrait, two-column catalog with illustrated Pets, Power-Ups,
-Skins, and Themes tabs, hidden-scrollbar touch scrolling, compact wallets, and
-Daily/Missions/Settings utilities. Game Over uses the matching framed Home,
+Skins, and Themes tabs in a bottom category row, hidden-scrollbar touch scrolling,
+compact wallets, No Ads, and a single Close action. Game Over uses the matching framed Home,
 Restart, and Settings hub and smoothly reveals a live capture of the final pile
 from the run that just ended.
 
@@ -58,5 +58,7 @@ are not committed.
 
 For PC debugging, the window is resizable and `F11` toggles fullscreen in debug
 builds. The default 432×960 debug window previews a modern 9:20 phone while the
-authored UI remains 720×1280. Mobile safe-area offsets intentionally do not run on
-desktop platforms.
+authored UI uses the matching 720×1600 logical canvas. Editor and debug-window
+compositions therefore match at the default size; `expand` still supports phones
+with different portrait aspect ratios. Mobile safe-area offsets intentionally do
+not run on desktop platforms.

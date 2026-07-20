@@ -124,39 +124,50 @@ text = "NEW BEST SCORE!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SnapshotFrame" type="PanelContainer" parent="Center/ResultCard"]
+[node name="SnapshotFrame" type="PanelContainer" parent="Center/ResultCard" unique_id=780354548]
 unique_name_in_owner = true
 clip_contents = true
-layout_mode = 0
-offset_left = 120.0
-offset_top = 214.0
-offset_right = 526.0
-offset_bottom = 612.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -209.0
+offset_top = -294.0
+offset_right = 215.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("SnapshotSurface")
 
-[node name="SnapshotMargin" type="MarginContainer" parent="Center/ResultCard/SnapshotFrame"]
+[node name="SnapshotMargin" type="MarginContainer" parent="Center/ResultCard/SnapshotFrame" unique_id=688617734]
+custom_minimum_size = Vector2(400, 400)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 mouse_filter = 2
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 6
 
-[node name="SnapshotClip" type="Control" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin"]
+[node name="SnapshotClip" type="Control" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin" unique_id=1551051637]
+custom_minimum_size = Vector2(400, 400)
 clip_contents = true
-custom_minimum_size = Vector2(394, 386)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 mouse_filter = 2
 
-[node name="SnapshotPlaceholder" type="Label" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip"]
+[node name="SnapshotPlaceholder" type="Label" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip" unique_id=84492730]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.94509804, 0.7647059, 0.74)
 theme_override_fonts/font = ExtResource("13")
 theme_override_font_sizes/font_size = 22
@@ -164,7 +175,7 @@ text = "FINAL PILE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="FinalSnapshot" type="TextureRect" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip"]
+[node name="FinalSnapshot" type="TextureRect" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip" unique_id=1017480371]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -176,7 +187,7 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="SnapshotFlash" type="ColorRect" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip"]
+[node name="SnapshotFlash" type="ColorRect" parent="Center/ResultCard/SnapshotFrame/SnapshotMargin/SnapshotClip" unique_id=1984951560]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -188,18 +199,19 @@ mouse_filter = 2
 color = Color(1, 0.9529412, 0.7137255, 0.32)
 
 [node name="RewardRow" type="HBoxContainer" parent="Center/ResultCard" unique_id=1520817190]
-custom_minimum_size = Vector2(420, 70)
+custom_minimum_size = Vector2(420, 60)
 layout_mode = 0
-offset_left = 113.0
-offset_top = 620.0
-offset_right = 533.0
-offset_bottom = 690.0
+offset_left = 116.0
+offset_top = 663.0
+offset_right = 536.0
+offset_bottom = 723.0
 theme_override_constants/separation = 32
 alignment = 1
 
 [node name="HighScoreLabel" type="Label" parent="Center/ResultCard/RewardRow" unique_id=1973066796]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("13")
 theme_override_font_sizes/font_size = 22
 text = "BEST  0"
@@ -207,6 +219,7 @@ text = "BEST  0"
 [node name="CoinsEarnedLabel" type="Label" parent="Center/ResultCard/RewardRow" unique_id=253732403]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.28, 0.5, 0.11, 1)
 theme_override_colors/font_outline_color = Color(1, 0.98, 0.8, 1)
 theme_override_constants/outline_size = 3
@@ -218,9 +231,9 @@ text = "+0 COINS"
 custom_minimum_size = Vector2(410, 40)
 layout_mode = 0
 offset_left = 120.0
-offset_top = 700.0
+offset_top = 719.0
 offset_right = 530.0
-offset_bottom = 740.0
+offset_bottom = 759.0
 theme_override_colors/font_color = Color(0.42, 0.27, 0.13, 1)
 theme_override_fonts/font = ExtResource("13")
 theme_override_font_sizes/font_size = 20

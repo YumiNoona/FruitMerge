@@ -23,7 +23,7 @@ merge_burst_scene = ExtResource("5")
 
 [node name="WorldOrigin" type="Node2D" parent="." unique_id=279369810]
 unique_name_in_owner = true
-position = Vector2(360, 1280)
+position = Vector2(360, 1440)
 
 [node name="Background" type="Sprite2D" parent="WorldOrigin" unique_id=902294362]
 unique_name_in_owner = true

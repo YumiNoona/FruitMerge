@@ -17,11 +17,11 @@ var _shop_items: Array[ShopItemData] = []
 @onready var _tab_pets: TextureButton = %TabPets
 @onready var _tab_powerups: TextureButton = %TabPowerups
 @onready var _tab_themes: TextureButton = %TabThemes
-@onready var _settings_menu: SettingsMenu = $SettingsMenu
-@onready var _run_setup: RunSetupPanel = $RunSetup
 @onready var _no_ads_purchase: NoAdsPurchase = $NoAdsPurchase
 @onready var _frame_art: TextureRect = %FrameArt
-@onready var _store_icon: TextureRect = %StoreIcon
+@onready var _shop_title: Label = $ShopTitle
+@onready var _category_row: HBoxContainer = $HBoxContainer
+@onready var _catalog_margin: MarginContainer = $CatalogMargin
 
 
 func _ready() -> void:
@@ -33,17 +33,12 @@ func _ready() -> void:
 	EventBus.item_equipped.connect(_on_catalog_changed)
 	EventBus.powerup_count_changed.connect(_on_powerup_count_changed)
 	AdManager.no_ads_changed.connect(_on_no_ads_changed)
-	%HomeButton.pressed.connect(_on_back_pressed)
 	%CloseButton.pressed.connect(_on_back_pressed)
-	%DailyButton.pressed.connect(_open_daily_reward)
-	%MissionsButton.pressed.connect(_open_missions)
-	%SettingsButton.pressed.connect(_settings_menu.open)
 	_no_ads_button.pressed.connect(_no_ads_purchase.open)
 	_connect_tabs()
 	_on_coins_changed(EconomyManager.coins)
 	_on_tickets_changed(EconomyManager.tickets)
 	_on_no_ads_changed(AdManager.has_no_ads())
-	$CatalogPanel.visible = true
 	_apply_safe_area()
 	_filter_category(SceneRouter.take_shop_entry_category())
 	_play_intro.call_deferred()
@@ -125,28 +120,20 @@ func _on_back_pressed() -> void:
 	SceneRouter.go_home()
 
 
-func _open_daily_reward() -> void:
-	HapticManager.pulse(HapticManager.Feedback.TAP)
-	SceneRouter.go_daily_reward()
-
-
-func _open_missions() -> void:
-	HapticManager.pulse(HapticManager.Feedback.TAP)
-	_run_setup.open()
-
-
 func _play_intro() -> void:
 	_frame_art.modulate.a = 0.0
-	_store_icon.pivot_offset = _store_icon.size * 0.5
-	_store_icon.scale = Vector2(0.72, 0.72)
-	_store_icon.modulate.a = 0.0
+	_shop_title.pivot_offset = _shop_title.size * 0.5
+	_shop_title.scale = Vector2(0.82, 0.82)
+	_shop_title.modulate.a = 0.0
+	_catalog_margin.modulate.a = 0.0
 	var tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_frame_art, "modulate:a", 1.0, 0.28)
-	tween.tween_property(_store_icon, "scale", Vector2.ONE, 0.42)
-	tween.tween_property(_store_icon, "modulate:a", 1.0, 0.20)
+	tween.tween_property(_shop_title, "scale", Vector2.ONE, 0.38)
+	tween.tween_property(_shop_title, "modulate:a", 1.0, 0.20)
+	tween.tween_property(_catalog_margin, "modulate:a", 1.0, 0.24).set_delay(0.08)
 
 
 func _apply_safe_area() -> void:
-	for control in [$StoreIcon, $ShopTitle, $CloseButton, $CoinPanel, $TicketPanel, $NoAdsButton]:
+	for control in [$ShopTitle, $CloseButton, $CoinPanel, $TicketPanel, $NoAdsButton]:
 		MobileSafeArea.apply_top_inset(control, control.position.y)
-	MobileSafeArea.apply_bottom_inset($UtilityRow, $UtilityRow.position.y)
+	MobileSafeArea.apply_bottom_inset(_category_row, _category_row.position.y)

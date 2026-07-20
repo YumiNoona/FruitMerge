@@ -4,7 +4,7 @@
 >
 > **Reading length:** roughly 20–30 printed pages, depending on page size, font, and code-block spacing.
 >
-> **Current engine:** Godot 4.7.1. The project is portrait-first and uses a 720 × 1280 logical viewport.
+> **Current engine:** Godot 4.7.1. The project is portrait-first and uses a 720 × 1600 logical viewport.
 
 ---
 
@@ -83,7 +83,7 @@ The key rule is simple: **matching fruits grow into the next fruit, but gravity 
 | --- | --- | --- |
 | Engine | Godot 4.7.1 | All scene/script syntax is Godot 4.x GDScript. |
 | Game mode | 2D physics | Fruits are `RigidBody2D`; the container is a `StaticBody2D`. |
-| Logical viewport | 720 × 1280 | All UI offsets are authored against this portrait canvas. |
+| Logical viewport | 720 × 1600 | All UI offsets are authored against this 9:20 portrait canvas. |
 | Desktop preview | 432 × 960 override | Emulates a modern 9:20 phone and exposes tall-screen anchor mistakes. |
 | Stretch mode | `canvas_items`, aspect `expand` | Preserves the authored UI coordinate system. |
 | Physics | 2D default gravity = 820 | Drives the fall weight and pile behavior. |
@@ -189,7 +189,7 @@ boot_splash/show_image=false
 
 [display]
 window/size/viewport_width=720
-window/size/viewport_height=1280
+window/size/viewport_height=1600
 window/size/window_width_override=432
 window/size/window_height_override=960
 window/stretch/mode="canvas_items"
@@ -200,12 +200,13 @@ window/handheld/orientation=1
 2d/default_gravity=820.0
 ```
 
-The 432 × 960 value changes only the desktop debug window. With `expand`, that
-9:20 window exposes a 720 × 1600 logical canvas, matching how the 720-wide game
-expands on a tall phone. Top HUD controls stay top-anchored, dock controls stay
-bottom-anchored, central art uses vertical-center anchors, and scrollable panels
-stretch between their top and bottom margins. Do not replace the 720 × 1280
-authored viewport with a device's physical pixel resolution.
+The 432 × 960 value changes only the desktop debug window. It has the same 9:20
+aspect ratio as the 720 × 1600 logical canvas, so scenes have the same composition
+in the 2D editor and the default running preview. With `expand`, other phone shapes
+can expose additional canvas space. Top HUD controls stay top-anchored, dock controls
+stay bottom-anchored, central art uses vertical-center anchors, and scrollable panels
+stretch between their top and bottom margins. Do not replace the 720 × 1600 authored
+viewport with a device's physical pixel resolution.
 
 The autoload order is also important. Register these in **Project → Project Settings → Autoload**:
 
@@ -530,7 +531,7 @@ pet edge position together. Keep `ContainerRig.scale = (1, 1)` and do not scale
 
 The Box scene is an authored child instance, so it appears in Main's scene tree. Expand `WorldOrigin/ContainerRig/BoxContainer/Box` to locate it; open `box.tscn` to edit the three collision shapes, or enable editable children on the instance when inspecting them in Main.
 
-`WorldOrigin` exists only to make the Main editor composition intuitive. A fixed-screen CanvasLayer HUD uses screen coordinates from `(0, 0)` to `(720, 1280)`, while the original gameplay camera viewed world coordinates from `(-360, -1280)` to `(360, 0)`. That made the correctly positioned container look one screen above the HUD in the 2D editor. `WorldOrigin.position = Vector2(360, 1280)` translates the camera and authored world together so its purple viewport rectangle overlaps the HUD in the editor. Because camera and world receive the same translation, the running game looks and behaves exactly the same.
+`WorldOrigin` exists only to make the Main editor composition intuitive. The fixed-screen CanvasLayer HUD uses screen coordinates from `(0, 0)` to `(720, 1600)`. `WorldOrigin.position = Vector2(360, 1440)` combines with the camera's local `(0, -640)` position to place the camera globally at `(360, 800)`, so its purple 720 × 1600 viewport rectangle overlaps the HUD exactly. The migration from the former 720 × 1280 canvas added 160 pixels to `WorldOrigin.y`; because the camera and authored physics world receive the same translation, their relative on-screen composition and behavior remain unchanged.
 
 ---
 
@@ -636,7 +637,7 @@ The `fruit_merged` event reports the old tier, so Main checks `tier + 1` when de
 
 ```text
 Main (Node2D, main.gd)
-├─ WorldOrigin (Node2D at 360,1280; aligns world and HUD in the editor)
+├─ WorldOrigin (Node2D at 360,1440; aligns world and HUD in the editor)
 │  ├─ Background (Sprite2D; currently hidden)
 │  ├─ ContainerRig (Node2D; move this to reposition the whole container)
 │  │  ├─ ContainerArt (Sprite2D)
@@ -651,7 +652,7 @@ Main (Node2D, main.gd)
    └─ GameOverPanel
 ```
 
-The camera keeps a local position of `(0, -640)` inside `WorldOrigin`. Its global editor position is therefore `(360, 640)`, aligning the 720×1280 Camera2D rectangle with the HUD canvas. This makes the world’s physical floor land low in the phone viewport while keeping room for the top HUD. UI should not be placed in world coordinates unless it deliberately belongs to a fruit/physics effect.
+The camera keeps a local position of `(0, -640)` inside `WorldOrigin`. Its global editor position is therefore `(360, 800)`, aligning the 720×1600 Camera2D rectangle with the HUD canvas. This makes the world’s physical floor land low in the phone viewport while keeping room for the top HUD. UI should not be placed in world coordinates unless it deliberately belongs to a fruit/physics effect.
 
 ### Coordinate conversion
 
@@ -788,20 +789,24 @@ skins, and background themes, and creates one reusable card per item. To add a
 shop item, create its `.tres`, register it in the catalog, and ensure the
 icon/resource path is valid.
 
-The full-screen store uses `Assets/UI/LongFrame.png` and the remaining Pets,
-Power-Ups, and Skins category art. Store, Themes, Home, Daily, Missions, Settings,
-No Ads, and Close resolve to the surviving `Assets/Menu` copies, so the deleted
-duplicate UI files are not restored. The left rail owns the four category buttons. Its selected icon grows and
-brightens; inactive icons are slightly smaller and cooler. Currency and No Ads
-stay in the header; the deleted rewarded-ticket action and category text labels
-are not queried by `shop.gd`. The bottom-anchored `UtilityRow` contains the
-exact `HomeButton`, `DailyButton`, `MissionsButton`, and `SettingsButton`
-contracts; Close also returns Home. Missions opens `RunSetup`, not a direct run.
+The rebuilt full-screen Store uses `Assets/UI/StoreFrame.png`, the garden
+background, and the Pets, Power-Ups, Skins, and Themes artwork. Coin/ticket wallets,
+No Ads, the COZY STORE title, and Close stay in the header. The four category
+buttons now live together in the bottom-anchored root `HBoxContainer`; selected
+art grows and brightens while inactive art becomes slightly smaller and cooler.
+`CloseButton` returns Home. Do not restore or query the deleted `StoreIcon`,
+`HomeButton`, `DailyButton`, `MissionsButton`, `SettingsButton`, `UtilityRow`, or
+`CatalogPanel`. The clipped `CatalogMargin` directly contains `ShopScroll`.
 
 `SceneRouter.go_shop(category)` stores an optional entry category for one scene
 transition, and `take_shop_entry_category()` resets it to pets after consumption.
 This is how Home's Themes shortcut opens the correct tab without coupling Home to
 the Shop node tree.
+
+The runtime test adds the Store to the scene tree, waits for `_ready()`, checks
+that all nine pet cards appear, then selects Power-Ups and checks all six cards.
+Keep this test when editing the Store: scene loading alone does not execute the
+button connections that previously produced null-instance errors.
 
 The portrait catalog is a clipped two-column grid. Each card has a 220 x 330 minimum with a
 compact local price style; do not reuse the normal `GreenPanel` padding inside the
@@ -1268,7 +1273,7 @@ Use this order to avoid building UI before the game has a stable world:
 ### Phase A — foundation
 
 1. Create a Godot 4.x project.
-2. Set 720 × 1280 logical viewport, portrait orientation, `canvas_items` stretch mode, default 2D gravity 820.
+2. Set 720 × 1600 logical viewport, portrait orientation, `canvas_items` stretch mode, default 2D gravity 820.
 3. Create `Assets`, `Audio`, `Autoloads`, `Data`, `Scenes`, `Scripts`, and `Docs` directories.
 4. Add the music bus layout with Music/SFX buses.
 5. Add Enums, EventBus, SaveManager, GameManager, EconomyManager, AudioManager, FruitDatabase, Bootstrap, and AdManager autoloads.
@@ -1343,7 +1348,7 @@ Also run `git diff --check` if using Git to catch whitespace errors.
 | Fruits land on tips / feel stiff | shape does not match silhouette, mass/damping/material needs tuning | adjust the per-fruit collision scene first; then material values. |
 | Cannot drop fruit in every mode | Full-screen HUD/overlay intercepts pointer; `HUD/TopRow` is the common culprit | set the `HUD` and `HUD/TopRow` mouse filters to Ignore; reserve capture for real buttons, then run the routed click regression test. |
 | `game_over.gd` reports integer-division warnings | Integer image-crop midpoint uses `/ 2` | convert the numerator to `float`, divide by `2.0`, and use `floori()` before building the integer crop rectangle. |
-| Bottom UI cut off | authored outside 720×1280 or CanvasLayer missing | use anchors/offsets inside logical viewport and test real run. |
+| Bottom UI cut off | authored outside 720×1600 or CanvasLayer missing | use anchors/offsets inside logical viewport and test real run. |
 | Daily panel appears every launch after claim | claim date was not saved or clock differs | inspect `daily_reward_last_claim`; claim via button, not close. |
 | Claim UI leaks outside panel | generated cards before layout or no clipping | wait one frame, calculate from Grid size, set `clip_contents`. |
 | Invalid access on freed fruit | coroutine continued after exit/merge | validate instance and tree membership after every await. |
@@ -1428,7 +1433,7 @@ Assign a stream to `FruitData.merge_sfx` for tier-specific merge sounds. For UI 
 - [ ] HUD does not block pointer input over the container.
 - [ ] HUD has no fruit-progression dock or duplicate dynamic fruit row.
 - [ ] Pause, Settings, Shop, Game Over, and No Ads screens close/navigate correctly.
-- [ ] All canvas-screen layouts fit the logical 720 × 1280 viewport.
+- [ ] All canvas-screen layouts fit the logical 720 × 1600 viewport.
 - [ ] Run Setup requires exactly three distinct powers for Classic/Time Attack;
 	  gameplay displays only those three slots.
 - [ ] Empty selected powers show `+`; their refill modal pauses/resumes all modes,

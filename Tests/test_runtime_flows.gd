@@ -129,6 +129,25 @@ static func run(tree: SceneTree) -> PackedStringArray:
 	GameManager.show_second_next_preview = false
 	GameManager.combo_window_bonus = 0.0
 
+	var shop_scene := load(SceneRouter.SHOP_SCENE) as PackedScene
+	var shop := shop_scene.instantiate() if shop_scene else null
+	if not shop:
+		failures.append("Rebuilt Store scene must instantiate")
+	else:
+		tree.root.add_child(shop)
+		await tree.process_frame
+		await tree.process_frame
+		var shop_list := shop.find_child("ShopList", true, false) as GridContainer
+		if not shop_list or shop_list.get_child_count() != ProjectValidator.REQUIRED_PETS.size():
+			failures.append("Rebuilt Store must complete _ready and populate its default pet catalog")
+		shop.call("_filter_category", &"powerup")
+		if not shop_list or shop_list.get_child_count() != ProjectValidator.REQUIRED_POWERUPS.size():
+			failures.append("Rebuilt Store bottom tabs must repopulate the selected catalog")
+		shop.free()
+		await tree.process_frame
+	GameManager.current_state = previous_state
+	tree.paused = false
+
 	var impact_root := Node2D.new()
 	tree.root.add_child(impact_root)
 	var falling := FruitDatabase.create_fruit(Enums.FruitTier.CHERRY)

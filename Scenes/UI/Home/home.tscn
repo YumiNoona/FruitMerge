@@ -6,8 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bbybjfa2tce3y" path="res://Assets/UI/Score.png" id="4_loy6l"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://duhssdh6bvku3" path="res://Assets/Menu/NoAds.png" id="5_s3cbl"]
-[ext_resource type="Texture2D" uid="uid://de6o6oo53fjyc" path="res://Assets/Menu/MenuDock.png" id="6"]
-[ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/UI/Ticket.png" id="6_173y0"]
+[ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/Menu/Ticket.png" id="6_173y0"]
 [ext_resource type="Texture2D" uid="uid://dok2upe21xu8j" path="res://Assets/Mascots/Cuby.png" id="6_s3cbl"]
 [ext_resource type="Texture2D" uid="uid://b0fxh5pishhre" path="res://Assets/Menu/Achivements.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://ynpc7wv52gl0" path="res://Assets/Menu/Play.png" id="11"]
@@ -162,20 +161,6 @@ texture = ExtResource("6_s3cbl")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Dock" type="TextureRect" parent="." unique_id=899878851]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -194.0
-offset_right = 704.0
-offset_bottom = -22.0
-grow_vertical = 0
-mouse_filter = 2
-texture = ExtResource("6")
-expand_mode = 1
-
 [node name="NoAdsButton" type="TextureButton" parent="." unique_id=248716530]
 unique_name_in_owner = true
 layout_mode = 0
@@ -230,9 +215,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 44.0
-offset_top = -170.0
+offset_top = -180.0
 offset_right = 169.0
-offset_bottom = -45.0
+offset_bottom = -55.0
 grow_vertical = 0
 texture_normal = ExtResource("14_fp2cr")
 ignore_texture_size = true
@@ -246,9 +231,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 174.0
-offset_top = -189.0
+offset_top = -199.0
 offset_right = 299.0
-offset_bottom = -64.0
+offset_bottom = -74.0
 grow_vertical = 0
 texture_normal = ExtResource("8")
 ignore_texture_size = true
@@ -256,14 +241,15 @@ stretch_mode = 5
 
 [node name="PlayButton" type="TextureButton" parent="." unique_id=1437492734]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 130)
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 288.0
-offset_top = -245.0
-offset_right = 438.0
-offset_bottom = -95.0
+offset_left = 297.0
+offset_top = -255.0
+offset_right = 427.0
+offset_bottom = -125.0
 grow_vertical = 0
 texture_normal = ExtResource("11")
 ignore_texture_size = true
@@ -276,9 +262,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 250.0
-offset_top = -75.0
+offset_top = -58.0
 offset_right = 470.0
-offset_bottom = -27.0
+offset_bottom = -10.0
 grow_vertical = 0
 theme_type_variation = &"CreamButton"
 theme_override_fonts/font = ExtResource("13_8vbvv")
@@ -293,9 +279,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 421.0
-offset_top = -191.0
+offset_top = -201.0
 offset_right = 546.0
-offset_bottom = -66.0
+offset_bottom = -76.0
 grow_vertical = 0
 texture_normal = ExtResource("17_8xxx3")
 ignore_texture_size = true
@@ -309,9 +295,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 551.0
-offset_top = -171.0
+offset_top = -181.0
 offset_right = 676.0
-offset_bottom = -46.0
+offset_bottom = -56.0
 grow_vertical = 0
 texture_normal = ExtResource("18_n2lbo")
 ignore_texture_size = true
@@ -384,6 +370,7 @@ visible = false
 layout_mode = 1
 
 [node name="NoAdsPurchase" parent="." unique_id=2116753313 instance=ExtResource("14")]
+visible = false
 layout_mode = 1
 
 [node name="RunSetup" parent="." unique_id=1728376815 instance=ExtResource("15")]

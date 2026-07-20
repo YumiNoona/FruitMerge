@@ -3,36 +3,19 @@
 [ext_resource type="Script" uid="uid://box274uu1k7rn" path="res://Scripts/UI/Shop/shop.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://p087oj74rxfj" path="res://Assets/UI/BackGround.png" id="2"]
 [ext_resource type="Theme" uid="uid://ooep0c5awy8d" path="res://Data/Themes/cozy_theme.tres" id="3"]
-[ext_resource type="Texture2D" uid="uid://thre0eu80noj" path="res://Assets/UI/LongFrame.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://c87xr2hrpymb2" path="res://Assets/Menu/Store.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://bdauy0c8slxra" path="res://Assets/UI/Pets.png" id="6"]
-[ext_resource type="Texture2D" uid="uid://lt8wfg8y7i5p" path="res://Assets/UI/Power-Ups.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://cm8tjnnro2ff2" path="res://Assets/UI/Skins.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://u8b1jad5fwm8" path="res://Assets/UI/StoreFrame.png" id="4_caefh"]
+[ext_resource type="Texture2D" uid="uid://bdauy0c8slxra" path="res://Assets/Menu/Pets.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://lt8wfg8y7i5p" path="res://Assets/Menu/Power-Ups.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cm8tjnnro2ff2" path="res://Assets/Menu/Skins.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://duhssdh6bvku3" path="res://Assets/Menu/NoAds.png" id="8_oq0pb"]
-[ext_resource type="Texture2D" uid="uid://cotwbkcmjj76w" path="res://Assets/Menu/Home.png" id="10"]
-[ext_resource type="Texture2D" uid="uid://bjqpuceegvmwe" path="res://Assets/Menu/Daily.png" id="11"]
-[ext_resource type="Texture2D" uid="uid://dfawdr74kyk21" path="res://Assets/Menu/Missions.png" id="12"]
 [ext_resource type="Texture2D" uid="uid://ca4b43pu3bjbb" path="res://Assets/Menu/Themes.png" id="12_caefh"]
-[ext_resource type="Texture2D" uid="uid://btx07feoqwnp5" path="res://Assets/Menu/Settings.png" id="13"]
 [ext_resource type="Texture2D" uid="uid://bc08kx6gmwwby" path="res://Assets/Menu/Close.png" id="15"]
 [ext_resource type="Texture2D" uid="uid://d1n86batyrhnj" path="res://Assets/Menu/Coin.png" id="16"]
-[ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/UI/Ticket.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://bf0cdb3r0kjt5" path="res://Assets/Menu/Ticket.png" id="17"]
 [ext_resource type="PackedScene" uid="uid://curl0kqpuh6dx" path="res://Scenes/UI/Settings/settings_menu.tscn" id="18"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/RunSetup/run_setup.tscn" id="19"]
 [ext_resource type="PackedScene" uid="uid://b2qw4dofqp0f7" path="res://Scenes/UI/NoAds/no_ads_purchase.tscn" id="20"]
 [ext_resource type="FontFile" uid="uid://m4edoe4gxv5w" path="res://Assets/Fonts/NERILLKID Trial.ttf" id="21"]
-
-[sub_resource type="StyleBoxFlat" id="InnerSurface"]
-bg_color = Color(1, 0.9, 0.66, 0.98)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.92, 0.57, 0.18, 0.72)
-corner_radius_top_left = 38
-corner_radius_top_right = 38
-corner_radius_bottom_right = 38
-corner_radius_bottom_left = 38
 
 [sub_resource type="StyleBoxFlat" id="CurrencySurface"]
 bg_color = Color(1, 0.98, 0.84, 0.98)
@@ -48,21 +31,6 @@ corner_radius_bottom_left = 22
 shadow_color = Color(0.28, 0.15, 0.05, 0.12)
 shadow_size = 3
 shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="CatalogSurface"]
-bg_color = Color(1, 0.95, 0.79, 0.99)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.74, 0.43, 0.12, 0.72)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-shadow_color = Color(0.27, 0.13, 0.04, 0.12)
-shadow_size = 4
-shadow_offset = Vector2(0, 3)
 
 [node name="Shop" type="Control" unique_id=1735740722]
 layout_mode = 3
@@ -96,54 +64,32 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.29, 0.73, 0.98, 0.18)
 
-[node name="InnerSurface" type="Panel" parent="." unique_id=1868734082]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 136.0
-offset_top = 199.0
-offset_right = -135.0
-offset_bottom = -189.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("InnerSurface")
-
 [node name="FrameArt" type="TextureRect" parent="." unique_id=1783015626]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 103.0
+offset_bottom = -115.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("4")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="StoreIcon" type="TextureRect" parent="." unique_id=573550615]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 304.0
-offset_top = 18.0
-offset_right = 416.0
-offset_bottom = 130.0
-mouse_filter = 2
-texture = ExtResource("5")
+texture = ExtResource("4_caefh")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="ShopTitle" type="Label" parent="." unique_id=1330838808]
 layout_mode = 0
-offset_left = 228.0
-offset_top = 112.0
-offset_right = 492.0
-offset_bottom = 156.0
+offset_left = 191.0
+offset_top = 84.0
+offset_right = 561.0
+offset_bottom = 170.0
 theme_override_colors/font_color = Color(0.21, 0.46, 0.7, 1)
-theme_override_colors/font_outline_color = Color(1, 0.97, 0.8, 1)
-theme_override_constants/outline_size = 6
+theme_override_colors/font_shadow_color = Color(0.8072351, 0.4176642, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 30
 theme_override_fonts/font = ExtResource("21")
 theme_override_font_sizes/font_size = 70
 text = "COZY STORE"
@@ -153,10 +99,10 @@ vertical_alignment = 1
 [node name="CloseButton" type="TextureButton" parent="." unique_id=38903759]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 636.0
-offset_top = 24.0
-offset_right = 702.0
-offset_bottom = 90.0
+offset_left = 616.0
+offset_top = 93.0
+offset_right = 696.0
+offset_bottom = 173.0
 tooltip_text = "Close store"
 texture_normal = ExtResource("15")
 ignore_texture_size = true
@@ -164,10 +110,10 @@ stretch_mode = 5
 
 [node name="CoinPanel" type="PanelContainer" parent="." unique_id=262792459]
 layout_mode = 0
-offset_left = 166.0
-offset_top = 162.0
-offset_right = 306.0
-offset_bottom = 232.0
+offset_left = 418.0
+offset_top = 10.0
+offset_right = 558.0
+offset_bottom = 80.00006
 theme_override_styles/panel = SubResource("CurrencySurface")
 
 [node name="CoinRow" type="HBoxContainer" parent="CoinPanel" unique_id=558839270]
@@ -191,10 +137,10 @@ text = "0"
 
 [node name="TicketPanel" type="PanelContainer" parent="." unique_id=1302361913]
 layout_mode = 0
-offset_left = 316.0
-offset_top = 162.0
-offset_right = 456.0
-offset_bottom = 232.0
+offset_left = 568.0
+offset_top = 10.0
+offset_right = 708.0
+offset_bottom = 80.00006
 theme_override_styles/panel = SubResource("CurrencySurface")
 
 [node name="TicketRow" type="HBoxContainer" parent="TicketPanel" unique_id=1957378189]
@@ -219,102 +165,35 @@ text = "0"
 [node name="NoAdsButton" type="TextureButton" parent="." unique_id=607947771]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 558.0
-offset_top = 154.0
-offset_right = 637.99994
-offset_bottom = 234.0
+offset_left = 12.0
+offset_top = 7.0
+offset_right = 112.0
+offset_bottom = 107.0
 tooltip_text = "Remove ads"
 texture_normal = ExtResource("8_oq0pb")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="TabPets" type="TextureButton" parent="." unique_id=2119732994]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 160)
-layout_mode = 0
-offset_left = 1.98
-offset_top = 284.0
-offset_right = 161.98
-offset_bottom = 444.0
-tooltip_text = "Pets"
-toggle_mode = true
-button_pressed = true
-texture_normal = ExtResource("6")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="TabPowerups" type="TextureButton" parent="." unique_id=247782406]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 140)
-layout_mode = 0
-offset_left = 7.98
-offset_top = 444.0
-offset_right = 147.98
-offset_bottom = 584.0
-tooltip_text = "Power-Ups"
-toggle_mode = true
-texture_normal = ExtResource("7")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="TabSkins" type="TextureButton" parent="." unique_id=1595386298]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 140)
-layout_mode = 0
-offset_left = 7.98
-offset_top = 604.0
-offset_right = 147.98
-offset_bottom = 744.0
-tooltip_text = "Fruit skins"
-toggle_mode = true
-texture_normal = ExtResource("8")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="TabThemes" type="TextureButton" parent="." unique_id=796333742]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 140)
-layout_mode = 0
-offset_left = 7.98
-offset_top = 764.0
-offset_right = 147.98
-offset_bottom = 904.0
-tooltip_text = "Background themes"
-toggle_mode = true
-texture_normal = ExtResource("12_caefh")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="CatalogPanel" type="PanelContainer" parent="." unique_id=227737259]
-visible = false
+[node name="CatalogMargin" type="MarginContainer" parent="." unique_id=1364463444]
 clip_contents = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 174.0
-offset_top = 296.0
-offset_right = -32.0
-offset_bottom = -174.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("CatalogSurface")
-
-[node name="CatalogMargin" type="MarginContainer" parent="CatalogPanel" unique_id=1364463444]
-clip_contents = true
-layout_mode = 2
+layout_mode = 0
+offset_left = 73.0
+offset_top = 163.0
+offset_right = 648.0
+offset_bottom = 1455.0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 14
 
-[node name="ShopScroll" type="ScrollContainer" parent="CatalogPanel/CatalogMargin" unique_id=481942970]
+[node name="ShopScroll" type="ScrollContainer" parent="CatalogMargin" unique_id=481942970]
 layout_mode = 2
+size_flags_horizontal = 4
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 scroll_deadzone = 8
 
-[node name="ShopList" type="GridContainer" parent="CatalogPanel/CatalogMargin/ShopScroll" unique_id=230405145]
+[node name="ShopList" type="GridContainer" parent="CatalogMargin/ShopScroll" unique_id=230405145]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(462, 0)
 layout_mode = 2
@@ -332,10 +211,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -175.0
-offset_top = -45.0
-offset_right = 245.0
-offset_bottom = 45.0
+offset_left = -208.315
+offset_top = -107.935
+offset_right = 211.68408
+offset_bottom = -17.934998
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("21")
@@ -345,63 +224,80 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="UtilityRow" type="HBoxContainer" parent="." unique_id=1287675637]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 134.0
-offset_top = -154.0
-offset_right = -134.0
-offset_bottom = -42.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="HomeButton" type="TextureButton" parent="UtilityRow" unique_id=783976607]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-tooltip_text = "Home"
-texture_normal = ExtResource("10")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="DailyButton" type="TextureButton" parent="UtilityRow" unique_id=935941006]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-tooltip_text = "Daily rewards"
-texture_normal = ExtResource("11")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="MissionsButton" type="TextureButton" parent="UtilityRow" unique_id=581403445]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-tooltip_text = "Missions and modes"
-texture_normal = ExtResource("12")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="SettingsButton" type="TextureButton" parent="UtilityRow" unique_id=1541336422]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-tooltip_text = "Settings"
-texture_normal = ExtResource("13")
-ignore_texture_size = true
-stretch_mode = 5
-
 [node name="SettingsMenu" parent="." unique_id=857842806 instance=ExtResource("18")]
 visible = false
 layout_mode = 1
 
 [node name="RunSetup" parent="." unique_id=1469609878 instance=ExtResource("19")]
 layout_mode = 1
+offset_left = -2.0
+offset_top = -36.0
+offset_right = -2.0
+offset_bottom = -36.0
 
 [node name="NoAdsPurchase" parent="." unique_id=1182811276 instance=ExtResource("20")]
+visible = false
 layout_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1659837192]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -122.0
+offset_right = 1.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="TabPets" type="TextureButton" parent="HBoxContainer" unique_id=2119732994]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Pets"
+toggle_mode = true
+button_pressed = true
+texture_normal = ExtResource("6")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="TabPowerups" type="TextureButton" parent="HBoxContainer" unique_id=247782406]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Power-Ups"
+toggle_mode = true
+texture_normal = ExtResource("7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="TabSkins" type="TextureButton" parent="HBoxContainer" unique_id=1595386298]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Fruit skins"
+toggle_mode = true
+texture_normal = ExtResource("8")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="TabThemes" type="TextureButton" parent="HBoxContainer" unique_id=796333742]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Background themes"
+toggle_mode = true
+texture_normal = ExtResource("12_caefh")
+ignore_texture_size = true
+stretch_mode = 5

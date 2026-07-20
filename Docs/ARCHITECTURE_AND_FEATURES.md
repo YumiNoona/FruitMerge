@@ -193,8 +193,8 @@ track's end. `music_fade_in_duration`, `music_crossfade_duration`, and
 
 ## Danger line and overflow
 
-`Scenes/Core/main.tscn` exposes a `WorldOrigin` at `(360, 1280)`. It translates the
-Camera2D and authored gameplay world together so the camera's 720×1280 rectangle
+`Scenes/Core/main.tscn` exposes a `WorldOrigin` at `(360, 1440)`. It translates the
+Camera2D and authored gameplay world together so the camera's 720×1600 rectangle
 overlaps the fixed-screen HUD in the 2D editor without changing runtime composition.
 Inside it, a scene-authored `ContainerRig` contains both `ContainerArt` and the
 physical `BoxContainer/Box` instance. Moving that one rig keeps the artwork, walls,
@@ -212,9 +212,8 @@ The central peach Play button on Home uses
 `Scripts/UI/Components/floating_button_animator.gd`. It runs a subtle looping
 rise/dip/settle sine tween with small scale and rotation accents, starts after
 safe-area placement, and stays static when reduced motion is requested. The Store
-uses a separate bottom-anchored utility row with `HomeButton`, `DailyButton`,
-`MissionsButton`, and `SettingsButton`; its top-right `CloseButton` also returns
-Home.
+uses a bottom-anchored category row for Pets, Power-Ups, Skins, and Themes. Its
+top-right `CloseButton` is the single return-to-Home action.
 
 Home's scene-authored `RewardsButton` opens Daily Reward through
 `SceneRouter.go_daily_reward()`. `MissionButton` opens Run Setup and
@@ -299,14 +298,13 @@ overrides.
 
 ## Portrait Store hub and containment
 
-The Store is framed by `Assets/UI/LongFrame.png`, keeps the remaining category art
-under `Assets/UI`, and reuses the surviving navigation artwork under `Assets/Menu`
-for Store, Themes, Home, Daily, Missions, Settings, No Ads, and Close. The deleted
-duplicate UI copies are not runtime dependencies. A left illustrated rail switches four exact catalog
-categories: pets, power-ups, fruit skins, and background themes. The header keeps
-coin/ticket balances and the no-ads action visible; the deleted rewarded-ad button
-and category text labels are not script contracts. A bottom utility row opens
-Home, Daily Reward, Run Setup, and Settings without duplicating Home's Play dock.
+The rebuilt Store uses `Assets/UI/StoreFrame.png` over the garden background, with
+the COZY STORE title, compact coin/ticket wallets, No Ads, and Close in the header.
+Four illustrated buttons in the bottom-anchored `HBoxContainer` switch Pets,
+Power-Ups, Skins, and Themes. Close is the only navigation action; the deleted
+Store icon, Home/Daily/Missions/Settings utility buttons, `UtilityRow`, and
+`CatalogPanel` are no longer runtime contracts. `CatalogMargin` directly owns the
+hidden-scrollbar `ShopScroll` and clips cards inside the authored frame.
 
 The two-column shop grid uses 220 x 330 minimum cards with a card-local price
 panel style. Card contents now fit their declared minimum height, titles have a
@@ -323,6 +321,11 @@ swallowing vertical drag events before they reach the ScrollContainer. An explic
 8 px touch deadzone separates a purchase tap from a scroll gesture. Category repopulation frees
 old cards immediately, preventing one-frame overlap. Header ad copy is ASCII-only
 and sized for the 720-wide portrait canvas.
+
+Store validation follows this rebuilt structure and launches the scene in the
+runtime flow test. The test requires `_ready()` to populate all nine Pets and the
+Power-Up tab to repopulate all six powers, catching stale node paths that a simple
+scene-instantiation check would miss.
 
 The default Cherry and Lemon skin resources are stored as `skin_cherry.tres` and
 `skin_lemon.tres` while retaining the stable save IDs `skin_default` and
@@ -407,12 +410,13 @@ can find it.
 ## Desktop debugging
 
 The PC debug window is resizable even though the production target is portrait
-mobile. Its default 432×960 override represents a modern 9:20 phone; `expand`
-turns the authored 720×1280 canvas into a 720×1600 visible canvas. This deliberately
-reveals controls that were positioned for only 16:9. Home's dock and the Store's
-utility row are bottom-anchored, central mascot art is vertically centered, the
-Store catalog grows into the extra height, and the loading footer observes the
-mobile bottom safe area.
+mobile. Its default 432×960 override represents a modern 9:20 phone and has the same
+aspect ratio as the authored 720×1600 canvas, so the editor composition and default
+runtime preview match. `expand` still reveals additional canvas space on devices
+whose portrait ratio is taller or wider. Home's dock and the Store's category row
+are bottom-anchored, central mascot art is vertically centered, the Store catalog
+grows with the available height, and the loading footer observes the mobile bottom
+safe area.
 
 In debug builds, focus the running game and press `F11` to toggle between windowed
 and fullscreen modes. When using Godot's embedded game view, black space around

@@ -104,8 +104,8 @@ static func _validate_display_profile() -> PackedStringArray:
 		int(ProjectSettings.get_setting("display/window/size/window_width_override", 0)),
 		int(ProjectSettings.get_setting("display/window/size/window_height_override", 0))
 	)
-	if logical_size != Vector2i(720, 1280):
-		issues.append("Logical UI viewport must remain 720x1280")
+	if logical_size != Vector2i(720, 1600):
+		issues.append("Logical UI viewport must remain 720x1600")
 	if preview_size != Vector2i(432, 960):
 		issues.append("Desktop mobile preview must remain 432x960 (9:20)")
 	if str(ProjectSettings.get_setting("display/window/stretch/aspect", "")) != "expand":
@@ -203,11 +203,14 @@ static func _validate_scenes() -> PackedStringArray:
 	if gameplay_scene:
 		var gameplay := gameplay_scene.instantiate()
 		var world_origin := gameplay.get_node_or_null("WorldOrigin") as Node2D
+		var camera := gameplay.get_node_or_null("WorldOrigin/Camera2D") as Camera2D
 		var rig := gameplay.get_node_or_null("WorldOrigin/ContainerRig")
 		if not world_origin:
 			issues.append("Gameplay scene is missing its editor-aligned WorldOrigin")
-		elif world_origin.position != Vector2(360, 1280):
-			issues.append("WorldOrigin must align the 720x1280 gameplay world with the editor canvas")
+		elif world_origin.position != Vector2(360, 1440):
+			issues.append("WorldOrigin must align the 720x1600 gameplay world with the editor canvas")
+		elif not camera or world_origin.position + camera.position != Vector2(360, 800):
+			issues.append("Gameplay camera must center the 720x1600 editor canvas at (360, 800)")
 		if not rig:
 			issues.append("Gameplay scene is missing its movable ContainerRig")
 		elif not rig.get_node_or_null("ContainerArt") or not rig.get_node_or_null("BoxContainer/Box"):
@@ -321,12 +324,12 @@ static func _validate_ui_contracts() -> PackedStringArray:
 	if shop_scene:
 		var shop := shop_scene.instantiate()
 		for node_name in [
-			"FrameArt", "StoreIcon", "TabPets", "TabPowerups",
-			"TabSkins", "TabThemes", "HomeButton", "DailyButton", "MissionsButton",
-			"SettingsButton", "CloseButton", "NoAdsButton",
+			"FrameArt", "ShopTitle", "CatalogMargin", "ShopScroll", "ShopList",
+			"TabPets", "TabPowerups", "TabSkins", "TabThemes", "CloseButton",
+			"NoAdsButton", "ShopCoinsLabel", "ShopTicketsLabel",
 		]:
 			if not shop.find_child(node_name, true, false):
-				issues.append("Store hub is missing %s required by shop.gd" % node_name)
+				issues.append("Store is missing %s required by its rebuilt layout" % node_name)
 		var shop_scroll := shop.find_child("ShopScroll", true, false) as ScrollContainer
 		if not shop_scroll or shop_scroll.vertical_scroll_mode != ScrollContainer.SCROLL_MODE_SHOW_NEVER:
 			issues.append("Shop must remain touch-scrollable without a visible scrollbar")
@@ -337,20 +340,22 @@ static func _validate_ui_contracts() -> PackedStringArray:
 			issues.append("Shop grid must pass card drag gestures to its ScrollContainer")
 		elif shop_list.columns != 2:
 			issues.append("Store catalog must use the mobile-friendly two-column grid")
-		var utility_row := shop.find_child("UtilityRow", true, false) as Control
-		if not utility_row or not is_equal_approx(utility_row.anchor_top, 1.0) or not is_equal_approx(utility_row.anchor_bottom, 1.0):
-			issues.append("Store utility row must stay bottom-anchored on tall phones")
-		var catalog_panel := shop.find_child("CatalogPanel", true, false) as Control
-		if not catalog_panel or not is_equal_approx(catalog_panel.anchor_bottom, 1.0):
-			issues.append("Shop catalog must expand vertically on tall phones")
+		var category_row := shop.get_node_or_null("HBoxContainer") as HBoxContainer
+		if not category_row or not is_equal_approx(category_row.anchor_top, 1.0) \
+				or not is_equal_approx(category_row.anchor_bottom, 1.0):
+			issues.append("Store category row must stay bottom-anchored")
+		var catalog_margin := shop.get_node_or_null("CatalogMargin") as MarginContainer
+		if not catalog_margin or not catalog_margin.clip_contents:
+			issues.append("Store catalog margin must clip scrolling cards to the frame")
 		shop.free()
 	var shop_source := FileAccess.get_file_as_string(SceneRouter.SHOP_SCENE)
 	for asset_path in [
-		"res://Assets/UI/LongFrame.png", "res://Assets/UI/Pets.png",
+		"res://Assets/UI/BackGround.png", "res://Assets/UI/StoreFrame.png",
+		"res://Assets/UI/Pets.png",
 		"res://Assets/UI/Power-Ups.png", "res://Assets/UI/Skins.png",
-		"res://Assets/Menu/Themes.png", "res://Assets/Menu/Home.png",
-		"res://Assets/Menu/Daily.png", "res://Assets/Menu/Missions.png",
-		"res://Assets/Menu/Settings.png",
+		"res://Assets/Menu/Themes.png", "res://Assets/Menu/Close.png",
+		"res://Assets/Menu/NoAds.png", "res://Assets/Menu/Coin.png",
+		"res://Assets/UI/Ticket.png",
 	]:
 		if not shop_source.contains(asset_path):
 			issues.append("Store presentation is missing surviving UI art: %s" % asset_path)

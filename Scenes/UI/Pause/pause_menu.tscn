@@ -159,9 +159,9 @@ stretch_mode = 5
 [node name="QuickRow" type="HBoxContainer" parent="." unique_id=410997264]
 layout_mode = 0
 offset_left = 192.0
-offset_top = 661.0
+offset_top = 827.0
 offset_right = 524.0
-offset_bottom = 761.0
+offset_bottom = 927.0
 theme_override_constants/separation = 16
 alignment = 1
 
@@ -193,4 +193,5 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="SettingsMenu" parent="." unique_id=1771454438 instance=ExtResource("6")]
+visible = false
 layout_mode = 1
